@@ -25,6 +25,7 @@ const coursetimes = (courseData) => {
         let description = "Instructors: " + course.instructors.join(", ");
         description += "\nCRN: " + course.crn;
         if (course.class) {
+            console.log(course.class);
             for (let day of course.class.days) {
                 console.log("day: " + day);
                 let baseDay = dates.add(WEEKSTART, daysOfWeek.indexOf(day, 'day'), 'day')
@@ -44,20 +45,23 @@ const coursetimes = (courseData) => {
             }
         }
         if (course.lab) {
-            let baseDay = dates.add(WEEKSTART, daysOfWeek.indexOf(day, 'day'), 'day')
-            let labStart = merge(baseDay, course.lab.startTime)
-            let labEnd = merge(baseDay, course.lab.endTime)
-            courseTimes.push(
-                {
-                    id: coursetimes.id++,
-                    title: course.courseName,
-                    desc: description,
-                    source: course,
-                    allDay: false,
-                    start: labStart,
-                    end: labEnd
-                }
-            );
+            for (let day of course.lab.days) {
+                console.log(course.lab);
+                let baseDay = dates.add(WEEKSTART, daysOfWeek.indexOf(course.lab.days, 'day'), 'day')
+                let labStart = merge(baseDay, course.lab.startTime)
+                let labEnd = merge(baseDay, course.lab.endTime)
+                courseTimes.push(
+                    {
+                        id: coursetimes.id++,
+                        title: course.courseName,
+                        desc: description,
+                        source: course,
+                        allDay: false,
+                        start: labStart,
+                        end: labEnd
+                    }
+                );
+            }
         }
         if (course.days) {
             for (let day of course.days) {

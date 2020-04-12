@@ -5,8 +5,8 @@ import {toggleCourse, removeCourse} from '../actions/CoursesActions';
 const CourseButton = ({course, toggleCourse, removeCourse}) => (
 	<div style={{ borderStyle: 'solid', display: "inline-block", padding: 2, margin: 4}}>
 		<p>{course.courseName}</p>
-		<button key={course.crn} onClick={() => toggleCourse(course.crn)}>Toggle</button>
-		<button key={course.crn} onClick={() => removeCourse(course.crn)}>Remove</button>
+		<button key={course.crn + "toggleVisible"} onClick={() => toggleCourse(course.crn)}>Toggle</button>
+		<button key={course.crn + "removeVisible"} onClick={() => removeCourse(course.crn)}>Remove</button>
 	</div>
 );
 
