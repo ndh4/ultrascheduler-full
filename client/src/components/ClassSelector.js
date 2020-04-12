@@ -1,28 +1,135 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import {connect} from 'react-redux';
 import {toggleCourse, removeCourse} from '../actions/CoursesActions';
 
-const CourseButton = ({course, toggleCourse, removeCourse}) => (
-	<div style={{ borderStyle: 'solid', display: "inline-block", padding: 2, margin: 4}}>
-		<p>{course.courseName}</p>
-		<button key={course.crn + "toggleVisible"} onClick={() => toggleCourse(course.crn)}>Toggle</button>
-		<button key={course.crn + "removeVisible"} onClick={() => removeCourse(course.crn)}>Remove</button>
-	</div>
-);
+import { classTimeString } from '../utils/transformCourseTime';
 
-const ClassSelector = ({courses, toggleCourse, removeCourse}) => {
-	return (<div>
-		{courses.map(c => <CourseButton course={c} toggleCourse={toggleCourse} removeCourse={removeCourse}/>)}
-	</div>);
+import { makeStyles } from '@material-ui/core/styles';
+
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+
+// Course visible
+import Checkbox from '@material-ui/core/Checkbox';
+
+// Has lab
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+
+// Delete course
+import DeleteIcon from '@material-ui/icons/Delete';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+import SwipeableViews from "react-swipeable-views";
+
+
+const useStyles = makeStyles({
+	table: {
+	  minWidth: 650,
+	},
+  });
+
+const ClassSelector = ({draftCourses, toggleCourse, removeCourse}) => {
+	const classes = useStyles();
+
+	// Get headers
+	let headers = ["Visible", "Course Code", "Class Days", "Class Time", "Has Lab?", "Lab Days", "Lab Times", "Instructor(s)", "Remove"]
+
+	const styles = {
+		slideContainer: {
+		  height: '30vh',
+		  width: '100vw',
+		  WebkitOverflowScrolling: 'touch', // iOS momentum scrolling
+		},
+	  };
+
+	const emptyCellGenerator = (count) => {
+		let cells = [];
+		for (let i = 0; i < count; i++) {
+			cells.push(<TableCell align="right"></TableCell>);
+		}
+		return cells;
+	}
+
+	return (
+		<TableContainer component={Paper}>
+			<SwipeableViews containerStyle={styles.slideContainer}>
+			<Table stickyHeader={true} className={classes.table} aria-label="simple table">
+				<TableHead>
+					<TableRow>
+						{headers.map((heading, idx) => {
+							if (idx == 0) {
+								return (<TableCell>{heading}</TableCell>)
+							} else {
+								return (<TableCell align="right">{heading}</TableCell>)
+							}
+						})}
+					</TableRow>
+				</TableHead>
+				<TableBody>
+					{draftCourses.map((course) => (
+						<TableRow key={course.crn}>
+							<TableCell padding="checkbox">
+								<Checkbox
+								checked={course.visible}
+								onClick={() => toggleCourse(course.crn)}
+								/>
+							</TableCell>
+							<TableCell align="right" component="th" scope="row">
+								{course.courseName}
+							</TableCell>
+							{course.class.hasClass ? (
+								<Fragment>
+									<TableCell align="right">{course.class.days}</TableCell>
+									<TableCell align="right">{classTimeString(course.class.startTime, course.class.endTime)}</TableCell>
+								</Fragment>
+							) : <Fragment>{emptyCellGenerator(2)}</Fragment>}
+							{course.lab.hasLab ? (
+								<Fragment>
+									<TableCell align="right"><CheckCircleIcon /></TableCell>
+									<TableCell align="right">{course.lab.labDays}</TableCell>
+									<TableCell align="right">{classTimeString(course.lab.labStartTime, course.lab.labEndTime)}</TableCell>
+								</Fragment>
+							) : <Fragment>{emptyCellGenerator(3)}</Fragment>}
+							<TableCell align="right">{course.instructors.join(" | ")}</TableCell>
+							<TableCell align="right">
+								<Tooltip title="Delete">
+									<IconButton aria-label="delete" onClick={() => removeCourse(course.crn)}>
+										<DeleteIcon />
+									</IconButton>
+								</Tooltip>
+							</TableCell>
+						</TableRow>
+					))}
+				</TableBody>
+			</Table>
+			</SwipeableViews>
+		</TableContainer>
+	)
+	// return (
+	// 	<List>
+	// 		{courses.map(course => {
+	// 			return (
+	// 				<ListItem key={course.crn} onClick={() => toggleCourse(course.crn)}>
+	// 					{course.courseName}
+	// 				</ListItem>
+	// 			)
+	// 		})}
+	// 	</List>
+	// )
 }
 
 
 export default connect(
         (state) => ({
-                courses: state.CoursesReducer.draftCourses,
+            draftCourses: state.CoursesReducer.draftCourses,
         }),
         (dispatch) => ({
-		toggleCourse: crn => dispatch(toggleCourse(crn)),
-		removeCourse: crn => dispatch(removeCourse(crn))
+			toggleCourse: crn => dispatch(toggleCourse(crn)),
+			removeCourse: crn => dispatch(removeCourse(crn))
         }),
 )(ClassSelector);

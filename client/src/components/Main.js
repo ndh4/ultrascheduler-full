@@ -21,10 +21,12 @@ const Main = () => {
         }, []
     );
     return (
-        <div className="App" stle={{ display: "inline" }}>
+        <div className="App" style={{ display: "inline" }}>
 			<Header />
-            <ClassSelector />
-            <div className="Container">
+            <div style={{ paddingBottom: "2vh" }}>
+                <ClassSelector />
+            </div>
+            <div className="Container" style={{ paddingTop: "2vh" }}>
                 <div style={{ float: "left", width: '30%' }}>
                     <CourseSearch depts={depts} term="Fall 2020"/>
                 </div>

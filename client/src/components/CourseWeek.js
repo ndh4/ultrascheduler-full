@@ -2,6 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux';
 import * as dates from 'date-arithmetic'
 import TimeGrid from 'react-big-calendar/lib/TimeGrid'
+import { timesToMoment } from '../utils/transformCourseTime';
 
 const max = Math.max
 const min = Math.min
@@ -15,22 +16,41 @@ class CourseWeek extends React.Component {
     }
     render() {
         const {date, courses} = this.props
+        console.log(date);
+        console.log(courses);
         let range = Array.from({length: 7}, (x,i) => dates.add(date, i, 'day'));
         let showWeekend = false;
         // let showWeekend = [false, false];
         let startHr = 8;
         let endHr = 14;
         // TODO: fix this
-        courses.forEach(c => {
+        courses.forEach(course => {
             // Skip invisible courses (and new format courses)
-            if (!c.visible || !c.days) return;
+            if (!course.visible || (!course.class.days && !course.lab.days)) return;
+
             // Check whether or not to show the weekend
-            if (!showWeekend && (c.days.indexOf("U") > -1 || c.days.indexOf("S") > -1)) 
+            if (!showWeekend && (course.class.days.indexOf("U") > -1 || course.class.days.indexOf("S") > -1)) 
                 showWeekend = true;
-            // if (!showWeekend[0] && c.days.indexOf("U") > -1) showWeekend[0] = true;
-            // if (!showWeekend[1] && c.days.indexOf("S") > -1) showWeekend[1] = true;
-            startHr = min(startHr, c.startTime[0] - 1);
-            endHr = max(endHr, c.endTime[0] + 1);
+            if (!showWeekend && course.lab.hasLab && (course.lab.days.indexOf("U") > -1 || course.lab.days.indexOf("S") > -1)) 
+                showWeekend = true;
+            
+            // Extend start & end time if needed
+            let [newStartTime, newEndTime] = timesToMoment(course.class.startTime, course.class.endTime)
+            if (course.lab.hasLab) {
+                let [labStartTime, labEndTime] = timesToMoment(course.lab.startTime, course.lab.endTime);
+                // Compare lab times with class times
+                newStartTime = min(newStartTime.hour(), labStartTime.hour());
+                newEndTime = max(newEndTime.hour(), labEndTime.hour());
+            } else {
+                newStartTime = newStartTime.hour();
+                newEndTime = newEndTime.hour();
+            }
+
+            // Check min of class & lab start time
+            startHr = min(startHr, newStartTime - 1);
+
+            // Check max of class & lab end time
+            endHr = max(endHr, newEndTime + 1);
         })
         if (!showWeekend)
             range = range.slice(1, range.length - 1)
