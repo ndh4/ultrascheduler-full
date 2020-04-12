@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {connect} from 'react-redux';
-import {addCourse} from '../actions/CoursesActions';
+import {addCourse, removeCourse} from '../actions/CoursesActions';
 
 import moment from "moment";
 
@@ -57,12 +57,29 @@ const styles = {
     },
   };
 
-const SessionItem = ({res, session, addCourse}) => {
+const SessionItem = ({res, session, draftCourses, addCourse, removeCourse }) => {
+    // Check if this course is in draftCourses
+    let courseSelected = false;
+    for (let course of draftCourses) {
+        console.log(course);
+        console.log(course.crn);
+        console.log(session.crn);
+        if (course.crn == session.crn) {
+            courseSelected = true;
+        }
+    }
     return (
-    <div key={res.crn} style={{ borderStyle: 'solid', display: "inline-block" }}>
+    <div key={session.crn} style={{ borderStyle: 'solid', display: "inline-block" }}>
         <input 
             type="checkbox" 
-            onClick={() => addCourse(sessionToDraftCourse(session, res.detail))} 
+            checked={courseSelected}
+            onClick={() => {
+                if (courseSelected) {
+                    removeCourse(session.crn);
+                } else {
+                    addCourse(sessionToDraftCourse(session, res.detail));
+                }
+            }} 
             style={{ alignItems: "left" }} 
         />
         <div style={{ alignItems: "left" }}>
@@ -72,7 +89,7 @@ const SessionItem = ({res, session, addCourse}) => {
     );
 }
 
-const CourseList = ({ searchResults, addCourse }) => {
+const CourseList = ({ searchResults, draftCourses, addCourse, removeCourse }) => {
     const [courseSelected, setCourseSelected] = useState("");
 
     if (searchResults == []) {
@@ -89,7 +106,6 @@ const CourseList = ({ searchResults, addCourse }) => {
             aria-labelledby="nested-list-subheader"
             >
                 {searchResults.map(res => {
-                    console.log("Inside");
                     return (
                         <div>
                             <ListItem 
@@ -100,7 +116,7 @@ const CourseList = ({ searchResults, addCourse }) => {
                             </ListItem>
                             <Collapse in={(courseSelected != "" && courseSelected.label == res.label) ? true : false} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
-                                {res.sessions.map(session => <SessionItem res={res} session={session} addCourse={addCourse}/>)}
+                                {res.sessions.map(session => <SessionItem res={res} session={session} draftCourses={draftCourses} addCourse={addCourse} removeCourse={removeCourse} />)}
                                 </List>
                             </Collapse>
                         </div>
@@ -114,8 +130,10 @@ const CourseList = ({ searchResults, addCourse }) => {
 
 export default connect(
     (state) => ({
+        draftCourses: state.CoursesReducer.draftCourses
     }),
     (dispatch) => ({
-		addCourse: course => dispatch(addCourse(course)),
+        addCourse: course => dispatch(addCourse(course)),
+        removeCourse: crn => dispatch(removeCourse(crn))
     }),
 )(CourseList);
