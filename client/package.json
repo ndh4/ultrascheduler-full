@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.9.10",
+    "@material-ui/icons": "^4.9.1",
     "cldr-data": "^36.0.0",
     "connected-react-router": "^6.8.0",
     "history": "^4.10.1",
