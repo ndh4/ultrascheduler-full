@@ -28,7 +28,6 @@ const CourseSearch = ({ term, depts }) => {
                 let sessions = courseObj["terms"][0]["sessions"];
                 classes.push({ label: prefix, value: prefix, sessions: sessions });
             });
-            console.log(classes);
             setSearchResults(classes);
         }
 
@@ -67,11 +66,6 @@ const styles = {
         margin: 8, 
         padding: 2,
     },
-    result: {
-        padding:2,
-        margin:4,
-        background:"#ADDFFF",
-    }
 }
 
 export default connect(

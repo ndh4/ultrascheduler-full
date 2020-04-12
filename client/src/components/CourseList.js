@@ -22,16 +22,15 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 
+const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
+
 const sessionToString = (session) => {
     let result = [];
-    // console.log(session);
     if (session.class.days.length > 0) {
         let classTime = "Class: " + session.class.days.join("")
         // Convert times
-        let startTime = session.class.startTime;
-        let endTime = session.class.endTime;
-        startTime = moment(startTime, 'HHmm').format('hh:mm a');
-        endTime = moment(endTime, 'HHmm').format('hh:mm a');
+        let startTime = formatTime(session.class.startTime);
+        let endTime = formatTime(session.class.endTime);
 
         classTime += " " + startTime + " - " + endTime
         result.push(<p>{classTime}</p>);
@@ -40,15 +39,13 @@ const sessionToString = (session) => {
         let labTime = "Lab: " + session.lab.days.join("")
 
         // Convert times
-        let startTime = session.lab.startTime;
-        let endTime = session.lab.endTime;
-        startTime = moment(startTime, 'HHmm').format('hh:mm a');
-        endTime = moment(endTime, 'HHmm').format('hh:mm a');
+        let startTime = formatTime(session.lab.startTime);
+        let endTime = formatTime(session.lab.endTime);
 
         labTime += " " + startTime + " - " + endTime
         result.push(<p>{labTime}</p>);
     }
-    return ((result.length > 0) ? result : "No class times");
+    return ((result.length > 0) ? result : ["No class times"]);
 }
 
 const styles = {
