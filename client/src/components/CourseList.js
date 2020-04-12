@@ -11,7 +11,16 @@ import {
     AccordionItemPanel,
 } from 'react-accessible-accordion';
 
-import Infinite from "react-infinite";
+
+// new imports
+import SwipeableViews from "react-swipeable-views";
+
+import ListSubheader from '@material-ui/core/ListSubheader';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Collapse from '@material-ui/core/Collapse';
 
 const sessionToString = (session) => {
     let result = [];
@@ -42,6 +51,13 @@ const sessionToString = (session) => {
     return ((result.length > 0) ? result : "No class times");
 }
 
+const styles = {
+    slideContainer: {
+      height: 500,
+      WebkitOverflowScrolling: 'touch', // iOS momentum scrolling
+    },
+  };
+
 const CourseList = ({ searchResults }) => {
     const [courseSelected, setCourseSelected] = useState("");
 
@@ -49,58 +65,45 @@ const CourseList = ({ searchResults }) => {
         return (<br />);
     }
 
-    if (courseSelected != "") {
-        return (
-            <div>
-                <h4 onClick={() => setCourseSelected("")}>{courseSelected.label}</h4>
-                {courseSelected.sessions.map(session => {
+    console.log("new search results");
+
+    return (
+        <SwipeableViews containerStyle={styles.slideContainer}>
+            <List
+            component="nav"
+            aria-labelledby="nested-list-subheader"
+            >
+                {searchResults.map(res => {
+                    console.log("Inside");
                     return (
-                        <div key={courseSelected.crn} style={{ borderStyle: 'solid', display: "inline-block" }}>
-                            <input type="checkbox" onClick={() => console.log("Add/Rem course")} style={{ alignItems: "left" }} />
-                            <div style={{ alignItems: "left" }}>
-                                {sessionToString(session)}
-                            </div>
+                        <div>
+                            <ListItem 
+                            key={res.label} 
+                            onClick={() => courseSelected ? setCourseSelected("") : setCourseSelected(res)}
+                            button>
+                                {res.label}
+                            </ListItem>
+                            <Collapse in={(courseSelected != "" && courseSelected.label == res.label) ? true : false} timeout="auto" unmountOnExit>
+                                <List component="div" disablePadding>
+                                {res.sessions.map(session => {
+                                    return (
+                                        <div key={res.crn} style={{ borderStyle: 'solid', display: "inline-block" }}>
+                                            <input type="checkbox" onClick={() => console.log("Add/Rem course")} style={{ alignItems: "left" }} />
+                                            <div style={{ alignItems: "left" }}>
+                                                {sessionToString(session)}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                                </List>
+                            </Collapse>
                         </div>
                     )
                 })}
-            </div>
-        )
-    } else {
-        return (
-            <Infinite containerHeight={courseSelected ? 200 : 500} elementHeight={courseSelected ? 200 : 50}>
-                <Accordion allowZeroExpanded={true}>
-                {searchResults.map(res => (
-                    <AccordionItem 
-                    key={res.label} 
-                    style={{ visibility: (courseSelected != "" && courseSelected != res.label) ? "hidden" : "visible" }}
-                    onClick={() => courseSelected ? setCourseSelected("") : setCourseSelected(res)}
-                    >
-                        <AccordionItemHeading>
-                            <AccordionItemButton>
-                                {res.label}
-                            </AccordionItemButton>
-                        </AccordionItemHeading>
-                        <AccordionItemPanel>
-                            {res.sessions.map(session => {
-                                return (
-                                    <div key={res.crn} style={{ borderStyle: 'solid', display: "inline-block" }}>
-                                        <input type="checkbox" onClick={() => console.log("Add/Rem course")} style={{ alignItems: "left" }} />
-                                        <div style={{ alignItems: "left" }}>
-                                            {sessionToString(session)}
-                                        </div>
-                                    </div>
-                                )
-                            })}
-                        </AccordionItemPanel>
-                    </AccordionItem>
-                    // <div style={styles.result} key={res.crn} onClick={() => console.log("clicked " + res.label)}>
-                    //     <p>{res.label}</p>
-                    // </div>
-                ))}
-                </Accordion>
-            </Infinite>
-        )
-    }
+            </List>
+        </SwipeableViews>
+    )
+
 }
 
 export default connect(
