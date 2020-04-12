@@ -277,9 +277,9 @@ router.get("/getCoursesByInstructor", async (req, res, next) => {
 		}}},
 		{ $lookup: {
 			from: "instructors",
-            localField: "terms.sessions.instructors",
-            foreignField: "_id",
-            as: "terms.sessions.instructors"
+            		localField: "terms.sessions.instructors",
+            		foreignField: "_id",
+           		as: "terms.sessions.instructors"
 		}}
 	]);
 
@@ -301,9 +301,15 @@ router.get("/searchCourses", (req, res, next) => {
 			terms: {$filter: {
 				input: '$terms',
 				as: 'termObject',
-				cond: {$eq: ['$$termObject.term', queryTerm]}
-			}}
-		}}
+				cond: {$eq: ['$$termObject.term', queryTerm]},
+			}},
+		}},
+		{ $lookup: {
+			from: "instructors",
+            		localField: "terms.sessions.instructors",
+            		foreignField: "_id",
+            		as: "blurgh"
+		}},
 	]);
 	courses.toArray().then(courses => {
 		res.json(courses);

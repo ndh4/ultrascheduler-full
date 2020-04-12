@@ -9,8 +9,6 @@ import { WEEKSTART } from "../constants/DefaultDateInfo";
 
 const localizer = momentLocalizer(moment)
 
-const days = ["M", "T", "W", "R", "F", "S", "U"];
-
 const CourseCalendar = ({courses}) => {
     return (
         <div>

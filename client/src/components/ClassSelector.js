@@ -22,7 +22,7 @@ export default connect(
                 courses: state.CoursesReducer.draftCourses,
         }),
         (dispatch) => ({
-			toggleCourse: crn => dispatch(toggleCourse(crn)),
-			removeCourse: crn => dispatch(removeCourse(crn))
+		toggleCourse: crn => dispatch(toggleCourse(crn)),
+		removeCourse: crn => dispatch(removeCourse(crn))
         }),
 )(ClassSelector);

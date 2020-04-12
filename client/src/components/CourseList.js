@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {connect} from 'react-redux';
+import {addCourse} from '../actions/CoursesActions';
 
 import moment from "moment";
 
@@ -21,6 +22,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
+import { sessionToDraftCourse } from "../utils/searchResultUtils";
 
 const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
 
@@ -55,7 +57,22 @@ const styles = {
     },
   };
 
-const CourseList = ({ searchResults }) => {
+const SessionItem = ({res, session, addCourse}) => {
+    return (
+    <div key={res.crn} style={{ borderStyle: 'solid', display: "inline-block" }}>
+        <input 
+            type="checkbox" 
+            onClick={() => addCourse(sessionToDraftCourse(session, res.detail))} 
+            style={{ alignItems: "left" }} 
+        />
+        <div style={{ alignItems: "left" }}>
+            {sessionToString(session)}
+        </div>
+    </div>
+    );
+}
+
+const CourseList = ({ searchResults, addCourse }) => {
     const [courseSelected, setCourseSelected] = useState("");
 
     if (searchResults == []) {
@@ -63,6 +80,7 @@ const CourseList = ({ searchResults }) => {
     }
 
     console.log("new search results");
+    // console.log(searchResults);
 
     return (
         <SwipeableViews containerStyle={styles.slideContainer}>
@@ -82,16 +100,7 @@ const CourseList = ({ searchResults }) => {
                             </ListItem>
                             <Collapse in={(courseSelected != "" && courseSelected.label == res.label) ? true : false} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
-                                {res.sessions.map(session => {
-                                    return (
-                                        <div key={res.crn} style={{ borderStyle: 'solid', display: "inline-block" }}>
-                                            <input type="checkbox" onClick={() => console.log("Add/Rem course")} style={{ alignItems: "left" }} />
-                                            <div style={{ alignItems: "left" }}>
-                                                {sessionToString(session)}
-                                            </div>
-                                        </div>
-                                    )
-                                })}
+                                {res.sessions.map(session => <SessionItem res={res} session={session} addCourse={addCourse}/>)}
                                 </List>
                             </Collapse>
                         </div>
@@ -107,5 +116,6 @@ export default connect(
     (state) => ({
     }),
     (dispatch) => ({
+		addCourse: crn => dispatch(addCourse(crn)),
     }),
 )(CourseList);

@@ -21,12 +21,13 @@ const CourseSearch = ({ term, depts }) => {
             // Transform each course into {label: dept + number + long title, value is same}
             const classes = []
             result.forEach(courseObj => {
+                console.log(courseObj);
                 let subject = courseObj["subject"];
                 let number = courseObj["courseNum"];
                 let longTitle = courseObj["longTitle"];
                 let prefix = subject + " " + number + " || " + longTitle;
                 let sessions = courseObj["terms"][0]["sessions"];
-                classes.push({ label: prefix, value: prefix, sessions: sessions });
+                classes.push({ label: prefix, value: prefix, sessions: sessions, detail: courseObj });
             });
             setSearchResults(classes);
         }

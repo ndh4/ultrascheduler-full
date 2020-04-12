@@ -20,9 +20,10 @@ class CourseWeek extends React.Component {
         // let showWeekend = [false, false];
         let startHr = 8;
         let endHr = 14;
+        // TODO: fix this
         courses.forEach(c => {
-            // Skip invisible courses
-            if (!c.visible) return;
+            // Skip invisible courses (and new format courses)
+            if (!c.visible || !c.days) return;
             // Check whether or not to show the weekend
             if (!showWeekend && (c.days.indexOf("U") > -1 || c.days.indexOf("S") > -1)) 
                 showWeekend = true;
