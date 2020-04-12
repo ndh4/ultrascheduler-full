@@ -1,7 +1,7 @@
 import * as ACTIONS from "../actions/CoursesActions"
 
 const defaultCoursesReducerState = {
-        courses: [
+        draftCourses: [
                 {
                         "days": "TRF",
                         "startTime": [9, 25],
@@ -54,14 +54,14 @@ const defaultCoursesReducerState = {
 const CoursesReducer = (state=defaultCoursesReducerState, action) => {
         switch (action.type) {
                 case ACTIONS.ADD_COURSE:
-                        return {...state, courses: state.courses.push(action.course)};
+                        return {...state, courses: state.draftCourses.push(action.course)};
                 case ACTIONS.REMOVE_COURSE:
-                        return {...state, courses: state.courses.filter(c => c.crn != action.crn)};
+                        return {...state, courses: state.draftCourses.filter(c => c.crn != action.crn)};
                 case ACTIONS.TOGGLE_COURSE:
-                        let copy = [...state.courses]
+                        let copy = [...state.draftCourses]
                         let crnIdx = copy.findIndex(c => c.crn === action.crn);
                         copy[crnIdx].visible = !copy[crnIdx].visible;
-                        return {...state, courses: copy};
+                        return {...state, draftCourses: copy};
                 default:
                         return {...state};
         }

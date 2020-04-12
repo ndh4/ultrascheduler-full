@@ -289,6 +289,27 @@ router.get("/getCoursesByInstructor", async (req, res, next) => {
 	return;
 });
 
+router.get("/searchCourses", (req, res, next) => {
+	let queryTerm = req.query.term;
+	let querySubject = req.query.subject ? req.query.subject : "";
+	let courses = Course.collection.aggregate([
+		{ $match: {"terms.term": queryTerm, "subject":querySubject.toUpperCase()}},
+		{ $project: {
+			subject: '$subject',
+			courseNum: '$courseNum',
+			longTitle: '$longTitle',
+			terms: {$filter: {
+				input: '$terms',
+				as: 'termObject',
+				cond: {$eq: ['$$termObject.term', queryTerm]}
+			}}
+		}}
+	]);
+	courses.toArray().then(courses => {
+		res.json(courses);
+	});
+});
+
 
 // requires req to specify filters and changes to be made
 // req.body.filter is an object

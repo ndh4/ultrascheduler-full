@@ -50,7 +50,7 @@ const Routes = ({ loggedIn, verifyRequest, getService }) => {
             path="/"
             loggedIn={loggedIn}
             verifyRequest={verifyRequest}>
-                <App />
+                <Redirect to="/schedule" />
             </PrivateRoute>
         </Switch>
     )

@@ -47,7 +47,7 @@ class CourseWeek extends React.Component {
 
 export default connect(
   (state) => ({
-          courses: state.CoursesReducer.courses,
+          courses: state.CoursesReducer.draftCourses,
   }),
   (dispatch) => ({}),
 )(CourseWeek);

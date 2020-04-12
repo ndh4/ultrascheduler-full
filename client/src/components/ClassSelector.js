@@ -13,7 +13,7 @@ const ClassSelector = ({courses, toggleCourse}) => {
 
 export default connect(
         (state) => ({
-                courses: state.CoursesReducer.courses,
+                courses: state.CoursesReducer.draftCourses,
         }),
         (dispatch) => ({
 			toggleCourse: crn => dispatch(toggleCourse(crn))
