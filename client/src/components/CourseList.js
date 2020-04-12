@@ -116,6 +116,6 @@ export default connect(
     (state) => ({
     }),
     (dispatch) => ({
-		addCourse: crn => dispatch(addCourse(crn)),
+		addCourse: course => dispatch(addCourse(course)),
     }),
 )(CourseList);

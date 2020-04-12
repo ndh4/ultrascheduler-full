@@ -1,9 +1,17 @@
 import moment from "moment";
 
-const createTimeObj = (schedule)  => ({
+const createClassObj = (schedule)  => ({
+        hasClass: true,
         days: schedule.days.join(""), 
-        startTime: moment(schedule.startTime, "HHmm").toDate(),
-        endTime: moment(schedule.endTime, "HHmm").toDate(),
+        startTime: moment(schedule.startTime, "HHmm"),
+        endTime: moment(schedule.endTime, "HHmm"),
+});
+
+const createLabObj = (schedule)  => ({
+        hasLab: true,
+        days: schedule.days.join(""), 
+        startTime: moment(schedule.startTime, "HHmm"),
+        endTime: moment(schedule.endTime, "HHmm"),
 });
 
 const sessionToDraftCourse = (session, detail) => {
@@ -17,11 +25,11 @@ const sessionToDraftCourse = (session, detail) => {
                 visible: true,
         };
         draft.class = (session.class.days.length > 0) 
-                ? createTimeObj(session.class) 
-                : null;
+                ? createClassObj(session.class) 
+                : { hasClass: false };
         draft.lab = (session.lab.days.length > 0) 
-                ? createTimeObj(session.lab) 
-                : null;
+                ? createLabObj(session.lab) 
+                : { hasLab: false };
         // TODO: Remove this line once instructors is working again
         draft.instructors = ["Fessor, Pro"];
         return draft;

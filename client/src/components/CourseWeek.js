@@ -35,22 +35,23 @@ class CourseWeek extends React.Component {
                 showWeekend = true;
             
             // Extend start & end time if needed
-            let [newStartTime, newEndTime] = timesToMoment(course.class.startTime, course.class.endTime)
+            let newStartTime = course.class.startTime;
+            let newEndTime = course.class.endTime;
+
             if (course.lab.hasLab) {
-                let [labStartTime, labEndTime] = timesToMoment(course.lab.startTime, course.lab.endTime);
+                let labStartTime = course.lab.startTime;
+                let labEndTime = course.lab.endTime;
+
                 // Compare lab times with class times
-                newStartTime = min(newStartTime.hour(), labStartTime.hour());
-                newEndTime = max(newEndTime.hour(), labEndTime.hour());
-            } else {
-                newStartTime = newStartTime.hour();
-                newEndTime = newEndTime.hour();
+                newStartTime = labStartTime.hour() < newStartTime.hour() ? labStartTime : newStartTime;
+                newEndTime = labEndTime.hour() > newEndTime.hour() ? labEndTime : newEndTime;
             }
 
             // Check min of class & lab start time
-            startHr = min(startHr, newStartTime - 1);
+            startHr = min(startHr, newStartTime.hour() - 1);
 
             // Check max of class & lab end time
-            endHr = max(endHr, newEndTime + 1);
+            endHr = max(endHr, newEndTime.hour() + 1);
         })
         if (!showWeekend)
             range = range.slice(1, range.length - 1)

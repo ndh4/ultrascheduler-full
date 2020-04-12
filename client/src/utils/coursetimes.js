@@ -29,9 +29,11 @@ const coursetimes = (courseData) => {
         if (course.class.hasClass) {
             for (let day of course.class.days) {
                 let baseDay = moment(WEEKSTART).add(daysOfWeek.indexOf(day), "days");
-                let convertedTimes = timesToMoment(course.class.startTime, course.class.endTime);
-                let courseStart = moment(baseDay).add(convertedTimes[0].hour(), 'hours').add(convertedTimes[0].minute(), 'minutes');
-                let courseEnd = moment(baseDay).add(convertedTimes[1].hour(), 'hours').add(convertedTimes[1].minute(), 'minutes');
+                // let convertedTimes = timesToMoment(course.class.startTime, course.class.endTime);
+                
+                console.log(course.class);
+                let courseStart = moment(baseDay).add(course.class.startTime.hour(), 'hours').add(course.class.startTime.minute(), 'minutes');
+                let courseEnd = moment(baseDay).add(course.class.endTime.hour(), 'hours').add(course.class.endTime.minute(), 'minutes');
                 courseTimes.push(
                     {
                         id: coursetimes.id++,
@@ -48,9 +50,10 @@ const coursetimes = (courseData) => {
         if (course.lab.hasLab) {
             for (let day of course.lab.days) {
                 let baseDay = moment(WEEKSTART).add(daysOfWeek.indexOf(day), "days");
-                let convertedTimes = timesToMoment(course.lab.startTime, course.lab.endTime);
-                let labStart = moment(baseDay).add(convertedTimes[0].hour(), 'hours').add(convertedTimes[0].minute(), 'minutes');
-                let labEnd = moment(baseDay).add(convertedTimes[1].hour(), 'hours').add(convertedTimes[1].minute(), 'minutes');
+                // let convertedTimes = timesToMoment(course.lab.startTime, course.lab.endTime);
+
+                let labStart = moment(baseDay).add(course.lab.startTime.hour(), 'hours').add(course.lab.startTime.minute(), 'minutes');
+                let labEnd = moment(baseDay).add(course.lab.endTime.hour(), 'hours').add(course.lab.endTime.minute(), 'minutes');
                 // Convert lab times into start/end time
                 courseTimes.push(
                     {

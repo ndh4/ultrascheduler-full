@@ -91,8 +91,8 @@ const ClassSelector = ({draftCourses, toggleCourse, removeCourse}) => {
 							{course.lab.hasLab ? (
 								<Fragment>
 									<TableCell align="right"><CheckCircleIcon /></TableCell>
-									<TableCell align="right">{course.lab.labDays}</TableCell>
-									<TableCell align="right">{classTimeString(course.lab.labStartTime, course.lab.labEndTime)}</TableCell>
+									<TableCell align="right">{course.lab.days}</TableCell>
+									<TableCell align="right">{classTimeString(course.lab.startTime, course.lab.endTime)}</TableCell>
 								</Fragment>
 							) : <Fragment>{emptyCellGenerator(3)}</Fragment>}
 							<TableCell align="right">{course.instructors.join(" | ")}</TableCell>
