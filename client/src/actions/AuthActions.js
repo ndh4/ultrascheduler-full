@@ -9,6 +9,15 @@ export const LOGIN_REQUEST_FAILED = "LOGIN_REQUEST_FAILED";
 export const LOGIN_FAILURE = "LOGIN_FAILURE";
 export const VERIFY_REQUEST_FAILED = "VERIFY_REQUEST_FAILED";
 
+export const GET_SERVICE = "GET_SERVICE";
+export const SAVE_SERVICE = "SAVE_SERVICE";
+
+export const getService = () => {
+    return {
+        type: GET_SERVICE
+    };
+}
+
 export const loginRequest = () => {
     console.log("Login requested.");
     return ({

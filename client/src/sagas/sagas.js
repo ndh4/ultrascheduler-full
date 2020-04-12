@@ -1,18 +1,27 @@
 import { all, call, put, takeEvery, takeLatest, take, select } from 'redux-saga/effects'
 import { push } from 'connected-react-router'
-import { LOGIN_SUCCESS, LOGIN_FAILURE, LOGIN_REQUESTED } from '../actions/AuthActions';
+import { LOGIN_SUCCESS, LOGIN_FAILURE, LOGIN_REQUESTED, GET_SERVICE, SAVE_SERVICE } from '../actions/AuthActions';
 import { history } from '../configureStore';
 
 // import Api from '...'
 
 const config = {
     loginURL: "https://idp.rice.edu/idp/profile/cas/login",
-    serviceURL: "http://localhost:3001/auth",
-    backendURL: "http://localhost:3000"
+    // serviceURL: "http://localhost:3001/auth",
+    // backendURL: "http://localhost:3000"
+}
+
+const fetchCurrentService = () => {
+    return fetch("/api/deploy/service")
+    .then(response => {
+        return response.text().then(text => {
+            return text;
+        })
+    })
 }
 
 const sendTicket = (ticket) => {
-    return fetch(config.backendURL + "/auth/login", {
+    return fetch("/api/auth/login", {
         method: "GET",
         headers: {
             'X-Ticket': ticket
@@ -25,7 +34,7 @@ const sendTicket = (ticket) => {
 }
 
 const verifyToken = (token) => {
-    return fetch(config.backendURL + "/auth/verify", {
+    return fetch("/api/auth/verify", {
         method: "GET",
         headers: {
             'X-Token': token
@@ -37,10 +46,26 @@ const verifyToken = (token) => {
     })
 }
 
+function* getService(action) {
+    try {
+        let serviceURL = yield call(fetchCurrentService);
+
+        console.log(serviceURL);
+
+        yield put({ type: SAVE_SERVICE, service: serviceURL });
+    } catch (e) {
+        yield put({ type: "GET_SERVICE_URL_FAILED", message: e.message });
+    }
+}
+
 function* loginRequest(action) {
     try {
+        const state = yield select();
+
+        console.log(state.auth);
+
         // Redirect to Rice IDP
-        let redirectURL = config.loginURL + "?service=" + config.serviceURL;
+        let redirectURL = config.loginURL + "?service=" + state.auth.service;
         window.open(redirectURL, "_self");
         // yield put(push('/meme'));
     } catch (e) {
@@ -122,6 +147,10 @@ function* verifyRequest(action) {
   dispatched while a fetch is already pending, that pending fetch is cancelled
   and only the latest one will be run.
 */
+function* serviceWatcher() {
+    yield takeLatest(GET_SERVICE, getService);
+}
+
 function* loginWatcher() {
     yield takeLatest(LOGIN_REQUESTED, loginRequest);
 }
@@ -136,6 +165,7 @@ function* authenticateWatcher() {
 
 export default function* rootSaga() {
     yield all([
+        serviceWatcher(),
         loginWatcher(),
         authenticateWatcher(),
         verifyWatcher(),

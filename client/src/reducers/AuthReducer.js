@@ -3,6 +3,7 @@ import * as ACTIONS from "../actions/AuthActions"
 const defaultAuthReducerState = {
     loginRequesting: false,
     loggedIn: false,
+    service: ''
 }
 
 const AuthReducer = (state=defaultAuthReducerState, action) => {
@@ -17,6 +18,8 @@ const AuthReducer = (state=defaultAuthReducerState, action) => {
                 return {...state, loginRequesting: false, loggedIn: false};
             case ACTIONS.LOGIN_REQUEST_FAILED:
                 return {...state, loginRequesting: false};
+            case ACTIONS.SAVE_SERVICE:
+                return {...state, service: action.service};
             default:
                 return {...state};
         }

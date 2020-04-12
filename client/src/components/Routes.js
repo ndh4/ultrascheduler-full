@@ -5,7 +5,7 @@ import Auth from './Auth';
 import Login from './Login';
 import Main from './Main';
 import App from '../App';
-import { verifyRequest } from '../actions/AuthActions'
+import { verifyRequest, getService } from '../actions/AuthActions'
 import { connect } from 'react-redux'
 
 const PrivateRoute = ({ children, loggedIn, verifyRequest, ...rest }) => {
@@ -28,7 +28,10 @@ const PrivateRoute = ({ children, loggedIn, verifyRequest, ...rest }) => {
     )
 }
 
-const Routes = ({ loggedIn, verifyRequest }) => {
+const Routes = ({ loggedIn, verifyRequest, getService }) => {
+    // Get service to start
+    getService();
+
     return (
         <Switch>
             <Route path="/auth">
@@ -58,6 +61,7 @@ export default connect(
         loggedIn: state.auth.loggedIn
     }),
     (dispatch) => ({
-        verifyRequest: () => dispatch(verifyRequest())
+        verifyRequest: () => dispatch(verifyRequest()),
+        getService: () => dispatch(getService())
     })
 )(Routes);

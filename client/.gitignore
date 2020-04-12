@@ -1,0 +1,6 @@
+.DS_STORE
+yarn.lock
+node_modules/
+dist/
+.gcloudignore
+package-lock.json
