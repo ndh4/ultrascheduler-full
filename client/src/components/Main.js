@@ -10,7 +10,6 @@ const Main = () => {
     const fetchDepts = async () => {
         let response = await fetch(config.backendURL + "/courses/getAllSubjects");
         let result = await response.json();
-        console.log(result);
         return result;
     }
     useEffect(
@@ -25,8 +24,14 @@ const Main = () => {
         <div className="App" stle={{ display: "inline" }}>
 			<Header />
             <ClassSelector />
-            <CourseSearch depts={depts} term="Fall 2017"/>
-			<CourseCalendar />
+            <div className="Container">
+                <div style={{ float: "left", width: '30%' }}>
+                    <CourseSearch depts={depts} term="Fall 2020"/>
+                </div>
+                <div style={{ float: "left", width: '70%' }}>
+                    <CourseCalendar />
+                </div>
+            </div>
 		</div>
     )
 }

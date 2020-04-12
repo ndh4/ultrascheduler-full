@@ -12,6 +12,7 @@
     "test:watch": "nwb test-react --server"
   },
   "dependencies": {
+    "@material-ui/core": "^4.9.10",
     "cldr-data": "^36.0.0",
     "connected-react-router": "^6.8.0",
     "history": "^4.10.1",
@@ -19,8 +20,10 @@
     "moment": "^2.24.0",
     "node-sass": "^4.13.1",
     "react": "^16.10.2",
+    "react-accessible-accordion": "^3.0.1",
     "react-big-calendar": "^0.24.0",
     "react-dom": "^16.10.2",
+    "react-infinite": "^0.13.0",
     "react-redux": "^7.1.1",
     "react-router": "^5.1.2",
     "react-select": "^3.1.0",
