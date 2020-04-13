@@ -12,11 +12,11 @@ const CoursesReducer = (state=defaultCoursesReducerState, action) => {
 						copy.push(action.course);
                         return {...state, draftCourses: copy};
                 case ACTIONS.REMOVE_COURSE:
-                        return {...state, draftCourses: state.draftCourses.filter(c => c.crn != action.crn)};
+                        return {...state, draftCourses: state.draftCourses.filter(c => c.sessionID != action.sessionID)};
                 case ACTIONS.TOGGLE_COURSE:
                         copy = [...state.draftCourses]
-                        let crnIdx = copy.findIndex(c => c.crn === action.crn);
-                        copy[crnIdx].visible = !copy[crnIdx].visible;
+                        let sessionIdx = copy.findIndex(c => c.sessionID === action.sessionID);
+                        copy[sessionIdx].visible = !copy[sessionIdx].visible;
                         return {...state, draftCourses: copy};
                 default:
                         return {...state};

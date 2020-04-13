@@ -27,3 +27,5 @@ var UserSchema = new Schema({
 var User = mongoose.model("users", UserSchema);
 
 exports.user = User;
+exports.scheduleSchema = ScheduleSchema;
+exports.draftCourseScehma = DraftCourseSchema;

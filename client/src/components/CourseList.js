@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {connect} from 'react-redux';
-import {addCourse, removeCourse} from '../actions/CoursesActions';
+import {addCourseRequest, removeCourseRequest} from '../actions/CoursesActions';
 
 import moment from "moment";
 
@@ -57,27 +57,27 @@ const styles = {
     },
   };
 
-const SessionItem = ({res, session, draftCourses, addCourse, removeCourse }) => {
+const SessionItem = ({res, session, draftCourses, addCourseRequest, removeCourseRequest }) => {
     // Check if this course is in draftCourses
-    let courseSelected = false;
-    for (let course of draftCourses) {
-        console.log(course);
-        console.log(course.crn);
-        console.log(session.crn);
+    let courseSelected = -1;
+    for (let idx in draftCourses) {
+        let course = draftCourses[idx];
         if (course.crn == session.crn) {
-            courseSelected = true;
+            courseSelected = idx;
         }
     }
+    console.log(session);
+    console.log(res);
     return (
     <div key={session.crn} style={{ borderStyle: 'solid', display: "inline-block" }}>
         <input 
             type="checkbox" 
-            checked={courseSelected}
+            checked={courseSelected > -1}
             onClick={() => {
-                if (courseSelected) {
-                    removeCourse(session.crn);
+                if (courseSelected > -1) {
+                    removeCourseRequest(draftCourses[courseSelected]);
                 } else {
-                    addCourse(sessionToDraftCourse(session, res.detail));
+                    addCourseRequest(sessionToDraftCourse(session, res.detail));
                 }
             }} 
             style={{ alignItems: "left" }} 
@@ -89,7 +89,7 @@ const SessionItem = ({res, session, draftCourses, addCourse, removeCourse }) => 
     );
 }
 
-const CourseList = ({ searchResults, draftCourses, addCourse, removeCourse }) => {
+const CourseList = ({ searchResults, draftCourses, addCourseRequest, removeCourseRequest }) => {
     const [courseSelected, setCourseSelected] = useState("");
 
     if (searchResults == []) {
@@ -116,7 +116,14 @@ const CourseList = ({ searchResults, draftCourses, addCourse, removeCourse }) =>
                             </ListItem>
                             <Collapse in={(courseSelected != "" && courseSelected.label == res.label) ? true : false} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
-                                {res.sessions.map(session => <SessionItem res={res} session={session} draftCourses={draftCourses} addCourse={addCourse} removeCourse={removeCourse} />)}
+                                {res.sessions.map(session => (
+                                    <SessionItem 
+                                    res={res} 
+                                    session={session} 
+                                    draftCourses={draftCourses} 
+                                    addCourseRequest={addCourseRequest} 
+                                    removeCourseRequest={removeCourseRequest} />
+                                ))}
                                 </List>
                             </Collapse>
                         </div>
@@ -133,7 +140,7 @@ export default connect(
         draftCourses: state.CoursesReducer.draftCourses
     }),
     (dispatch) => ({
-        addCourse: course => dispatch(addCourse(course)),
-        removeCourse: crn => dispatch(removeCourse(crn))
+        addCourseRequest: (course) => dispatch(addCourseRequest(course)),
+        removeCourseRequest: (course) => dispatch(removeCourseRequest(course))
     }),
 )(CourseList);

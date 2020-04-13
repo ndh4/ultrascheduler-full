@@ -20,8 +20,9 @@ const sessionToDraftCourse = (session, detail) => {
                 courseName:  detail.subject + " " + detail.courseNum,
                 longTitle: detail.longTitle,
                 instructors: session.instructors,
-                sessionId: session._id,
-                detailId: detail._id,
+                sessionID: session._id,
+                courseID: detail._id,
+                term: detail.terms[0].term, 
                 visible: true,
         };
         draft.class = (session.class.days.length > 0) 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import {connect} from 'react-redux';
-import {toggleCourse, removeCourse} from '../actions/CoursesActions';
+import {toggleCourseRequest, removeCourseRequest} from '../actions/CoursesActions';
 
 import { classTimeString } from '../utils/transformCourseTime';
 
@@ -33,7 +33,7 @@ const useStyles = makeStyles({
 	},
   });
 
-const ClassSelector = ({draftCourses, toggleCourse, removeCourse}) => {
+const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest}) => {
 	const classes = useStyles();
 
 	// Get headers
@@ -76,7 +76,7 @@ const ClassSelector = ({draftCourses, toggleCourse, removeCourse}) => {
 							<TableCell padding="checkbox">
 								<Checkbox
 								checked={course.visible}
-								onClick={() => toggleCourse(course.crn)}
+								onClick={() => toggleCourseRequest(course)}
 								/>
 							</TableCell>
 							<TableCell align="right" component="th" scope="row">
@@ -98,7 +98,7 @@ const ClassSelector = ({draftCourses, toggleCourse, removeCourse}) => {
 							<TableCell align="right">{course.instructors.join(" | ")}</TableCell>
 							<TableCell align="right">
 								<Tooltip title="Delete">
-									<IconButton aria-label="delete" onClick={() => removeCourse(course.crn)}>
+									<IconButton aria-label="delete" onClick={() => removeCourseRequest(course)}>
 										<DeleteIcon />
 									</IconButton>
 								</Tooltip>
@@ -129,7 +129,7 @@ export default connect(
             draftCourses: state.CoursesReducer.draftCourses,
         }),
         (dispatch) => ({
-			toggleCourse: crn => dispatch(toggleCourse(crn)),
-			removeCourse: crn => dispatch(removeCourse(crn))
+			toggleCourseRequest: course => dispatch(toggleCourseRequest(course)),
+			removeCourseRequest: course => dispatch(removeCourseRequest(course))
         }),
 )(ClassSelector);
