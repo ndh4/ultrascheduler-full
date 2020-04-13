@@ -370,6 +370,12 @@ router.get("/searchCourses", (req, res, next) => {
 				as: "terms.sessions.instructors"
 			}
 		},
+		// Sort before sending
+		{
+			$sort: {
+				courseNum: 1
+			}
+		}
 	]);
 	courses.toArray().then(courses => {
 		res.json(courses);
