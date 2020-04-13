@@ -7,7 +7,8 @@ const Course = require("../models/coursesModel").course;
 
 var DraftCourseSchema = new Schema({
     visible: { type: Boolean },
-    course: { type: Schema.Types.ObjectID, ref: Course }
+    sessionID: { type: String },
+    courseID: { type: Schema.Types.ObjectID, ref: Course }
 })
 
 var ScheduleSchema = new Schema({

@@ -24,9 +24,11 @@ var SessionSchema = new Schema({
     instructors: [{type: Schema.Types.ObjectID, ref: Instructor}]
 })
 
+var Session = mongoose.model("sessions", SessionSchema);
+
 var TermSchema = new Schema({
     term: String,
-    sessions: [ SessionSchema ]
+    sessions: [ { type: Schema.Types.ObjectId, ref: Session } ]
 })
 
 var CourseSchema = new Schema({
@@ -36,6 +38,7 @@ var CourseSchema = new Schema({
     terms: [ TermSchema ],
 });
 
-var Course = mongoose.model("courses", CourseSchema);
+var Course = mongoose.model("new_courses", CourseSchema);
 
 exports.course = Course;
+exports.session = Session;

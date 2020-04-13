@@ -1,7 +1,9 @@
 const User = require("../models/usersModel").user;
+const Course = require("../models/coursesModel").course;
 
 var express = require('express');
 var router = express.Router();
+var mongoose = require('mongoose');
 
 const getUser = async (req) => {
 	// Check user
@@ -15,6 +17,43 @@ const getUser = async (req) => {
 	return user;
 }
 
+const populateSchedule = async (schedule) => {
+	let courses = [];
+	// Get all sessionIDs 
+	for (let sparseCourseObj of schedule.courses) {
+		let { sessionID, courseID, visible } = sparseCourseObj;
+		let returnObject = {
+			sessionID,
+			courseID,
+			visible,
+			term: schedule.term,
+		};
+
+		// Query specific course
+		let queriedCourse = await Course.findById(courseID);
+		returnObject.courseName = queriedCourse.subject + " " + queriedCourse.courseNum;
+		returnObject.longTitle = queriedCourse.longTitle;
+
+		// Query specific session
+		let queriedSession = await Course.collection.find({ "terms.sessions._id": mongoose.Types.ObjectId(sessionID)}, {"terms.sessions.$": true})
+		returnObject.detail = await queriedSession.toArray();
+		// Recreate:
+		/*
+		crn: session.crn,
+		courseName:  detail.subject + " " + detail.courseNum,
+		longTitle: detail.longTitle,
+		instructors: session.instructors,
+		sessionID: session._id,
+		courseID: detail._id,
+		term: detail.terms[0].term, 
+		visible: true,
+		*/
+		console.log(returnObject);
+		courses.push(returnObject);
+	}
+	return courses;
+}
+
 /* GET users listing. */
 router.get('/schedule', async (req, res, next) => {
 	// Get user from request 
@@ -26,12 +65,14 @@ router.get('/schedule', async (req, res, next) => {
 	// Send their schedule(s)
 	if (queryTerm == "") {
 		// Return all
-		res.json(user.schedules);
+		res.send(400); // No term specified
 		return;
 	} else {
 		for (let schedule of user.schedules) {
 			if (schedule.term == queryTerm) {
-				res.json(schedule);
+				// Populate schedule
+				let populatedSchedule = await populateSchedule(schedule);
+				res.json(populatedSchedule);
 				return;
 			}
 		}
@@ -61,12 +102,12 @@ router.post("/addCourse", async (req, res, next) => {
 
 	if (existingScheduleIdx > -1) {
 		// Add to existing schedule
-		user.schedules[existingScheduleIdx].courses.push({ course: req.body.sessionID, visible: true });
+		user.schedules[existingScheduleIdx].courses.push({ courseID: req.body.courseID, sessionID: req.body.sessionID, visible: true });
 	} else {
 		// Create new schedule object
 		user.schedules.push({
 			term: req.body.term,
-			courses: [ { course: req.body.sessionID, visible: true } ]
+			courses: [ { courseID: req.body.courseID, sessionID: req.body.sessionID, visible: true } ]
 		});
 	}
 
@@ -91,7 +132,7 @@ router.delete("/removeCourse", async (req, res, next) => {
 
 	if (existingScheduleIdx > -1) {
 		// Remove from existing schedule
-		let updatedSchedule = user.schedules[existingScheduleIdx].courses.filter(courseObj => courseObj.course != req.body.sessionID);
+		let updatedSchedule = user.schedules[existingScheduleIdx].courses.filter(courseObj => courseObj.sessionID != req.body.sessionID);
 		user.schedules[existingScheduleIdx].courses = updatedSchedule;
 	} else {
 		// No such term to remove from
@@ -120,7 +161,7 @@ router.put("/toggleCourse", async (req, res, next) => {
 	if (existingScheduleIdx > -1) {
 		// Toggle from existing schedule
 		let updatedSchedule = user.schedules[existingScheduleIdx].courses.map(courseObj => {
-			if (courseObj.course == req.body.sessionID) {
+			if (courseObj.sessionID == req.body.sessionID) {
 				// Toggle visibility
 				courseObj.visible = !courseObj.visible;
 			}

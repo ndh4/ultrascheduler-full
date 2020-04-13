@@ -1,5 +1,6 @@
 const Course = require("../models/coursesModel").course;
 const Instructor = require("../models/instructorsModel").instructor;
+const Session = require("../models/coursesModel").session;
 
 var express = require("express");
 var router = express.Router();
@@ -104,14 +105,17 @@ var jsonToSchema = async (jsonObj) => {
 										"days": session["lab_days"]
 									};
 								}
-								
-								// Add session to sessions for term
-								sessions.push({
+
+								// Create session object
+								let sessionObj = await Session.create({
 									"class": classObject,
 									"lab": labObject,
 									"crn": session.crn,
 									"instructors": instructorRefs
 								});
+								
+								// Add session to sessions for term
+								sessions.push(sessionObj._id);
 	
 								// Check if longTitle has been created so far
 								if (courseObject["longTitle"] == "") {
@@ -179,7 +183,7 @@ router.get("/getSingleCourse", (req, res, next) => {
 	let querySubject = req.query.subject;
 	let queryCourseCode = req.query.code;
 	Course.find({ subject: querySubject.toUpperCase(), courseNum: queryCourseCode })
-		.populate({ path: "terms.sessions.instructors" })
+		.populate({ path: "terms.sessions", populate: { path: "instructors" } })
 		.exec((err, course) => {
 			if (err) {
 				res.json("ERROR!");
@@ -192,7 +196,7 @@ router.get("/getSingleCourse", (req, res, next) => {
 router.get("/getCoursesBySubject", (req, res, next) => {
 	let querySubject = req.query.subject;
 	Course.find({ subject: querySubject.toUpperCase() })
-		.populate({ path: "terms.sessions.instructors" })
+		.populate({ path: "terms.sessions", populate: { path: "instructors" } })
 		.exec((err, course) => {
 			if (err) {
 				res.json("ERROR!");
@@ -227,7 +231,32 @@ router.get("/getCoursesByTerm", (req, res, next) => {
 				as: 'termObject',
 				cond: {$eq: ['$$termObject.term', queryTerm]}
 			}}
-		}}
+		}},
+		{
+			$lookup: {
+				from: "sessions",
+				localField: "terms.sessions",
+            	foreignField: "_id",
+           		as: "terms.sessions"
+			}
+		},
+		{
+			$unwind: "$terms.sessions",
+		},
+		{
+			$lookup: {
+				from: "instructors",
+				localField: "terms.sessions.instructors",
+				foreignField: "_id",
+				as: "terms.sessions.instructors"
+			}
+		},
+		{
+			$unwind: {
+				path: "$terms.sessions",
+				preserveNullAndEmptyArrays: true
+			}
+		}
 	]);
 	courses.toArray().then(courses => {
 		res.json(courses);
@@ -275,12 +304,30 @@ router.get("/getCoursesByInstructor", async (req, res, next) => {
 				}
 			}
 		}}},
-		{ $lookup: {
-			from: "instructors",
-            		localField: "terms.sessions.instructors",
-            		foreignField: "_id",
-           		as: "terms.sessions.instructors"
-		}}
+		{
+			$lookup: {
+				from: "sessions",
+				localField: "terms.sessions",
+            	foreignField: "_id",
+           		as: "terms.sessions"
+			}
+		},
+		{
+			$unwind: "$terms.sessions",
+		},
+		{
+			$lookup: {
+				from: "instructors",
+				localField: "terms.sessions.instructors",
+				foreignField: "_id",
+				as: "terms.sessions.instructors"
+			}
+		},
+		{
+			$unwind: {
+				path: "$terms.sessions",
+			}
+		},
 	]);
 
 	courses.toArray().then(courses => {
@@ -304,12 +351,25 @@ router.get("/searchCourses", (req, res, next) => {
 				cond: {$eq: ['$$termObject.term', queryTerm]},
 			}},
 		}},
-		{ $lookup: {
-			from: "instructors",
-            		localField: "terms.sessions.instructors",
-            		foreignField: "_id",
-            		as: "blurgh"
-		}},
+		{
+			$lookup: {
+				from: "sessions",
+				localField: "terms.sessions",
+            	foreignField: "_id",
+           		as: "terms.sessions"
+			}
+		},
+		{
+			$unwind: "$terms.sessions",
+		},
+		{
+			$lookup: {
+				from: "instructors",
+				localField: "terms.sessions.instructors",
+				foreignField: "_id",
+				as: "terms.sessions.instructors"
+			}
+		},
 	]);
 	courses.toArray().then(courses => {
 		res.json(courses);

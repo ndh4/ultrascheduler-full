@@ -48,10 +48,11 @@ const verifyToken = (token) => {
     })
 }
 
-const addCourseToSchedule = ({ sessionID, term }) => {
+const addCourseToSchedule = ({ courseID, sessionID, term }) => {
     let body = {
         term: term,
-        sessionID: sessionID
+        sessionID: sessionID,
+        courseID: courseID
     };
     return fetch("/api/users/addCourse", {
         method: "POST",
@@ -230,11 +231,12 @@ function* addCourseRequest(action) {
     console.log("Adding course.");
     try {
         // Extract sessionID from course object
+        let courseID = action.course.courseID;
         let sessionID = action.course.sessionID;
         let term = action.course.term;
 
         // Send course to backend
-        yield call(addCourseToSchedule, { sessionID, term } );
+        yield call(addCourseToSchedule, { courseID, sessionID, term } );
 
         // Add course on frontend
         yield put({ type: "ADD_COURSE", course: action.course });

@@ -19,16 +19,29 @@ const CourseSearch = ({ term, depts }) => {
             let response = await fetch(config.backendURL + "/courses/searchCourses?subject="+dept+"&term="+term);
             let result = await response.json();
             // Transform each course into {label: dept + number + long title, value is same}
-            const classes = []
-            result.forEach(courseObj => {
-                console.log(courseObj);
-                let subject = courseObj["subject"];
-                let number = courseObj["courseNum"];
-                let longTitle = courseObj["longTitle"];
+            let classes = {}
+            result.forEach(sessionObj => {
+                let subject = sessionObj["subject"];
+                let number = sessionObj["courseNum"];
+                let longTitle = sessionObj["longTitle"];
                 let prefix = subject + " " + number + " || " + longTitle;
-                let sessions = courseObj["terms"][0]["sessions"];
-                classes.push({ label: prefix, value: prefix, sessions: sessions, detail: courseObj });
+                // Check if we already have this prefix
+                if (prefix in classes) {
+                    classes[prefix].sessions.push(sessionObj.terms.sessions);
+                } else {
+                    let sessions = [ sessionObj.terms.sessions ];
+                    let courseDetail = {
+                        id: sessionObj["_id"],
+                        subject,
+                        number,
+                        longTitle,
+                        term
+                    };
+                    classes[prefix] = { label: prefix, value: prefix, sessions, detail: courseDetail }
+                }
             });
+            // Transform classes back into array
+            classes = Object.values(classes);
             setSearchResults(classes);
         }
 
