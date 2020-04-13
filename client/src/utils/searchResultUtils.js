@@ -14,16 +14,16 @@ const createLabObj = (schedule)  => ({
         endTime: moment(schedule.endTime, "HHmm"),
 });
 
-const sessionToDraftCourse = (session, detail) => {
+const sessionToDraftCourse = (session, detail, term, visible=true) => {
         let draft = {
                 crn: session.crn,
-                courseName:  detail.subject + " " + detail.number,
+                courseName:  detail.subject + " " + detail.courseNum,
                 longTitle: detail.longTitle,
                 instructors: [],
                 sessionID: session._id,
                 courseID: detail._id,
-                term: detail.term, 
-                visible: true,
+                term: term, 
+                visible: visible,
         };
         draft.class = (session.class.days.length > 0) 
                 ? createClassObj(session.class) 
@@ -32,7 +32,7 @@ const sessionToDraftCourse = (session, detail) => {
                 ? createLabObj(session.lab) 
 				: { hasLab: false };
         session.instructors.forEach(instructor => {
-            let name = instructor.firstName.concat(instructor.lastName);
+            let name = instructor.firstName + " " + instructor.lastName;
             draft.instructors.push(name);
         })
         return draft;

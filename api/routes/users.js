@@ -1,5 +1,6 @@
 const User = require("../models/usersModel").user;
 const Course = require("../models/coursesModel").course;
+const Session = require("../models/coursesModel").session;
 
 var express = require('express');
 var router = express.Router();
@@ -35,21 +36,30 @@ const populateSchedule = async (schedule) => {
 		returnObject.longTitle = queriedCourse.longTitle;
 
 		// Query specific session
-		let queriedSession = await Course.collection.find({ "terms.sessions._id": mongoose.Types.ObjectId(sessionID)}, {"terms.sessions.$": true})
-		returnObject.detail = await queriedSession.toArray();
-		// Recreate:
-		/*
-		crn: session.crn,
-		courseName:  detail.subject + " " + detail.courseNum,
-		longTitle: detail.longTitle,
-		instructors: session.instructors,
-		sessionID: session._id,
-		courseID: detail._id,
-		term: detail.terms[0].term, 
-		visible: true,
-		*/
-		console.log(returnObject);
-		courses.push(returnObject);
+		let queriedSession = await (Session.findById(sessionID).populate({ path: "instructors" }));
+		returnObject.crn = queriedSession.crn;
+		returnObject.instructors = queriedSession.instructors;
+
+		// Create class & lab objects
+		returnObject.class = queriedSession.class;
+		returnObject.lab = queriedSession.lab;
+
+		if (queriedSession.class.days.length > 0) {
+			// Has class
+			returnObject.class["hasClass"] = true;
+		} else {
+			returnObject.class["hasClass"] = false;
+		}
+
+		if (queriedSession.lab.days.length > 0) {
+			// Has lab
+			returnObject.lab["hasLab"] = true;
+		} else {
+			returnObject.lab["hasLab"] = false;
+		}
+
+		// courses.push(returnObject);
+		courses.push({ session: queriedSession, detail: queriedCourse, visible: sparseCourseObj.visible })
 	}
 	return courses;
 }
@@ -76,7 +86,8 @@ router.get('/schedule', async (req, res, next) => {
 				return;
 			}
 		}
-		res.send(400);
+		// No schedule found for this term
+		res.send(404);
 	}
 });
 
@@ -121,6 +132,8 @@ router.delete("/removeCourse", async (req, res, next) => {
 	// Get user from request
 	let user = await getUser(req);
 
+	console.log(req.body);
+
 	// Get user schedule corresponding to desired term (or return error)
 	let existingScheduleIdx = -1;
 	for (let idx in user.schedules) {
@@ -137,12 +150,14 @@ router.delete("/removeCourse", async (req, res, next) => {
 	} else {
 		// No such term to remove from
 		res.send(404);
+		return;
 	}
 
 	// Save the updated schedule
 	user.save();
 
 	res.send(200);
+	return;
 })
 
 router.put("/toggleCourse", async (req, res, next) => {

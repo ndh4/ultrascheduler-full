@@ -17,7 +17,9 @@ const CoursesReducer = (state=defaultCoursesReducerState, action) => {
                         copy = [...state.draftCourses]
                         let sessionIdx = copy.findIndex(c => c.sessionID === action.sessionID);
                         copy[sessionIdx].visible = !copy[sessionIdx].visible;
-                        return {...state, draftCourses: copy};
+						return {...state, draftCourses: copy};
+				case ACTIONS.SET_SCHEDULE:
+					return {...state, draftCourses: action.draftCourses}
                 default:
                         return {...state};
         }

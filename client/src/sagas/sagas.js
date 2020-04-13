@@ -1,8 +1,9 @@
 import { all, call, put, takeEvery, takeLatest, take, select, fork } from 'redux-saga/effects'
 import { push } from 'connected-react-router'
 import { LOGIN_SUCCESS, LOGIN_FAILURE, LOGIN_REQUESTED, GET_SERVICE, SAVE_SERVICE } from '../actions/AuthActions';
-import { ADD_COURSE_REQUEST, REMOVE_COURSE_REQUEST, TOGGLE_COURSE_REQUEST } from '../actions/CoursesActions';
+import { ADD_COURSE_REQUEST, REMOVE_COURSE_REQUEST, TOGGLE_COURSE_REQUEST, SET_SCHEDULE } from '../actions/CoursesActions';
 import { history } from '../configureStore';
+import { sessionToDraftCourse } from '../utils/searchResultUtils';
 
 // import Api from '...'
 
@@ -211,7 +212,14 @@ function* verifyRequest(action) {
 
             // Load schedule
             let schedule = yield call(fetchSchedule, term);
-            console.log(schedule);
+
+            // Transform schedule into draftCourses
+            let draftCourses = [];
+            for (let course of schedule) {
+                draftCourses.push(sessionToDraftCourse(course.session, course.detail, term, course.visible));
+            }
+
+            yield put({ type: SET_SCHEDULE, draftCourses });
 
             // Redirect to desired protected page
             yield call(history.push, history.location.pathname);

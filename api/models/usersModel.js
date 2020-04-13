@@ -4,10 +4,11 @@ var mongoose = require('mongoose')
 require('../db')
 
 const Course = require("../models/coursesModel").course;
+const Session = require("../models/coursesModel").session;
 
 var DraftCourseSchema = new Schema({
     visible: { type: Boolean },
-    sessionID: { type: String },
+    sessionID: { type: Schema.Types.ObjectID, ref: Session },
     courseID: { type: Schema.Types.ObjectID, ref: Course }
 })
 

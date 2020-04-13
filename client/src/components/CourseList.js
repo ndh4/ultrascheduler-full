@@ -77,7 +77,7 @@ const SessionItem = ({res, session, draftCourses, addCourseRequest, removeCourse
                 if (courseSelected > -1) {
                     removeCourseRequest(draftCourses[courseSelected]);
                 } else {
-                    addCourseRequest(sessionToDraftCourse(session, res.detail));
+                    addCourseRequest(sessionToDraftCourse(session, res.detail, res.detail.term));
                 }
             }} 
             style={{ alignItems: "left" }} 
