@@ -182,6 +182,21 @@ function* authenticateRequest(action) {
         // Set token in local storage
         localStorage.setItem('token', token);
 
+        // Get current term
+        // For now we just have one so we'll hardcode this
+        let term = "Fall 2020";
+
+        // Load schedule
+        let schedule = yield call(fetchSchedule, term);
+
+        // Transform schedule into draftCourses
+        let draftCourses = [];
+        for (let course of schedule) {
+            draftCourses.push(sessionToDraftCourse(course.session, course.detail, term, course.visible));
+        }
+
+        yield put({ type: SET_SCHEDULE, draftCourses });
+
         // Finally redirect them to schedule
         yield call(history.push, "/schedule");
 
