@@ -86,8 +86,14 @@ router.get('/schedule', async (req, res, next) => {
 				return;
 			}
 		}
-		// No schedule found for this term
-		res.send(404);
+		// If no schedule found, create empty one
+		let termSchedule = {
+			term: queryTerm,
+			courses: []
+		};
+		user.schedules.push(termSchedule);
+		res.json(termSchedule.courses);
+		return;
 	}
 });
 
