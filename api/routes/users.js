@@ -92,6 +92,7 @@ router.get('/schedule', async (req, res, next) => {
 			courses: []
 		};
 		user.schedules.push(termSchedule);
+		user.save();
 		res.json(termSchedule.courses);
 		return;
 	}
