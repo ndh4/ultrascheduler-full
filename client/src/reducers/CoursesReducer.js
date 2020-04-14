@@ -1,7 +1,8 @@
 import * as ACTIONS from "../actions/CoursesActions"
 
 const defaultCoursesReducerState = {
-        draftCourses: []
+		draftCourses: [],
+		draftCoursesLoaded: false,
 }
 
 const CoursesReducer = (state=defaultCoursesReducerState, action) => {
@@ -19,7 +20,7 @@ const CoursesReducer = (state=defaultCoursesReducerState, action) => {
                         copy[sessionIdx].visible = !copy[sessionIdx].visible;
 						return {...state, draftCourses: copy};
 				case ACTIONS.SET_SCHEDULE:
-					return {...state, draftCourses: action.draftCourses}
+					return {...state, draftCourses: action.draftCourses, draftCoursesLoaded: true}
                 default:
                         return {...state};
         }

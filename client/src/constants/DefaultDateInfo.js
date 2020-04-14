@@ -1,4 +1,4 @@
-const WEEKSTART = new Date(2015, 3, 12);
+const WEEKSTART = new Date(2019, 11, 1);
 
 export {
         WEEKSTART

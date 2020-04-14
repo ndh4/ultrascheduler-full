@@ -20,7 +20,7 @@ const CourseCalendar = ({courses}) => {
             defaultView={Views.WEEK}
             views={{month: false, week: CourseWeek, day: false}}
             defaultDate={WEEKSTART}
-            onSelectEvent={event => alert(event.title + "\n" + event.desc + "\n" + event.source)}
+            onSelectEvent={event => alert(event.title + "\n" + event.desc + "\n")}
             toolbar={false}
             style={style}
             />
@@ -34,7 +34,7 @@ const style = {
 
 export default connect(
     (state) => ({
-            courses: state.CoursesReducer.draftCourses,
+            courses: state.courses.draftCourses,
     }),
     (dispatch) => ({
         

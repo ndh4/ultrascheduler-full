@@ -137,7 +137,7 @@ const CourseList = ({ searchResults, draftCourses, addCourseRequest, removeCours
 
 export default connect(
     (state) => ({
-        draftCourses: state.CoursesReducer.draftCourses
+        draftCourses: state.courses.draftCourses
     }),
     (dispatch) => ({
         addCourseRequest: (course) => dispatch(addCourseRequest(course)),

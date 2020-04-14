@@ -7,6 +7,7 @@ import Main from './Main';
 import App from '../App';
 import { verifyRequest, getService } from '../actions/AuthActions'
 import { connect } from 'react-redux'
+import LoadingScreen from './LoadingScreen';
 
 const PrivateRoute = ({ children, loggedIn, verifyRequest, ...rest }) => {
     console.log(loggedIn);
@@ -28,7 +29,7 @@ const PrivateRoute = ({ children, loggedIn, verifyRequest, ...rest }) => {
     )
 }
 
-const Routes = ({ loggedIn, verifyRequest, getService }) => {
+const Routes = ({ loggedIn, draftCoursesLoaded, verifyRequest, getService }) => {
     // Get service to start
     getService();
 
@@ -44,7 +45,7 @@ const Routes = ({ loggedIn, verifyRequest, getService }) => {
             path="/schedule" 
             loggedIn={loggedIn} 
             verifyRequest={verifyRequest}>
-                <Main />
+                {draftCoursesLoaded ? <Main /> : <LoadingScreen />}
             </PrivateRoute>
             <PrivateRoute 
             path="/"
@@ -58,7 +59,8 @@ const Routes = ({ loggedIn, verifyRequest, getService }) => {
 
 export default connect(
     (state) => ({
-        loggedIn: state.auth.loggedIn
+        loggedIn: state.auth.loggedIn,
+        draftCoursesLoaded: state.courses.draftCoursesLoaded
     }),
     (dispatch) => ({
         verifyRequest: () => dispatch(verifyRequest()),

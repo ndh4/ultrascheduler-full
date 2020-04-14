@@ -14,6 +14,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
+// Course evals
+import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
+
 // Course visible
 import Checkbox from '@material-ui/core/Checkbox';
 
@@ -32,6 +35,16 @@ const useStyles = makeStyles({
 	  minWidth: 650,
 	},
   });
+
+const createURL = (crn, detail=true) => {
+	if (detail) {
+		// Return detail
+		return `https://courses.rice.edu/courses/!SWKSCAT.cat?p_action=COURSE&p_term=202110&p_crn=${crn}`;
+	} else {
+		// Return eval
+		return `https://esther.rice.edu/selfserve/swkscmt.main?p_term=202110&p_crn=${crn}&p_commentid=&p_confirm=1&p_type=Course`;
+	}
+}
 
 const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest}) => {
 	const classes = useStyles();
@@ -80,7 +93,14 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 								/>
 							</TableCell>
 							<TableCell align="right" component="th" scope="row">
-								{course.courseName}
+								<Tooltip title="View Course Details">
+									<a href={createURL(course.crn)} target="_blank" style={{ color: 'black' }}>{course.courseName}</a>
+								</Tooltip>
+								<Tooltip title="View Evaluations">
+									<IconButton aria-label="evaluations" onClick={() => window.open(createURL(course.crn, false), "_blank")}>
+										<QuestionAnswerIcon />
+									</IconButton>
+								</Tooltip>
 							</TableCell>
 							{course.class.hasClass ? (
 								<Fragment>
@@ -126,7 +146,7 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 
 export default connect(
         (state) => ({
-            draftCourses: state.CoursesReducer.draftCourses,
+            draftCourses: state.courses.draftCourses,
         }),
         (dispatch) => ({
 			toggleCourseRequest: course => dispatch(toggleCourseRequest(course)),

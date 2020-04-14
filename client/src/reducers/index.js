@@ -6,7 +6,7 @@ import AuthReducer from './AuthReducer';
 
 const createRootReducer = (history) => combineReducers({
     router: connectRouter(history),
-    CoursesReducer,
+    courses: CoursesReducer,
     auth: AuthReducer
 });
 
