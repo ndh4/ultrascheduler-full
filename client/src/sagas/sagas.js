@@ -258,8 +258,8 @@ function* addCourseRequest(action) {
         let sessionID = action.course.sessionID;
         let term = action.course.term;
 
-        // Send course to backend
-        yield call(addCourseToSchedule, { courseID, sessionID, term } );
+        // Send course to backend; don't wait 
+        yield fork(addCourseToSchedule, { courseID, sessionID, term } );
 
         // Add course on frontend
         yield put({ type: "ADD_COURSE", course: action.course });
@@ -273,7 +273,7 @@ function* removeCourseRequest(action) {
         let { sessionID, term } = action.course;
 
         // Send sessionID to remove to backend
-        yield call(removeCourseFromSchedule, { sessionID: sessionID, term: term });
+        yield fork(removeCourseFromSchedule, { sessionID: sessionID, term: term });
 
         // Remove course on frontend
         yield put({ type: "REMOVE_COURSE", sessionID: sessionID });
