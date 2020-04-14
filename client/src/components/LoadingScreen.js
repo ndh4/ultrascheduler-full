@@ -11,13 +11,15 @@ const useStyles = makeStyles((theme) => ({
 
 const LoadingScreen = () => {
     const classes = useStyles();
+    let loadingTextOptions = ["eat. sleep. plan. repeat.", "time to hatch a plan."]
+    let loadingText = Math.random() < 0.5 ? loadingTextOptions[0] : loadingTextOptions[1];
     return (
         <Backdrop className={classes.backdrop} open={true}>
             <div style={{ display: "block", justifyContent: 'center' }}>
                 <div style={{ width: "25%", margin: '0 auto' }}>
                     <CircularProgress color="inherit" />
                 </div>
-                <h4>eat. sleep. plan. repeat.</h4>
+                <h4>{loadingText}</h4>
             </div>
         </Backdrop>
     )

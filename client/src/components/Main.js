@@ -21,7 +21,7 @@ const Main = () => {
         }, []
     );
     return (
-        <div className="App" style={{ display: "inline" }}>
+        <div className="App" style={{ display: "inline", color: "#272D2D" }}>
 			<Header />
             <div style={{ paddingBottom: "2vh" }}>
                 <ClassSelector />

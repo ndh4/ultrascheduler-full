@@ -5,13 +5,13 @@ import { loginRequest } from "../actions/AuthActions";
 import { Button } from "@material-ui/core";
 
 const Login = ({ loginRequest }) => (
-    <div style={{ height: '100vh', width: '100vw', display: 'flex', position: 'relative', textAlign: 'center', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ display: "inline-block" }}>
-            <h3>the app formerly known as schedule planner</h3>
-            <h5>brought to you by riceapps</h5>
+    <div style={{ height: '100vh', width: '100vw', display: 'flex', position: 'relative', textAlign: 'center', alignItems: 'center', justifyContent: 'center', backgroundColor: "#FBFBFB" }}>
+        <div style={{ display: "inline-block", color: "#272D2D" }}>
+            <h2>the app formerly known as schedule planner</h2>
+            <h4>brought to you by riceapps</h4>
         </div>
         <div style={{ position: 'absolute', marginTop: '75px' }}>
-            <Button variant="outlined" onClick={() => loginRequest()}>Enter</Button>
+            <Button variant="outlined" style={{ color: "#272D2D", textTransform: "none" }} onClick={() => loginRequest()}>enter</Button>
         </div>
     </div>
 )

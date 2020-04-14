@@ -94,7 +94,7 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 							</TableCell>
 							<TableCell align="right" component="th" scope="row">
 								<Tooltip title="View Course Details">
-									<a href={createURL(course.crn)} target="_blank" style={{ color: 'black' }}>{course.courseName}</a>
+									<a href={createURL(course.crn)} target="_blank" style={{ color: '#272D2D' }}>{course.courseName}</a>
 								</Tooltip>
 								<Tooltip title="View Evaluations">
 									<IconButton aria-label="evaluations" onClick={() => window.open(createURL(course.crn, false), "_blank")}>
