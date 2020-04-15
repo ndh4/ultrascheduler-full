@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {connect} from 'react-redux';
-import LoadingScreen from "./LoadingScreen";
+import LoadingScreen from "../LoadingScreen";
 import { authenticateRequest } from "../../actions/AuthActions";
 import { Backdrop, CircularProgress, makeStyles } from "@material-ui/core";
 

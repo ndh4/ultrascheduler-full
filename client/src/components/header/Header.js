@@ -3,8 +3,8 @@ import Title from "./Title";
 import { Button } from "@material-ui/core";
 import ReactGA from "react-ga";
 
-import RiceAppsLogo from "../riceappslogo.png";
-import { initGA, OutboundLink } from "../utils/analytics";
+import RiceAppsLogo from "../../riceappslogo.png";
+import { initGA, OutboundLink } from "../../utils/analytics";
 
 function Header() {
     let feedbackURL = "https://forms.gle/6uyRuTxKgP3n53vB6";
