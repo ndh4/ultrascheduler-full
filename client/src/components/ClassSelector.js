@@ -53,7 +53,7 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 	const classes = useStyles();
 
 	// Get headers
-	let headers = ["Visible", "Course Code", "Class Days", "Class Time", "Has Lab?", "Lab Days", "Lab Times", "Instructor(s)", "Remove"]
+	let headers = ["Visible", "Course Code", "Class Days", "Class Time", "CRN", "Lab Days", "Lab Times", "Instructor(s)", "Remove"]
 
 	const styles = {
 		slideContainer: {
@@ -128,13 +128,13 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 									<TableCell align="right">{classTimeString(course.class.startTime, course.class.endTime)}</TableCell>
 								</Fragment>
 							) : <Fragment>{emptyCellGenerator(2)}</Fragment>}
+							<TableCell align="right">{course.crn}</TableCell>
 							{course.lab.hasLab ? (
 								<Fragment>
-									<TableCell align="right"><CheckCircleIcon /></TableCell>
 									<TableCell align="right">{course.lab.days}</TableCell>
 									<TableCell align="right">{classTimeString(course.lab.startTime, course.lab.endTime)}</TableCell>
 								</Fragment>
-							) : <Fragment>{emptyCellGenerator(3)}</Fragment>}
+							) : <Fragment>{emptyCellGenerator(2)}</Fragment>}
 							<TableCell align="right">{course.instructors.join(" | ")}</TableCell>
 							<TableCell align="right">
 								<Tooltip title="Delete">
