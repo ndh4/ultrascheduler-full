@@ -9,10 +9,8 @@ const defaultAuthReducerState = {
 const AuthReducer = (state=defaultAuthReducerState, action) => {
         switch (action.type) {
             case ACTIONS.LOGIN_REQUESTED:
-                console.log("Request reached reducer.");
                 return {...state, loginRequesting: true};
             case ACTIONS.LOGIN_SUCCESS:
-                console.log("Successful Login recorded.");
                 return {...state, loginRequesting: false, loggedIn: true};
             case ACTIONS.LOGIN_FAILURE:
                 return {...state, loginRequesting: false, loggedIn: false};

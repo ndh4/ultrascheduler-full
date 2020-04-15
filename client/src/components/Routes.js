@@ -10,8 +10,6 @@ import { connect } from 'react-redux'
 import LoadingScreen from './LoadingScreen';
 
 const PrivateRoute = ({ children, loggedIn, verifyRequest, ...rest }) => {
-    console.log(loggedIn);
-    console.log(localStorage.getItem('token'));
     return (
         <Route {...rest} render={(props) => {
             if (loggedIn) {

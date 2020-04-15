@@ -19,21 +19,18 @@ export const getService = () => {
 }
 
 export const loginRequest = () => {
-    console.log("Login requested.");
     return ({
         type: LOGIN_REQUESTED
     });
 }
 
 export const authenticateRequest = () => {
-    console.log("Authenticate requested.");
     return ({
         type: AUTHENTICATE_REQUESTED
     });
 }
 
 export const verifyRequest = () => {
-    console.log("Verify requested.");
     return ({
         type: VERIFY_REQUESTED
     });

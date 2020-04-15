@@ -67,8 +67,6 @@ const SessionItem = ({res, session, draftCourses, addCourseRequest, removeCourse
             courseSelected = idx;
         }
     }
-    console.log(session);
-    console.log(res);
     return (
     <div key={session.crn} style={{ borderStyle: 'solid', display: "inline-block" }}>
         <input 
@@ -101,9 +99,6 @@ const CourseList = ({ searchResults, draftCourses, addCourseRequest, removeCours
     if (searchResults == []) {
         return (<br />);
     }
-
-    console.log("new search results");
-    // console.log(searchResults);
 
     return (
         <SwipeableViews containerStyle={styles.slideContainer}>

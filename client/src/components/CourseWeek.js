@@ -16,8 +16,6 @@ class CourseWeek extends React.Component {
     }
     render() {
         const {date, courses} = this.props
-        console.log(date);
-        console.log(courses);
         let range = Array.from({length: 7}, (x,i) => dates.add(date, i, 'day'));
         let showWeekend = false;
         // let showWeekend = [false, false];
