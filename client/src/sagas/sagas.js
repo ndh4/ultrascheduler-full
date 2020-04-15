@@ -3,7 +3,7 @@ import { push } from 'connected-react-router'
 import { LOGIN_SUCCESS, LOGIN_FAILURE, LOGIN_REQUESTED, GET_SERVICE, SAVE_SERVICE } from '../actions/AuthActions';
 import { ADD_COURSE_REQUEST, REMOVE_COURSE_REQUEST, TOGGLE_COURSE_REQUEST, SET_SCHEDULE } from '../actions/CoursesActions';
 import { history } from '../configureStore';
-import { sessionToDraftCourse } from '../utils/searchResultUtils';
+import { sessionToDraftCourse } from '../utils/SessionUtils';
 
 // import Api from '...'
 

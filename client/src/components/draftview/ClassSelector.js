@@ -24,7 +24,7 @@ import SwipeableViews from "react-swipeable-views";
 import ReactGA from "react-ga";
 import {toggleCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
 import { initGA, Event } from "../../utils/analytics";
-import { classTimeString } from '../../utils/transformCourseTime';
+import { classTimeString } from '../../utils/CourseTimeTransforms';
 
 
 const useStyles = makeStyles({

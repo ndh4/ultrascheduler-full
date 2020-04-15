@@ -1,7 +1,4 @@
-import { WEEKSTART } from '../constants/DefaultDateInfo'
-import {merge} from 'react-big-calendar/lib/utils/dates'
-import * as dates from 'date-arithmetic'
-import { timesToMoment } from '../utils/transformCourseTime';
+import { WEEKSTART } from '../constants/Defaults';
 import moment from 'moment';
 
 const coursetimes = (courseData) => {

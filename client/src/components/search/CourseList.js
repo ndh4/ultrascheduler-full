@@ -4,8 +4,8 @@ import SwipeableViews from "react-swipeable-views";
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Collapse from '@material-ui/core/Collapse';
-import { sessionToDraftCourse } from "../utils/searchResultUtils";
-import { Event } from "../utils/analytics";
+import { Event } from "../../utils/analytics";
+import { sessionToDraftCourse } from "../../utils/SessionUtils";
 import {addCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
 
 import moment from "moment";
