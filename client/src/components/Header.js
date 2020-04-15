@@ -12,7 +12,7 @@ function Header() {
     initGA();
 
     const handleLogoClick = () => {
-        OutboundLink("Clicked Logo.", window.open("http://www.riceapps.org", "_blank"));
+        OutboundLink("Clicked Logo.", window.open("https://medium.com/riceapps", "_blank"));
     }
 
     return (
