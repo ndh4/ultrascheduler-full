@@ -1,10 +1,10 @@
 steps:
 - name: 'gcr.io/cloud-builders/npm'
   args: ['install']
-  dir: 'api'
+  dir: 'api/'
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy"]
-  dir: 'api'
+  dir: 'api/'
 - name: 'gcr.io/cloud-builders/npm'
   args: ['install']
   dir: 'client'
