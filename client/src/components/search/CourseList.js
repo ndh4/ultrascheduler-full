@@ -1,28 +1,13 @@
 import React, { useState, useEffect } from "react";
 import {connect} from 'react-redux';
-import {addCourseRequest, removeCourseRequest} from '../actions/CoursesActions';
-
-import moment from "moment";
-
-import {
-    Accordion,
-    AccordionItem,
-    AccordionItemHeading,
-    AccordionItemButton,
-    AccordionItemPanel,
-} from 'react-accessible-accordion';
-
-
-// new imports
 import SwipeableViews from "react-swipeable-views";
-
-import ListSubheader from '@material-ui/core/ListSubheader';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
-import { sessionToDraftCourse } from "../utils/searchResultUtils";
+import { sessionToDraftCourse } from "../../utils/searchResultUtils";
+import {addCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
+
+import moment from "moment";
 
 const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
 

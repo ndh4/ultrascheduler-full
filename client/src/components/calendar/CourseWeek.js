@@ -2,7 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux';
 import * as dates from 'date-arithmetic'
 import TimeGrid from 'react-big-calendar/lib/TimeGrid'
-import { timesToMoment } from '../utils/transformCourseTime';
+import { timesToMoment } from '../../utils/transformCourseTime';
 
 const max = Math.max
 const min = Math.min

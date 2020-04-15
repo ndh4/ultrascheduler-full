@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {connect} from 'react-redux';
-
-import { authenticateRequest } from "../actions/AuthActions";
+import { authenticateRequest } from "../../actions/AuthActions";
 import { Backdrop, CircularProgress, makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({

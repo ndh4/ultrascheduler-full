@@ -1,11 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import {connect} from 'react-redux';
-import {toggleCourseRequest, removeCourseRequest} from '../actions/CoursesActions';
-
-import { classTimeString } from '../utils/transformCourseTime';
-
 import { makeStyles } from '@material-ui/core/styles';
-
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -13,18 +8,18 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-
 // Course visible
 import Checkbox from '@material-ui/core/Checkbox';
-
 // Has lab
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-
 // Delete course
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import SwipeableViews from "react-swipeable-views";
+
+import {toggleCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
+import { classTimeString } from '../../utils/transformCourseTime';
 
 
 const useStyles = makeStyles({

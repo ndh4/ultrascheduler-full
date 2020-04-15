@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import Header from "./Header";
-import CourseCalendar from "./Calendar";
-import ClassSelector from "./ClassSelector";
-import CourseSearch from "./CourseSearch";
-import config from '../config';
+import Header from "../header/Header";
+import CourseCalendar from "../calendar/Calendar";
+import ClassSelector from "../draftview/ClassSelector";
+import CourseSearch from "../search/CourseSearch";
+import config from '../../config';
 
 const Main = () => {
     const [depts, setDepts] = useState([]);
