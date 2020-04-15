@@ -5,7 +5,7 @@ import moment from 'moment'
 import CourseWeek from "./CourseWeek"
 import { Calendar, Views, momentLocalizer }  from "react-big-calendar"
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import { WEEKSTART } from "../../constants/DefaultDateInfo";
+import { WEEKSTART } from "../../constants/Defaults";
 
 const localizer = momentLocalizer(moment)
 

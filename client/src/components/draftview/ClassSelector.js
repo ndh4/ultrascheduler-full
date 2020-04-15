@@ -19,7 +19,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import SwipeableViews from "react-swipeable-views";
 
 import {toggleCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
-import { classTimeString } from '../../utils/transformCourseTime';
+import { classTimeString } from '../../utils/CourseTimeTransforms';
 
 
 const useStyles = makeStyles({
