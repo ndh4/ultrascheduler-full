@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import {connect} from 'react-redux';
 import SwipeableViews from "react-swipeable-views";
 import List from '@material-ui/core/List';

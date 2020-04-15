@@ -20,10 +20,14 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import SwipeableViews from "react-swipeable-views";
 
+<<<<<<< HEAD:client/src/components/draftview/ClassSelector.js
 // Tracking
 import ReactGA from "react-ga";
 import {toggleCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
 import { initGA, Event } from "../../utils/analytics";
+=======
+import {toggleCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
+>>>>>>> bed0d0f9d7b5225799d2e8f50111101b7299315f:client/src/components/ClassSelector.js
 import { classTimeString } from '../../utils/CourseTimeTransforms';
 
 

@@ -3,7 +3,8 @@ import React from "react";
 function Title() {
     return (
         <div>
-            <h1>hatch.</h1>
+            <h1>Ultrascheduler</h1>
+            <h3>A Course Planning Tool</h3>
         </div>
     );
 }
