@@ -31,12 +31,12 @@ import SwipeableViews from "react-swipeable-views";
 
 // Tracking
 import ReactGA from "react-ga";
-import { initGA } from "../utils/analytics";
+import { initGA, Event } from "../utils/analytics";
 
 const useStyles = makeStyles({
 	table: {
-	  minWidth: 650,
-	},
+		width: "100%"
+	}
   });
 
 const createURL = (crn, detail=true) => {
@@ -58,7 +58,7 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 	const styles = {
 		slideContainer: {
 		  height: '30vh',
-		  width: '100vw',
+		  maxWidth: '100vw',
 		  WebkitOverflowScrolling: 'touch', // iOS momentum scrolling
 		},
 	  };
@@ -73,6 +73,15 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 
 	// Initialize GA before use
 	initGA();
+
+	const handleCourseRemoveRequest = (course) => {
+		let crnString = String.toString(course.crn);
+		// Tracking 
+		Event("COURSE_SELECTOR", "Remove Course from Schedule: " + crnString, crnString);
+
+		// Remove course
+		removeCourseRequest(course)
+	}
 
 	return (
 		<TableContainer component={Paper}>
@@ -100,15 +109,17 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 							</TableCell>
 							<TableCell align="right" component="th" scope="row">
 								<Tooltip title="View Course Details">
-									<ReactGA.OutboundLink eventLabel="Course Description" to={createURL(course.crn)} target="_blank" style={{ color: "272D2D" }}>
-										{course.courseName}
+									<ReactGA.OutboundLink style={{ color: "#272D2D", textDecoration: 'none' }} eventLabel="course_description" to={createURL(course.crn)} target="_blank">
+										<span style={{ color: "272D2D" }}>{course.courseName}</span>
 									</ReactGA.OutboundLink>
 									{/* <a href={createURL(course.crn)} target="_blank" style={{ color: '#272D2D' }}></a> */}
 								</Tooltip>
 								<Tooltip title="View Evaluations">
-									<IconButton aria-label="evaluations" onClick={() => window.open(createURL(course.crn, false), "_blank")}>
-										<QuestionAnswerIcon />
-									</IconButton>
+									<ReactGA.OutboundLink eventLabel="course_evaluation" to={createURL(course.crn, false)} target="_blank">
+										<IconButton aria-label="evaluations">
+											<QuestionAnswerIcon />
+										</IconButton>
+									</ReactGA.OutboundLink>
 								</Tooltip>
 							</TableCell>
 							{course.class.hasClass ? (
@@ -127,7 +138,7 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 							<TableCell align="right">{course.instructors.join(" | ")}</TableCell>
 							<TableCell align="right">
 								<Tooltip title="Delete">
-									<IconButton aria-label="delete" onClick={() => removeCourseRequest(course)}>
+									<IconButton aria-label="delete" onClick={() => handleCourseRemoveRequest(course)}>
 										<DeleteIcon />
 									</IconButton>
 								</Tooltip>
@@ -136,7 +147,7 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 					))}
 				</TableBody>
 			</Table>
-			</SwipeableViews>
+		</SwipeableViews>
 		</TableContainer>
 	)
 	// return (

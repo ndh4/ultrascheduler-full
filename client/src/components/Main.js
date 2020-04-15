@@ -23,10 +23,10 @@ const Main = () => {
     return (
         <div className="App" style={{ display: "inline", color: "#272D2D" }}>
 			<Header />
-            <div style={{ paddingBottom: "2vh" }}>
+            <div style={{ padding: "2%" }}>
                 <ClassSelector />
             </div>
-            <div className="Container" style={{ paddingTop: "2vh" }}>
+            <div className="Container" style={{ padding: "2%" }}>
                 <div style={{ float: "left", width: '30%' }}>
                     <CourseSearch depts={depts} term="Fall 2020"/>
                 </div>

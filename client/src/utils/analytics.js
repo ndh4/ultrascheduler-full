@@ -23,4 +23,10 @@ export const Event = (category, action, label) => {
     });
   };
 
+export const OutboundLink = (label, callback) => {
+    ReactGA.outboundLink({
+    label: label
+    }, callback);
+}
+
   

@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import config from "../config";
 import Selection from "./Selection";
 import CourseList from "./CourseList";
+import { initGA, Event } from "../utils/analytics";
 
 const dummy = {label:"", value:""};
 
@@ -52,6 +53,17 @@ const CourseSearch = ({ term, depts }) => {
                 return (<p>Search loading...</p>);
         }
 
+        // Initialize GA before use
+        initGA();
+
+        const handleSearchClasses = () => {
+            // Tracking
+            Event("SEARCH", "Search for Department", getDept.label);
+
+            // Search through classes
+            searchClasses(term, getDept.label);
+        }
+
         return (
         <div className="Search">
             <div style={styles.filter}>
@@ -63,7 +75,7 @@ const CourseSearch = ({ term, depts }) => {
                     show={true}
                     handleChange={handleChangeDept}
                 />
-                <button style={styles.button} onClick={() => searchClasses(term, getDept.label)}>Search</button>
+                <button style={styles.button} onClick={() => handleSearchClasses()}>Search</button>
             </div>
             <CourseList searchResults={searchResults} />
         </div>

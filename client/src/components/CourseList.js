@@ -23,6 +23,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import { sessionToDraftCourse } from "../utils/searchResultUtils";
+import { Event } from "../utils/analytics";
 
 const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
 
@@ -74,9 +75,14 @@ const SessionItem = ({res, session, draftCourses, addCourseRequest, removeCourse
             type="checkbox" 
             checked={courseSelected > -1}
             onClick={() => {
+                let crnString = String.toString(session.crn);
                 if (courseSelected > -1) {
+                    // Track remove
+                    Event("COURSE_LIST", "Remove Course from Schedule: " + crnString, crnString);
                     removeCourseRequest(draftCourses[courseSelected]);
                 } else {
+                    // Track add
+                    Event("COURSE_LIST", "Add Course to Schedule: " + crnString, crnString);
                     addCourseRequest(sessionToDraftCourse(session, res.detail, res.detail.term));
                 }
             }} 
