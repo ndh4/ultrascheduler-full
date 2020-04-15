@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {connect} from 'react-redux';
-import {toggleCourse} from '../actions/CoursesActions';
-import Course from "./Course";
+import {toggleCourse} from '../../actions/CoursesActions';
+import Course from "../courseview/Course";
 
 const Day = ({day, courses, toggleCourse}) => (
         <li style = {{display:"inline"}}>
