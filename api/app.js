@@ -16,34 +16,12 @@ var deployRouter = require('./routes/deploy');
 
 var app = express();
 
-// See the react auth blog in which cors is required for access
-// app.use((req, res, next) => {
-//   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-//   next();
-// });
-
-// Enable cross orgin resource sharing
-// const enableCORS = function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", '*');
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, x-ticket, x-token, Content-Type, Accept, Authorization");
-//   res.header("Access-Control-Allow-Credentials", "true");
-//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-//   if (req.method === "OPTIONS") {
-//        res.status(200).send('OK')
-//   } else {
-//        next();
-//   }
-// }
-
 // view engine setup
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use(exjwt({secret: 'testsec'}).unless({ path: ['/auth/login', '/auth/dummy'] })); // Will always check for auth token except for login
-// app.use(enableCORS);
 
 // app.use('/', indexRouter);
 app.use('/api/users', exjwt({secret: 'testsec'}), usersRouter);
@@ -51,12 +29,6 @@ app.use('/api/courses', coursesRouter);
 app.use('/api/instructors', instructorsRouter);
 app.use('/api/auth', authenticationRouter);
 app.use('/api/deploy', deployRouter);
-// app.use('/', express.static("../client/dist"))
-
-// Serve our react build
-// app.get("/*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "../client/dist/index.html"));
-// });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

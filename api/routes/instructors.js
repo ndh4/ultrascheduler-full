@@ -3,15 +3,6 @@ const Instructor = require("../models/instructorsModel").instructor;
 var express = require('express');
 var router = express.Router();
 
-router.post('/create', (req, res, next) => {
-    Instructor.create({
-        firstName: "Dan",
-        lastName: "Wallach"
-    });
-
-    res.send("Created new instructor.");
-})
-
 router.get('/getInstructor', (req, res, next) => {
     if (!req.query.firstName || !req.query.lastName) {
         res.send("First and last name of professor is required.");
