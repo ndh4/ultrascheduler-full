@@ -57,7 +57,7 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 
 	const styles = {
 		slideContainer: {
-		  height: '30vh',
+		  maxHeight: '50vh',
 		  maxWidth: '100vw',
 		  WebkitOverflowScrolling: 'touch', // iOS momentum scrolling
 		},
