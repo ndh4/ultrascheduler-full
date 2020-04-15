@@ -3,12 +3,12 @@ steps:
   args: ['install']
   dir: 'api/'
 - name: "gcr.io/cloud-builders/gcloud"
-  args: ["api", "deploy"]
+  args: ["app", "deploy", "api.yaml"]
   dir: 'api/'
 - name: 'gcr.io/cloud-builders/npm'
   args: ['install']
   dir: 'client'
 - name: "gcr.io/cloud-builders/gcloud"
-  args: ["client", "deploy"]
+  args: ["app", "deploy", "client.yaml"]
   dir: 'client'
 timeout: "1600s"
