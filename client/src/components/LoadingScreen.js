@@ -11,8 +11,9 @@ const useStyles = makeStyles((theme) => ({
 
 const LoadingScreen = () => {
     const classes = useStyles();
-    let loadingTextOptions = ["eat. sleep. plan. repeat.", "time to hatch a plan."]
-    let loadingText = Math.random() < 0.5 ? loadingTextOptions[0] : loadingTextOptions[1];
+    let loadingTextOptions = ["eat. sleep. plan. repeat.", "time to hatch a plan.", "built with ❤️ by Will Mundy, Jamie Tan, David Torres-Ramos, Manan Bajaj, Max Bowman, Peter Wang, and Skylar Neuendorff"]
+    let selectedQuoteIdx = Math.floor(Math.random() * 3)
+    let loadingText = loadingTextOptions[selectedQuoteIdx];
     return (
         <Backdrop className={classes.backdrop} open={true}>
             <div style={{ display: "block", justifyContent: 'center' }}>
