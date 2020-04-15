@@ -29,6 +29,9 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import SwipeableViews from "react-swipeable-views";
 
+// Tracking
+import ReactGA from "react-ga";
+import { initGA } from "../utils/analytics";
 
 const useStyles = makeStyles({
 	table: {
@@ -68,6 +71,9 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 		return cells;
 	}
 
+	// Initialize GA before use
+	initGA();
+
 	return (
 		<TableContainer component={Paper}>
 			<SwipeableViews containerStyle={styles.slideContainer}>
@@ -94,7 +100,10 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 							</TableCell>
 							<TableCell align="right" component="th" scope="row">
 								<Tooltip title="View Course Details">
-									<a href={createURL(course.crn)} target="_blank" style={{ color: '#272D2D' }}>{course.courseName}</a>
+									<ReactGA.OutboundLink eventLabel="Course Description" to={createURL(course.crn)} target="_blank" style={{ color: "272D2D" }}>
+										{course.courseName}
+									</ReactGA.OutboundLink>
+									{/* <a href={createURL(course.crn)} target="_blank" style={{ color: '#272D2D' }}></a> */}
 								</Tooltip>
 								<Tooltip title="View Evaluations">
 									<IconButton aria-label="evaluations" onClick={() => window.open(createURL(course.crn, false), "_blank")}>

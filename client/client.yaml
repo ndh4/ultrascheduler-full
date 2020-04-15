@@ -1,5 +1,9 @@
 runtime: nodejs10
 service: default
+
+env_variables:
+  GA_TRACKING_ID: G-LR874JMH94
+
 handlers:
     # Serve all static files with urls ending with a file extension
     - url: /(.*\..+)$
