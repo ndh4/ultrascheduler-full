@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
 import {connect} from 'react-redux';
+import LoadingScreen from "../LoadingScreen";
+import { authenticateRequest } from "../../actions/AuthActions";
+import { Backdrop, CircularProgress, makeStyles } from "@material-ui/core";
 
-import { authenticateRequest } from "../actions/AuthActions";
-import LoadingScreen from "./LoadingScreen";
+const useStyles = makeStyles((theme) => ({
+    backdrop: {
+      zIndex: theme.zIndex.drawer + 1,
+      color: '#fff',
+    },
+  }));
 
 const Auth = ({ authenticateRequest }) => {
     authenticateRequest();

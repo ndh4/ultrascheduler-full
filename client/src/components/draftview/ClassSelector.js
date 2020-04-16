@@ -1,11 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import {connect} from 'react-redux';
-import {toggleCourseRequest, removeCourseRequest} from '../actions/CoursesActions';
-
-import { classTimeString } from '../utils/transformCourseTime';
-
 import { makeStyles } from '@material-ui/core/styles';
-
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -13,25 +8,28 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-
 // Course evals
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
-
 // Course visible
 import Checkbox from '@material-ui/core/Checkbox';
-
 // Has lab
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-
 // Delete course
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import SwipeableViews from "react-swipeable-views";
 
+<<<<<<< HEAD:client/src/components/draftview/ClassSelector.js
 // Tracking
 import ReactGA from "react-ga";
-import { initGA, Event } from "../utils/analytics";
+import {toggleCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
+import { initGA, Event } from "../../utils/analytics";
+=======
+import {toggleCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
+>>>>>>> bed0d0f9d7b5225799d2e8f50111101b7299315f:client/src/components/ClassSelector.js
+import { classTimeString } from '../../utils/CourseTimeTransforms';
+
 
 const useStyles = makeStyles({
 	table: {
@@ -53,11 +51,11 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 	const classes = useStyles();
 
 	// Get headers
-	let headers = ["Visible", "Course Code", "Class Days", "Class Time", "Has Lab?", "Lab Days", "Lab Times", "Instructor(s)", "Remove"]
+	let headers = ["Visible", "Course Code", "Class Days", "Class Time", "CRN", "Lab Days", "Lab Times", "Instructor(s)", "Remove"]
 
 	const styles = {
 		slideContainer: {
-		  height: '30vh',
+		  maxHeight: '50vh',
 		  maxWidth: '100vw',
 		  WebkitOverflowScrolling: 'touch', // iOS momentum scrolling
 		},
@@ -128,13 +126,13 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 									<TableCell align="right">{classTimeString(course.class.startTime, course.class.endTime)}</TableCell>
 								</Fragment>
 							) : <Fragment>{emptyCellGenerator(2)}</Fragment>}
+							<TableCell align="right">{course.crn}</TableCell>
 							{course.lab.hasLab ? (
 								<Fragment>
-									<TableCell align="right"><CheckCircleIcon /></TableCell>
 									<TableCell align="right">{course.lab.days}</TableCell>
 									<TableCell align="right">{classTimeString(course.lab.startTime, course.lab.endTime)}</TableCell>
 								</Fragment>
-							) : <Fragment>{emptyCellGenerator(3)}</Fragment>}
+							) : <Fragment>{emptyCellGenerator(2)}</Fragment>}
 							<TableCell align="right">{course.instructors.join(" | ")}</TableCell>
 							<TableCell align="right">
 								<Tooltip title="Delete">

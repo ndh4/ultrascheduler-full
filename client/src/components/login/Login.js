@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {connect} from 'react-redux';
 
-import { loginRequest } from "../actions/AuthActions";
+import { loginRequest } from "../../actions/AuthActions";
 import { Button } from "@material-ui/core";
 
 const Login = ({ loginRequest }) => (

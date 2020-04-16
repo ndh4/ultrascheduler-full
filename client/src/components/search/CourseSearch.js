@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import {connect} from 'react-redux';
-import config from "../config";
+import config from "../../config";
 import Selection from "./Selection";
 import CourseList from "./CourseList";
-import { initGA, Event } from "../utils/analytics";
+import { initGA, Event } from "../../utils/analytics";
 
 const dummy = {label:"", value:""};
 

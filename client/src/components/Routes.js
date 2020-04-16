@@ -1,17 +1,13 @@
 import React, { Component } from 'react'
-
 import { Switch, Route, Redirect } from 'react-router'
-import Auth from './Auth';
-import Login from './Login';
-import Main from './Main';
-import App from '../App';
+import Auth from './auth/Auth';
+import Login from './login/Login';
+import Main from './main/Main';
 import { verifyRequest, getService } from '../actions/AuthActions'
 import { connect } from 'react-redux'
 import LoadingScreen from './LoadingScreen';
 
 const PrivateRoute = ({ children, loggedIn, verifyRequest, ...rest }) => {
-    console.log(loggedIn);
-    console.log(localStorage.getItem('token'));
     return (
         <Route {...rest} render={(props) => {
             if (loggedIn) {

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import Header from "./Header";
-import CourseCalendar from "./Calendar";
-import ClassSelector from "./ClassSelector";
-import CourseSearch from "./CourseSearch";
-import config from '../config';
+import Header from "../header/Header";
+import CourseCalendar from "../calendar/Calendar";
+import ClassSelector from "../draftview/ClassSelector";
+import CourseSearch from "../search/CourseSearch";
+import config from '../../config';
+import { CUR_TERM } from '../../constants/Defaults';
 
 const Main = () => {
     const [depts, setDepts] = useState([]);
@@ -28,7 +29,7 @@ const Main = () => {
             </div>
             <div className="Container" style={{ padding: "2%" }}>
                 <div style={{ float: "left", width: '30%' }}>
-                    <CourseSearch depts={depts} term="Fall 2020"/>
+                    <CourseSearch depts={depts} term={CUR_TERM}/>
                 </div>
                 <div style={{ float: "left", width: '70%' }}>
                     <CourseCalendar />

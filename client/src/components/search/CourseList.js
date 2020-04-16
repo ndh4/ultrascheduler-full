@@ -1,29 +1,13 @@
-import React, { useState, useEffect } from "react";
 import {connect} from 'react-redux';
-import {addCourseRequest, removeCourseRequest} from '../actions/CoursesActions';
-
-import moment from "moment";
-
-import {
-    Accordion,
-    AccordionItem,
-    AccordionItemHeading,
-    AccordionItemButton,
-    AccordionItemPanel,
-} from 'react-accessible-accordion';
-
-
-// new imports
 import SwipeableViews from "react-swipeable-views";
-
-import ListSubheader from '@material-ui/core/ListSubheader';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
-import { sessionToDraftCourse } from "../utils/searchResultUtils";
-import { Event } from "../utils/analytics";
+import { Event } from "../../utils/analytics";
+import { sessionToDraftCourse } from "../../utils/SessionUtils";
+import {addCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
+
+import moment from "moment";
 
 const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
 
@@ -67,8 +51,6 @@ const SessionItem = ({res, session, draftCourses, addCourseRequest, removeCourse
             courseSelected = idx;
         }
     }
-    console.log(session);
-    console.log(res);
     return (
     <div key={session.crn} style={{ borderStyle: 'solid', display: "inline-block" }}>
         <input 
@@ -101,9 +83,6 @@ const CourseList = ({ searchResults, draftCourses, addCourseRequest, removeCours
     if (searchResults == []) {
         return (<br />);
     }
-
-    console.log("new search results");
-    // console.log(searchResults);
 
     return (
         <SwipeableViews containerStyle={styles.slideContainer}>

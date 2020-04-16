@@ -2,7 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux';
 import * as dates from 'date-arithmetic'
 import TimeGrid from 'react-big-calendar/lib/TimeGrid'
-import { timesToMoment } from '../utils/transformCourseTime';
+import { timesToMoment } from '../../utils/CourseTimeTransforms';
 
 const max = Math.max
 const min = Math.min
@@ -16,8 +16,6 @@ class CourseWeek extends React.Component {
     }
     render() {
         const {date, courses} = this.props
-        console.log(date);
-        console.log(courses);
         let range = Array.from({length: 7}, (x,i) => dates.add(date, i, 'day'));
         let showWeekend = false;
         // let showWeekend = [false, false];

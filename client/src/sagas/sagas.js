@@ -3,7 +3,7 @@ import { push } from 'connected-react-router'
 import { LOGIN_SUCCESS, LOGIN_FAILURE, LOGIN_REQUESTED, GET_SERVICE, SAVE_SERVICE } from '../actions/AuthActions';
 import { ADD_COURSE_REQUEST, REMOVE_COURSE_REQUEST, TOGGLE_COURSE_REQUEST, SET_SCHEDULE } from '../actions/CoursesActions';
 import { history } from '../configureStore';
-import { sessionToDraftCourse } from '../utils/searchResultUtils';
+import { sessionToDraftCourse } from '../utils/SessionUtils';
 
 // import Api from '...'
 
@@ -63,9 +63,10 @@ const addCourseToSchedule = ({ courseID, sessionID, term }) => {
             'Content-Type': "application/json"
         }
     }).then(response => {
-        console.log(response);
+        return;
     }).catch(error => {
         console.log("Error.");
+        return;
     })
 }
 
@@ -82,9 +83,10 @@ const removeCourseFromSchedule = ({ sessionID, term }) => {
             'Content-Type': "application/json"
         }
     }).then(response => {
-        console.log(response);
+        return;
     }).catch(error => {
         console.log("Error.");
+        return;
     })
 }
 
@@ -101,7 +103,7 @@ const toggleCourse = ({ sessionID, term }) => {
             'Content-Type': "application/json"
         }
     }).then(response => {
-        console.log(response);
+        return;
     }).catch(error => {
         console.log("Error.");
     })
@@ -114,7 +116,6 @@ const fetchSchedule = (term) => {
             'Content-Type': "application/json"
         },
     }).then(response => {
-        console.log(response);
         return response.json().then(body => {
             return body;
         })
@@ -125,8 +126,6 @@ function* getService(action) {
     try {
         let serviceURL = yield call(fetchCurrentService);
 
-        console.log(serviceURL);
-
         yield put({ type: SAVE_SERVICE, service: serviceURL });
     } catch (e) {
         yield put({ type: "GET_SERVICE_URL_FAILED", message: e.message });
@@ -136,8 +135,6 @@ function* getService(action) {
 function* loginRequest(action) {
     try {
         const state = yield select();
-
-        console.log(state.auth);
 
         // Redirect to Rice IDP
         let redirectURL = config.loginURL + "?service=" + state.auth.service;
@@ -167,15 +164,12 @@ function* authenticateRequest(action) {
         let token;
         try {
             token = yield call(sendTicket, ticket);
-            console.log("Received token");
             // Save token to config
             config.token = token;
         } catch (e) {
             yield call(history.push, "/error");
             yield put({ type: LOGIN_FAILURE, message: e.message });
         }
-
-        console.log("About to set token");
 
         yield put({ type: LOGIN_SUCCESS });
 
@@ -206,7 +200,6 @@ function* authenticateRequest(action) {
 }
 
 function* verifyRequest(action) {
-    console.log("In verify req.");
     try {
         // Get token
         let token = yield localStorage.getItem('token');
@@ -251,7 +244,6 @@ function* verifyRequest(action) {
 }
 
 function* addCourseRequest(action) {
-    console.log("Adding course.");
     try {
         // Extract sessionID from course object
         let courseID = action.course.courseID;
