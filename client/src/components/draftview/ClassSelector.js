@@ -20,15 +20,12 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import SwipeableViews from "react-swipeable-views";
 
-<<<<<<< HEAD:client/src/components/draftview/ClassSelector.js
 // Tracking
 import ReactGA from "react-ga";
 import {toggleCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
 import { initGA, Event } from "../../utils/analytics";
-=======
-import {toggleCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
->>>>>>> bed0d0f9d7b5225799d2e8f50111101b7299315f:client/src/components/ClassSelector.js
 import { classTimeString } from '../../utils/CourseTimeTransforms';
+import URLTypes from "../../constants/URLTypes";
 
 
 const useStyles = makeStyles({
@@ -37,13 +34,15 @@ const useStyles = makeStyles({
 	}
   });
 
-const createURL = (crn, detail=true) => {
-	if (detail) {
-		// Return detail
-		return `https://courses.rice.edu/courses/!SWKSCAT.cat?p_action=COURSE&p_term=202110&p_crn=${crn}`;
-	} else {
-		// Return eval
-		return `https://esther.rice.edu/selfserve/swkscmt.main?p_term=202110&p_crn=${crn}&p_commentid=&p_confirm=1&p_type=Course`;
+const createURL = (termcode, crn, type=URLTypes.DETAIL) => {
+	switch (type) {
+		case URLTypes.DETAIL:
+			return `https://courses.rice.edu/courses/!SWKSCAT.cat?p_action=COURSE&p_term=${termcode}&p_crn=${crn}`;
+		case URLTypes.EVAL:
+			return `https://esther.rice.edu/selfserve/swkscmt.main?p_term=${termcode}&p_crn=${crn}&p_commentid=&p_confirm=1&p_type=Course`;
+		default:
+			console.log(`Uknown URL type: ${type}`);
+			return "https://rice.edu/"
 	}
 }
 
@@ -107,13 +106,13 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 							</TableCell>
 							<TableCell align="right" component="th" scope="row">
 								<Tooltip title="View Course Details">
-									<ReactGA.OutboundLink style={{ color: "#272D2D", textDecoration: 'none' }} eventLabel="course_description" to={createURL(course.crn)} target="_blank">
+									<ReactGA.OutboundLink style={{ color: "#272D2D", textDecoration: 'none' }} eventLabel="course_description" to={createURL("202110", course.crn, URLTypes.DETAIL)} target="_blank">
 										<span style={{ color: "272D2D" }}>{course.courseName}</span>
 									</ReactGA.OutboundLink>
 									{/* <a href={createURL(course.crn)} target="_blank" style={{ color: '#272D2D' }}></a> */}
 								</Tooltip>
 								<Tooltip title="View Evaluations">
-									<ReactGA.OutboundLink eventLabel="course_evaluation" to={createURL(course.crn, false)} target="_blank">
+									<ReactGA.OutboundLink eventLabel="course_evaluation" to={createURL("202110", course.crn, URLTypes.EVAL)} target="_blank">
 										<IconButton aria-label="evaluations">
 											<QuestionAnswerIcon />
 										</IconButton>
