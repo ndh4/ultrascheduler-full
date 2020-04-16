@@ -33,7 +33,7 @@ const useStyles = makeStyles({
 const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest}) => {
 	const classes = useStyles();
 	// Get headers
-	let headers = ["Visible", "Course Code", "Class Days", "Class Time", "CRN", "Lab Days", "Lab Times", "Instructor(s)", "Remove"]
+	let headers = ["Visible", "Course Code", "CRN", "Class Days", "Class Time", "Lab Days", "Lab Times", "Instructor(s)", "Remove"]
 
 	// Initialize GA before use
 	initGA();

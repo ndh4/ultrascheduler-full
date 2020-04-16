@@ -1,5 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
-import { makeStyles } from '@material-ui/core/styles';
+import React, { Fragment } from "react";
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 // Course evals
@@ -76,8 +75,8 @@ const DraftCourseItem = ({ course, onToggle, onRemove }) => {
                                 </ReactGA.OutboundLink>
                         </Tooltip>
                 </TableCell>
-                {createCourseTimeCells(course.class, course.class.hasClass)}
                 <TableCell align="right">{course.crn}</TableCell>
+                {createCourseTimeCells(course.class, course.class.hasClass)}
                 {createCourseTimeCells(course.lab, course.class.hasLab)}
                 <TableCell align="right">{course.instructors.join(", ")}</TableCell>
                 <TableCell align="right">
