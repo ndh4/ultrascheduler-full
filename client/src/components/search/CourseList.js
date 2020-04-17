@@ -12,8 +12,23 @@ import moment from "moment";
 
 const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
 
+/**
+ * 
+ * @param {instructor} instructors 
+ * {id: xxx, firstName: xxx, lastName: xxx}
+ */
+const instructorsToNames = (instructors) => {
+    let instructorNames = [];
+    for (let instructor of instructors) {
+        let instructorName = instructor.firstName + " " + instructor.lastName;
+        instructorNames.push(instructorName);
+    }
+    return instructorNames;
+}
+
 const sessionToString = (session) => {
     let result = [];
+    // Find class times
     if (session.class.days.length > 0) {
         let classTime = "Class: " + session.class.days.join("")
         // Convert times
@@ -21,8 +36,9 @@ const sessionToString = (session) => {
         let endTime = formatTime(session.class.endTime);
 
         classTime += " " + startTime + " - " + endTime
-        result.push(<p>{classTime}</p>);
+        result.push(<p style={{ padding: "5px" }}>{classTime}</p>);
     }
+    // Find lab times
     if (session.lab.days.length > 0) {
         let labTime = "Lab: " + session.lab.days.join("")
 
@@ -31,9 +47,14 @@ const sessionToString = (session) => {
         let endTime = formatTime(session.lab.endTime);
 
         labTime += " " + startTime + " - " + endTime
-        result.push(<p>{labTime}</p>);
+        result.push(<p style={{ padding: "5px" }}>{labTime}</p>);
     }
-    return ((result.length > 0) ? result : ["No class times"]);
+    // Finally find instructors
+    if (session.instructors.length > 0) {
+        let instructorNames = instructorsToNames(session.instructors);
+        result.push(<p style={{ padding: "5px" }}>{instructorNames.join(", ")}</p>)
+    }
+    return ((result.length > 0) ? result : ["No information found for this session."]);
 }
 
 const styles = {
