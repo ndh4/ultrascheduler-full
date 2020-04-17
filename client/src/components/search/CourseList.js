@@ -79,10 +79,26 @@ const SessionItem = ({res, session, draftCourses, addCourseRequest, removeCourse
 }
 
 const CourseList = ({ searchResults, draftCourses, addCourseRequest, removeCourseRequest }) => {
-    const [courseSelected, setCourseSelected] = useState("");
+    const [courseSelected, setCourseSelected] = useState([]);
 
     if (searchResults == []) {
         return (<br />);
+    }
+
+    const courseSelectedAdd = (courseLabel) => {
+        let copy = courseSelected.slice();
+        
+        // Add course with this label
+        copy.push(courseLabel);
+        setCourseSelected(copy);
+    }
+
+    const courseSelectedRemove = (courseLabel) => {
+        let copy = courseSelected.slice();
+
+        // Filter out all courses with this label
+        copy = copy.filter(label => label != courseLabel)
+        setCourseSelected(copy);
     }
 
     return (
@@ -96,11 +112,11 @@ const CourseList = ({ searchResults, draftCourses, addCourseRequest, removeCours
                         <div>
                             <ListItem 
                             key={res.label} 
-                            onClick={() => courseSelected ? setCourseSelected("") : setCourseSelected(res)}
+                            onClick={() => (courseSelected.includes(res.label)) ? courseSelectedRemove(res.label) : courseSelectedAdd(res.label)}
                             button>
                                 {res.label}
                             </ListItem>
-                            <Collapse in={(courseSelected != "" && courseSelected.label == res.label) ? true : false} timeout="auto" unmountOnExit>
+                            <Collapse in={(courseSelected.includes(res.label)) ? true : false} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
                                 {res.sessions.map(session => (
                                     <SessionItem 
