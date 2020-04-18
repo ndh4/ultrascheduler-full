@@ -2,6 +2,11 @@ steps:
 - name: 'gcr.io/cloud-builders/npm'
   args: ['install']
   dir: 'api/'
+- name: 'gcr.io/cloud-builders/npm'
+  args: ["run", "create-env"]
+  env:
+    - 'MONGODB_CONNECTION_STRING=${_MY_SECRET_KEY}'
+    - 'SERVICE_URL=${_SERVICE_URL}'
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy", "api.yaml"]
   dir: 'api/'
