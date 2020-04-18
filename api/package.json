@@ -3,7 +3,7 @@
     "version": "0.0.0",
     "private": true,
     "scripts": {
-      "start": "PORT=$PORT SERVICE_URL=https://ultrascheduler.uc.r.appspot.com/auth nodemon ./bin/www"
+      "start": "PORT=$PORT SERVICE_URL=http://hatch.riceapps.org/auth nodemon ./bin/www"
     },
     "dependencies": {
       "body-parser": "^1.19.0",
