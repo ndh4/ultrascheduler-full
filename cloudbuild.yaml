@@ -8,7 +8,7 @@ steps:
   args: ['install']
   dir: 'client'
 - name: 'gcr.io/cloud-builders/npm'
-  args: ['run build']
+  args: ['run', 'build']
   dir: 'client'
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy", "client/client.yaml"]
