@@ -5,6 +5,8 @@ import requests
 import tempfile
 from xml.etree import ElementTree
 import re
+import datetime
+import os
 
 def check_days(course):
     day_tags = ["mon_day", "tue_day", "wed_day", "thu_day", "fri_day", "sat_day", "sun_day"]
@@ -78,6 +80,107 @@ def parse_file(file, current_data):
         course_info["crn"] = course.find("crn").text
         course_info["instructors"] = [instructor.text for instructor in course.find_all("name")]
 
+        # Additional info to get
+        '''
+        credit hours (min - max)
+        prereqs
+            - reqs
+            - recommendations
+        coreqs
+        distribution
+        description
+        enrollment
+        max_enrollment
+        waitlisted
+        max_waitlisted
+        xlist group
+        xlist enrollment
+        xlist max enrollment
+        xlist waitlisted
+        xlist max waitlisted
+        '''
+        # Credit fetch
+        course_info["credits_low"] = course.find("credits").get("low")
+        try:
+            # some courses have a max # of credits; so a range
+            course_info["credits_high"] = course.find("credits").get("high")
+        except:
+            course_info["credits_high"] = ""
+        
+        # there are level, major, class restrictions
+        restrictions_node = course.find("restrictions")
+        if (restrictions_node):
+            all_sets = []
+            restrictions_set = None
+            for restriction_node in restrictions_node.findChildren():
+                # num 0 is always placeholder; "ind" tells us inclusive or exclusive restriction
+                if (restriction_node.get("num") == "0"):
+                    # Save old object if it exists (so all times except 1st run)
+                    if (restrictions_set != None):
+                        all_sets.append(restrictions_set)
+
+                    # Create new restriction object
+                    restrictions_set = {
+                        "set_type": restriction_node.get("type"),
+                        "set_setting": restriction_node.get("ind"), # I = inclusive, E = exclusive
+                        "set_params": []
+                    }
+                else:
+                    # We just have to get the text
+                    restriction_param = restriction_node.text
+                    restrictions_set["set_params"].append(restriction_param)
+            # Add last one to set
+            all_sets.append(restrictions_set)
+            course_info["restrictions"] = all_sets
+
+        # Course restrictions (prereqs, coreqs)
+        try:
+            course_info["prereqs"] = course.find("preq").text
+            # Example: (BIOC 301 OR BIOC 341 OR BIOC 344) AND (MATH 102 OR MATH 106)
+            # so we need to parse this in a function
+        except:
+            # Course has no listed prereqs
+            course_info["prereqs"] = ""
+        
+        try:
+            coreq_list = []
+            coreqs_node = course.find("coreqs")
+            for coreq_node in coreqs_node.findChildren():
+                # Get subject, course number from coreq
+                subj = coreq_node.get("subj")
+                numb = coreq_node.get("numb")
+                concat = subj + " " + numb
+                coreq_list.append(concat)
+            course_info["coreqs"] = coreq_list
+        except:
+            course_info["coreqs"] = []
+        
+        # Mutual exclusions
+        me_node = course.find("mutual-exclusions")
+        if (me_node):
+            mutual_excl_list = []
+            # Need this recursive=false to ONLY get child nodes
+            for excl_node in me_node.findChildren(recursive=False):
+                # Get the subject, course #
+                subj =  excl_node.find("subject").get("code")
+                # Ex: <SUBJECT code="BIOC">Biochemistry &amp; Cell Biology</SUBJECT>
+                numb = excl_node.find("crse_numb").text
+                # Ex: <CRSE_NUMB>464</CRSE_NUMB>
+                concat = str(subj) + " " + str(numb)
+                mutual_excl_list.append(concat)
+            course_info["mutual_exclusives"] = mutual_excl_list
+        else:
+            course_info["mutual_exclusives"] = []
+
+        # Enrollment cap
+        course_info["max_enroll"] = course.find("max_enrl").text
+        course_info["cur_enroll"] = course.find("enrl").text
+
+        # Waitlist cap
+        course_info["max_wait"] = course.find("wait_capacity").text
+        course_info["cur_wait"] = course.find("wait_count").text
+
+
         name = course.find("subject")["code"] + " " + course.find("crse_numb").text
 
         if name not in current_data.keys():
@@ -97,10 +200,14 @@ def aggregate_parsed_files(file_names):
 
 def main():
     print("start")
-    terms = ["201810", "201820", "201910", "201920", "202010", "202020", "202110"]
-    url = "https://courses.rice.edu/courses/!swkscat.cat?format=XML&p_action=COURSE&p_term="
+    output_dir = "./python_scripts/"
+    output_loc = os.path.join(output_dir, "output7.json") 
+    terms = ["202110"]
+    # terms = ["201810", "201820", "201910", "201920", "202010", "202020", "202110"]
+    url = "https://courses.rice.edu/admweb/!swkscat.cat?format=XML&p_action=COURSE&p_term="
+    # url = "https://courses.rice.edu/courses/!SWKSCAT.cat?p_action=QUERY&p_term=202110&format=XML"
     # Initialize file
-    with open("./output5.json", "w+") as output_file:
+    with open(output_loc, "w+") as output_file:
         output_file.write("[")
 
     for term in terms:
@@ -108,7 +215,10 @@ def main():
         term_url = url + term
         courses = requests.get(term_url)
         print("Made request")
-        with tempfile.TemporaryFile(mode='r+') as fp:
+        xml_filename = datetime.date.today()
+        with open(output_dir + str(xml_filename) + ".xml", mode="w+") as fp:
+        # with tempfile.TemporaryFile(mode='r+') as fp:
+        # with open(output_dir + "courses.xml", "r") as fp:
             print("Writing to tempfile")
             fp.write(courses.text)
             # wait for write
@@ -122,12 +232,12 @@ def main():
             json_data = parse_file(fp, current_data)
             
             # Dump to JSON
-            with open("./output5.json", "a+") as output_file:
+            with open(output_loc, "a+") as output_file:
                 json.dump(json_data, output_file)
                 output_file.write(",\n")
                 print("finishied writing this term")
     
-    with open("./output5.json", "a+") as output_file:
+    with open(output_loc, "a+") as output_file:
         output_file.write("]")
 
     # XML is destroyed
