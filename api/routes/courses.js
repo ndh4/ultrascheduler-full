@@ -208,4 +208,41 @@ router.get("/searchCourses", (req, res, next) => {
 	});
 });
 
+router.get("/newSearchCourses", (req, res, next) => {
+	let queryTerm = req.query.term;
+	let querySubject = req.query.subject;
+
+	let sessions = Session.collection.aggregate([
+		{ $match: { term: queryTerm } },
+		{ $lookup: 
+			{
+				from: "courses",
+				localField: "course",
+				foreignField: "_id",
+				as: "course"
+			}
+		},
+		{ $unwind: "$course" },
+		{ $match: { "course.subject": querySubject } },
+		{
+			$lookup: {
+				from: "instructors",
+				localField: "instructors",
+				foreignField: "_id",
+				as: "instructors"
+			}
+		},
+		// Sort before sending
+		{
+			$sort: {
+				"course.courseNum": 1
+			}
+		}
+	])
+
+	sessions.toArray().then(sessions => {
+		res.json(sessions);
+	})
+})
+
 module.exports = router;

@@ -17,26 +17,28 @@ const CourseSearch = ({ term, depts }) => {
 
         const searchClasses = async (term, dept) => {
             // Fetch courses by subject
-            let response = await fetch(config.backendURL + "/courses/searchCourses?subject="+dept+"&term="+term);
+            let response = await fetch(config.backendURL + "/courses/newSearchCourses?subject="+dept+"&term="+term);
             let result = await response.json();
             // Transform each course into {label: dept + number + long title, value is same}
             let classes = {}
             result.forEach(sessionObj => {
-                let subject = sessionObj["subject"];
-                let courseNum = sessionObj["courseNum"];
-                let longTitle = sessionObj["longTitle"];
+                console.log(sessionObj);
+                let subject = sessionObj["course"]["subject"];
+                let courseNum = sessionObj["course"]["courseNum"];
+                let longTitle = sessionObj["course"]["longTitle"];
                 let prefix = subject + " " + courseNum + " || " + longTitle;
                 // Check if we already have this prefix
+                let {course, ...session} = sessionObj; // session is all of sessionObj, minus course
                 if (prefix in classes) {
-                    classes[prefix].sessions.push(sessionObj.terms.sessions);
+                    classes[prefix].sessions.push(session);
                 } else {
-                    let sessions = [ sessionObj.terms.sessions ];
+                    let sessions = [ session ];
                     let courseDetail = {
-                        _id: sessionObj["_id"], // this is the course object id
+                        _id: sessionObj["_id"], // this is the session object id
+                        courseID: sessionObj["course"]["_id"], // this is the course ID
                         subject,
                         courseNum,
-                        longTitle,
-                        term
+                        longTitle
                     };
                     classes[prefix] = { label: prefix, value: prefix, sessions, detail: courseDetail }
                 }

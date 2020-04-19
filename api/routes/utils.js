@@ -150,12 +150,19 @@ var jsonToSchema = async (jsonObj) => {
                     // Check if longTitle has been created so far; or if title changed
                     if (newObject || courseObject["longTitle"] != session.longTitle) {
                         courseObject["longTitle"] = session.long_title;
-                        courseObject.save();
+                        await courseObject.save();
                         newObject = false;
                     }
                 }
             }
     }
+
+    // Finish saving prior to completion
+    let copy = sessionBulkUpdates.slice();
+    Session.bulkWrite(copy, (err, res) => {
+        process.send("Num attempted: " + copy.length);
+        process.send("Num finished: " + res.matchedCount);
+    });
 
     // Stop
     console.timeEnd("json");
