@@ -23,24 +23,19 @@ const CourseSearch = ({ term, depts }) => {
             let classes = {}
             result.forEach(sessionObj => {
                 console.log(sessionObj);
-                let subject = sessionObj["course"]["subject"];
-                let courseNum = sessionObj["course"]["courseNum"];
-                let longTitle = sessionObj["course"]["longTitle"];
+                let {course, ...session} = sessionObj; // session is all of sessionObj, minus course
+
+                let subject = course["subject"];
+                let courseNum = course["courseNum"];
+                let longTitle = course["longTitle"];
                 let prefix = subject + " " + courseNum + " || " + longTitle;
                 // Check if we already have this prefix
-                let {course, ...session} = sessionObj; // session is all of sessionObj, minus course
                 if (prefix in classes) {
                     classes[prefix].sessions.push(session);
                 } else {
                     let sessions = [ session ];
-                    let courseDetail = {
-                        _id: sessionObj["_id"], // this is the session object id
-                        courseID: sessionObj["course"]["_id"], // this is the course ID
-                        subject,
-                        courseNum,
-                        longTitle
-                    };
-                    classes[prefix] = { label: prefix, value: prefix, sessions, detail: courseDetail }
+                    // Need to set additional details to start
+                    classes[prefix] = { label: prefix, value: prefix, sessions, detail: course }
                 }
             });
             // Transform classes back into array

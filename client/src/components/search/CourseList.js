@@ -87,7 +87,7 @@ const SessionItem = ({res, session, draftCourses, addCourseRequest, removeCourse
                 } else {
                     // Track add
                     Event("COURSE_LIST", "Add Course to Schedule: " + crnString, crnString);
-                    addCourseRequest(sessionToDraftCourse(session, res.detail, res.detail.term));
+                    addCourseRequest(sessionToDraftCourse(session, res.detail, session.term));
                 }
             }} 
             style={{ alignItems: "left" }} 

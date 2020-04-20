@@ -49,11 +49,10 @@ const verifyToken = (token) => {
     })
 }
 
-const addCourseToSchedule = ({ courseID, sessionID, term }) => {
+const addCourseToSchedule = ({ sessionID, term }) => {
     let body = {
         term: term,
         sessionID: sessionID,
-        courseID: courseID
     };
     return fetch("/api/users/addCourse", {
         method: "POST",
@@ -221,9 +220,13 @@ function* verifyRequest(action) {
             // Load schedule
             let schedule = yield call(fetchSchedule, term);
 
+            console.log("Inside verify, pre schedule");
+            console.log(schedule);
+
             // Transform schedule into draftCourses
             let draftCourses = [];
             for (let course of schedule) {
+                console.log(course);
                 draftCourses.push(sessionToDraftCourse(course.session, course.detail, term, course.visible));
             }
 
@@ -246,12 +249,11 @@ function* verifyRequest(action) {
 function* addCourseRequest(action) {
     try {
         // Extract sessionID from course object
-        let courseID = action.course.courseID;
         let sessionID = action.course.sessionID;
         let term = action.course.term;
 
         // Send course to backend; don't wait 
-        yield fork(addCourseToSchedule, { courseID, sessionID, term } );
+        yield fork(addCourseToSchedule, { sessionID, term } );
 
         // Add course on frontend
         yield put({ type: "ADD_COURSE", course: action.course });
