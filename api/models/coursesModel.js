@@ -17,6 +17,12 @@ var LabSchema = new Schema({
     days: [ { type: String, enum: ['M', 'T', 'W', 'R', 'F', 'S', 'U']}]
 })
 
+var RestrictionSchema = new Schema({
+    type: String,
+    setting: { type: String, enum: ['I', 'E'] }, // Only inclusive or exclusive
+    params: [String]
+})
+
 // var TermSchema = new Schema({
 //     term: String,
 //     sessions: [ { type: Schema.Types.ObjectId, ref: Session } ]
@@ -26,6 +32,13 @@ var CourseSchema = new Schema({
     subject: String,
     courseNum: Number,
     longTitle: String,
+    creditsMin: Number,
+    creditsMax: Number,
+    restrictions: [ { type: RestrictionSchema } ],
+    prereqs: String,
+    coreqs: [ String ],
+    mutualExclusions: [ String ],
+    distribution: String
     // terms: [ TermSchema ],
 });
 

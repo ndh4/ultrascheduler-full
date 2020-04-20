@@ -28,6 +28,38 @@ def convert_term(number):
         readable = "Summer " + number[:4]
     return readable
 
+def convert_prereqs(prereq_str):
+    # If empty, return empty list
+    if (len(prereq_str) < 1):
+        return []
+
+    # First divide by AND
+    if (prereq_str.find(" AND ")):
+        prereq_sets = prereq_str.split(" AND ")
+    else:
+        prereq_sets = [prereq_str]
+    
+    all_preqs = []
+    
+    for prereq_set in prereq_sets:
+        possible_courses = prereq_set.split(" OR ")
+        # Strip out "(" or ")"
+        new_set = []
+        for possible_course in possible_courses:
+            new_set.append(possible_course.replace("(", "").replace(")", ""))
+        all_preqs.append(new_set)
+    
+    return all_preqs
+
+def convert_distribution(distribution_str):
+    if (distribution_str == "GRP1"):
+        return "Distribution I"
+    elif (distribution_str == "GRP2"):
+        return "Distribution II"
+    elif (distribution_str == "GRP3"):
+        return "Distribution III"
+    # Sum ting wong
+    return ""
 
 def parse_file(file, current_data):
     # file = open(filename, "r").read()
@@ -99,6 +131,14 @@ def parse_file(file, current_data):
         xlist waitlisted
         xlist max waitlisted
         '''
+        # Dist fetch
+        dist_node = course.find("dists")
+        if (dist_node):
+            course_info["distribution"] = convert_distribution(dist_node.find("dist").get("code"))
+        else:
+            # Not part of a distribution
+            course_info["distribution"] = ""
+        
         # Credit fetch
         course_info["credits_low"] = course.find("credits").get("low")
         try:
@@ -121,20 +161,22 @@ def parse_file(file, current_data):
 
                     # Create new restriction object
                     restrictions_set = {
-                        "set_type": restriction_node.get("type"),
-                        "set_setting": restriction_node.get("ind"), # I = inclusive, E = exclusive
-                        "set_params": []
+                        "type": restriction_node.get("type"),
+                        "setting": restriction_node.get("ind"), # I = inclusive, E = exclusive
+                        "params": []
                     }
                 else:
                     # We just have to get the text
                     restriction_param = restriction_node.text
-                    restrictions_set["set_params"].append(restriction_param)
+                    restrictions_set["params"].append(restriction_param)
             # Add last one to set
             all_sets.append(restrictions_set)
             course_info["restrictions"] = all_sets
 
         # Course restrictions (prereqs, coreqs)
         try:
+            # course_info["prereqs"] = convert_prereqs(course.find("preq").text)
+            # for now we will just pass the whole string
             course_info["prereqs"] = course.find("preq").text
             # Example: (BIOC 301 OR BIOC 341 OR BIOC 344) AND (MATH 102 OR MATH 106)
             # so we need to parse this in a function
@@ -201,10 +243,10 @@ def aggregate_parsed_files(file_names):
 def main():
     print("start")
     output_dir = "./python_scripts/"
-    output_loc = os.path.join(output_dir, "output7.json") 
+    output_loc = os.path.join(output_dir, "output8.json") 
     terms = ["202110"]
     # terms = ["201810", "201820", "201910", "201920", "202010", "202020", "202110"]
-    url = "https://courses.rice.edu/admweb/!swkscat.cat?format=XML&p_action=COURSE&p_term="
+    # url = "https://courses.rice.edu/admweb/!swkscat.cat?format=XML&p_action=COURSE&p_term="
     # url = "https://courses.rice.edu/courses/!SWKSCAT.cat?p_action=QUERY&p_term=202110&format=XML"
     # Initialize file
     with open(output_loc, "w+") as output_file:
@@ -212,19 +254,19 @@ def main():
 
     for term in terms:
         print(term)
-        term_url = url + term
-        courses = requests.get(term_url)
+        # term_url = url + term
+        # courses = requests.get(term_url)
         print("Made request")
-        xml_filename = datetime.date.today()
-        with open(output_dir + str(xml_filename) + ".xml", mode="w+") as fp:
+        # xml_filename = datetime.date.today()
+        # with open(output_dir + str(xml_filename) + ".xml", mode="w+") as fp:
         # with tempfile.TemporaryFile(mode='r+') as fp:
-        # with open(output_dir + "courses.xml", "r") as fp:
+        with open(output_dir + "Holy Grail 2020-04-18.xml", "r") as fp:
             print("Writing to tempfile")
-            fp.write(courses.text)
+            # fp.write(courses.text)
             # wait for write
-            fp.flush()
+            # fp.flush()
             # reset position to start
-            fp.seek(0)
+            # fp.seek(0)
 
             print("Finishing writing to tempfile")
 

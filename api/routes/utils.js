@@ -2,7 +2,7 @@ const Course = require("../models/coursesModel").course;
 const Instructor = require("../models/instructorsModel").instructor;
 const Session = require("../models/coursesModel").session;
 
-var BIGJSON = require("../python_scripts/Holy Grail 2020-04-18.json");
+var BIGJSON = require("../python_scripts/output8.json");
 
 var jsonToSchema = async (jsonObj) => {
     // https://stackoverflow.com/questions/40102372/find-one-or-create-with-mongoose 
@@ -11,6 +11,7 @@ var jsonToSchema = async (jsonObj) => {
     process.send("Started task!");
     // Iterate through each course code in the json
     let sessionBulkUpdates = [];
+    let courseBulkUpdates = [];
     for (let courseCode in jsonObj) {
             // create course object for this key
             // inside each course code, we want to extract each term
@@ -38,6 +39,56 @@ var jsonToSchema = async (jsonObj) => {
                 } catch {
                     includedSessions = [];
                 }
+            }
+
+            // Sync course object using first session object
+            let firstSession = jsonObj[courseCode]["Fall 2020"][0];
+
+            // // Find corresponding coreqs
+            // let coreqRefs = [];
+            // for (let coreqCode of firstSession["coreqs"]) {
+            //     // Split into subject, coursenum
+            //     let { coreqSubj, coreqNum } = coreqCode.split(" ");
+            //     let coreqCourse = await Course.findOne({ subject: coreqSubj, courseNum: coreqNum });
+            //     coreqRefs.push(coreqCourse._id);
+            // }
+
+            let filter = { subject: subject, courseNum: courseNum };
+
+            let courseSingleUpdate = {
+                // Honestly add the name here too
+                "creditsMin": firstSession["credits_low"],
+                "creditsMax": firstSession["credits_high"],
+                "restrictions": firstSession["restrictions"],
+                "prereqs": firstSession["prereqs"],
+                "coreqs": firstSession["coreqs"],
+                "mutualExclusions": firstSession["mutual_exclusives"],
+                "distribution": firstSession["distribution"]
+            }
+
+            // Create updator document
+            let courseUpdator = {
+                updateOne: {
+                    filter: filter,
+                    update: { $set: courseSingleUpdate },
+                    upsert: false
+                }
+            }
+
+            courseBulkUpdates.push(courseUpdator);
+
+            if (courseBulkUpdates.length > 100) {
+                let copy = courseBulkUpdates.slice();
+                Course.bulkWrite(copy, (err, res) => {
+                    if (err) {
+                        console.log(err);
+                        process.exit();
+                    }
+                    process.send("Num courses attempted: " + copy.length);
+                    process.send("Num courses finished: " + res.matchedCount);
+                });
+
+                courseBulkUpdates = [];
             }
 
             // Retrieve ID from course object
@@ -158,10 +209,16 @@ var jsonToSchema = async (jsonObj) => {
     }
 
     // Finish saving prior to completion
-    let copy = sessionBulkUpdates.slice();
-    Session.bulkWrite(copy, (err, res) => {
-        process.send("Num attempted: " + copy.length);
+    let sessionCopy = sessionBulkUpdates.slice();
+    Session.bulkWrite(sessionCopy, (err, res) => {
+        process.send("Num attempted: " + sessionCopy.length);
         process.send("Num finished: " + res.matchedCount);
+    });
+
+    let courseCopy = courseBulkUpdates.slice();
+    Course.bulkWrite(courseCopy, (err, res) => {
+        process.send("Num courses attempted: " + courseCopy.length);
+        process.send("Num courses finished: " + res.modifiedCount);
     });
 
     // Stop
