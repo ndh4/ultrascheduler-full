@@ -22,44 +22,45 @@ const populateSchedule = async (schedule) => {
 	let courses = [];
 	// Get all sessionIDs 
 	for (let sparseCourseObj of schedule.courses) {
-		let { sessionID, courseID, visible } = sparseCourseObj;
+		let { sessionID, visible } = sparseCourseObj;
 		let returnObject = {
 			sessionID,
-			courseID,
 			visible,
 			term: schedule.term,
 		};
 
+		let queriedSession = await Session.findById(sessionID).populate({ path: "instructors" }).populate({ path: "course" });
+
 		// Query specific course
-		let queriedCourse = await Course.findById(courseID);
-		returnObject.courseName = queriedCourse.subject + " " + queriedCourse.courseNum;
-		returnObject.longTitle = queriedCourse.longTitle;
+		// let queriedCourse = await Course.findById(courseID);
+		// returnObject.courseName = queriedCourse.subject + " " + queriedCourse.courseNum;
+		// returnObject.longTitle = queriedCourse.longTitle;
 
-		// Query specific session
-		let queriedSession = await (Session.findById(sessionID).populate({ path: "instructors" }));
-		returnObject.crn = queriedSession.crn;
-		returnObject.instructors = queriedSession.instructors;
+		// // Query specific session
+		// let queriedSession = await (Session.findById(sessionID).populate({ path: "instructors" }));
+		// returnObject.crn = queriedSession.crn;
+		// returnObject.instructors = queriedSession.instructors;
 
-		// Create class & lab objects
-		returnObject.class = queriedSession.class;
-		returnObject.lab = queriedSession.lab;
+		// // Create class & lab objects
+		// returnObject.class = queriedSession.class;
+		// returnObject.lab = queriedSession.lab;
 
-		if (queriedSession.class.days.length > 0) {
-			// Has class
-			returnObject.class["hasClass"] = true;
-		} else {
-			returnObject.class["hasClass"] = false;
-		}
+		// if (queriedSession.class.days.length > 0) {
+		// 	// Has class
+		// 	returnObject.class["hasClass"] = true;
+		// } else {
+		// 	returnObject.class["hasClass"] = false;
+		// }
 
-		if (queriedSession.lab.days.length > 0) {
-			// Has lab
-			returnObject.lab["hasLab"] = true;
-		} else {
-			returnObject.lab["hasLab"] = false;
-		}
+		// if (queriedSession.lab.days.length > 0) {
+		// 	// Has lab
+		// 	returnObject.lab["hasLab"] = true;
+		// } else {
+		// 	returnObject.lab["hasLab"] = false;
+		// }
 
 		// courses.push(returnObject);
-		courses.push({ session: queriedSession, detail: queriedCourse, visible: sparseCourseObj.visible })
+		courses.push({ session: queriedSession, detail: queriedSession.course, visible: sparseCourseObj.visible })
 	}
 	return courses;
 }
