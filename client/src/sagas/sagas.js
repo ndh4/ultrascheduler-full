@@ -1,6 +1,6 @@
 import { all, call, put, takeEvery, takeLatest, take, select, fork } from 'redux-saga/effects'
 import { push } from 'connected-react-router'
-import { LOGIN_SUCCESS, LOGIN_FAILURE, LOGIN_REQUESTED, GET_SERVICE, SAVE_SERVICE } from '../actions/AuthActions';
+import { LOGIN_SUCCESS, LOGIN_FAILURE, LOGIN_REQUESTED, GET_SERVICE, SAVE_SERVICE, SET_RECENT_UPDATE } from '../actions/AuthActions';
 import { ADD_COURSE_REQUEST, REMOVE_COURSE_REQUEST, TOGGLE_COURSE_REQUEST, SET_SCHEDULE } from '../actions/CoursesActions';
 import { history } from '../configureStore';
 import { sessionToDraftCourse } from '../utils/SessionUtils';
@@ -31,7 +31,7 @@ const sendTicket = (ticket) => {
         }
     }).then(response => {
         return response.json().then(body => {
-            return body.token;
+            return { token: body.token, user: body.user };
         })
     })
 }
@@ -44,7 +44,8 @@ const verifyToken = (token) => {
         }
     }).then(response => {
         return response.json().then(body => {
-            return body.success;
+            return { verificationStatus: body.success, user: body.user };
+            // return body.success;
         })
     })
 }
@@ -160,20 +161,25 @@ function* authenticateRequest(action) {
         }
 
         // Send ticket to backend
-        let token;
+        let success;
         try {
-            token = yield call(sendTicket, ticket);
-            // Save token to config
-            config.token = token;
+            success = yield call(sendTicket, ticket);
         } catch (e) {
             yield call(history.push, "/error");
             yield put({ type: LOGIN_FAILURE, message: e.message });
         }
 
-        yield put({ type: LOGIN_SUCCESS });
+        // Extract from success
+        let { token, user } = success;
+
+        // Save token to config
+        config.token = token;
 
         // Set token in local storage
         localStorage.setItem('token', token);
+
+        yield put({ type: LOGIN_SUCCESS });
+        yield put({ type: SET_RECENT_UPDATE, recentUpdate: user.recentUpdate });
 
         // Get current term
         // For now we just have one so we'll hardcode this
@@ -207,7 +213,7 @@ function* verifyRequest(action) {
         let token = yield localStorage.getItem('token');
 
         // Send token to backend for verification
-        let verificationStatus = yield call(verifyToken, token);
+        let { verificationStatus, user } = yield call(verifyToken, token);
 
         if (verificationStatus) {
             // Store token in config
@@ -215,6 +221,7 @@ function* verifyRequest(action) {
 
             // Set to logged in
             yield put({ type: LOGIN_SUCCESS });
+            yield put({ type: SET_RECENT_UPDATE, recentUpdate: user.recentUpdate });
 
             // Get current term
             // For now we just have one so we'll hardcode this

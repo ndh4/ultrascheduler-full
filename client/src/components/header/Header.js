@@ -47,7 +47,7 @@ const styles = {
         marginLeft: "2vw", 
         width: "5%", 
         height: "5%" 
-    }
+    },
 }
 
 export default Header;

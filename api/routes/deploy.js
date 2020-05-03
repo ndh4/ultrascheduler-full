@@ -10,9 +10,9 @@ router.get('/service', function(req, res, next) {
     res.send(SERVICE_URL);
 });
 
-// router.put('/pushRecentUpdate', async (req, res, next) => {
-// 	await User.update({}, { $set: { recentUpdate: false } }, { multi: true });
-// 	res.sendStatus(200);
-// })
+router.put('/pushRecentUpdate', async (req, res, next) => {
+	await User.update({}, { $set: { recentUpdate: true } }, { multi: true });
+	res.sendStatus(200);
+})
 
 module.exports = router;

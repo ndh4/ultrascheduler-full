@@ -12,6 +12,9 @@ export const VERIFY_REQUEST_FAILED = "VERIFY_REQUEST_FAILED";
 export const GET_SERVICE = "GET_SERVICE";
 export const SAVE_SERVICE = "SAVE_SERVICE";
 
+export const SET_RECENT_UPDATE = "SET_RECENT_UPDATE";
+export const SEEN_RECENT_UPDATE = "SEEN_RECENT_UPDATE";
+
 export const getService = () => {
     return {
         type: GET_SERVICE
@@ -33,5 +36,11 @@ export const authenticateRequest = () => {
 export const verifyRequest = () => {
     return ({
         type: VERIFY_REQUESTED
+    });
+}
+
+export const seenRecentUpdate = () => {
+    return ({
+        type: SEEN_RECENT_UPDATE
     });
 }

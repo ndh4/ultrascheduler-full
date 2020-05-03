@@ -4,11 +4,12 @@ import CourseCalendar from "../calendar/Calendar";
 import ClassSelector from "../draftview/ClassSelector";
 import CourseSearch from "../search/CourseSearch";
 import config from '../../config';
+import { connect } from 'react-redux';
 
-const Main = () => {
+const Main = ({ recentUpdate }) => {
     const [depts, setDepts] = useState([]);
     const fetchDepts = async () => {
-        let response = await fetch(config.backendURL + "/courses/getAllSubjects");
+        let response = await fetch(config.backendURL + "/courses/getAllSubjects?term=202030");
         let result = await response.json();
         return result;
     }
@@ -20,6 +21,7 @@ const Main = () => {
             })
         }, []
     );
+
     return (
         <div className="App" style={{ display: "inline", color: "#272D2D" }}>
 			<Header />
@@ -38,4 +40,11 @@ const Main = () => {
     )
 }
 
-export default Main;
+export default connect(
+    (state) => ({
+        recentUpdate: state.auth.recentUpdate
+    }),
+    (dispatch) => ({
+
+    })
+)(Main);

@@ -2,7 +2,7 @@ const Course = require("../models/coursesModel").course;
 const Instructor = require("../models/instructorsModel").instructor;
 const Session = require("../models/coursesModel").session;
 
-var BIGJSON = require("../python_scripts/output10.json");
+var BIGJSON = require("../python_scripts/output11.json");
 
 const splitCourseCode = (courseCode) => {
     let courseArr = courseCode.split(" ");
@@ -101,13 +101,13 @@ var jsonToSchema = async (jsonObj) => {
             }
 
             // TODO: Create crosslisted
-            let crosslistCourses = [];
-            for (let crosslistCourseCRN of session["crosslists"]) {
-                // Find corresponding course
-                let crosslistSession = await Session.findOne({ crn: crosslistCourseCRN, term: session.term });
-                let crosslistCourseID = crosslistSession.course;
-                crosslistCourses.push(crosslistCourseID);
-            }
+            // let crosslistCourses = [];
+            // for (let crosslistCourseCRN of session["crosslists"]) {
+            //     // Find corresponding course
+            //     let crosslistSession = await Session.findOne({ crn: crosslistCourseCRN, term: session.term });
+            //     let crosslistCourseID = crosslistSession.course;
+            //     crosslistCourses.push(crosslistCourseID);
+            // }
 
             // Create update document
             let sessionSingleUpdate = {
@@ -116,7 +116,8 @@ var jsonToSchema = async (jsonObj) => {
                 "course": courseObject._id,
                 "class": classObject,
                 "lab": labObject,
-                "crosslistCourses": crosslistCourses,
+                "crosslistCourses": [],
+                // "crosslistCourses": crosslistCourses,
                 "instructors": instructorRefs,
                 "enrollment": session["cur_enroll"],
                 "maxEnrollment": session["max_enroll"],

@@ -27,7 +27,6 @@ const populateSchedule = async (schedule) => {
 
 		courses.push({ session: queriedSession, detail: queriedSession.course, visible: draftSession.visible, term: schedule.term })
 	}
-	console.log(courses);
 	return courses;
 }
 
@@ -85,7 +84,6 @@ router.post("/addCourse", async (req, res, next) => {
 
 	// Create update payload (which is just a new course)
 	let draftSessionObject = { session: req.body.sessionID, visible: true }
-	console.log(draftSessionObject);
 
 	let update = { $push: { draftSessions: draftSessionObject } };
 

@@ -3,7 +3,8 @@ import * as ACTIONS from "../actions/CoursesActions"
 const defaultCoursesReducerState = {
 		draftCourses: [],
                 draftCoursesLoaded: false,
-                term: "202110"
+                term: "202030",
+                // term: "202110"
 }
 
 const CoursesReducer = (state=defaultCoursesReducerState, action) => {

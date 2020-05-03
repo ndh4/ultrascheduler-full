@@ -49,13 +49,13 @@ router.get('/verify', (req, res, next) => {
     // Get token from header
     let token = req.get('X-Token');
 
-    console.log(token);
-
     return jwt.verify(token, config.secret, async (err, decoded) => {
         if (err) {
             res.json({ success: false, message: "Nope." });
         } else {
-            res.json({ success: true, message: "Enter." });
+            // Get user object
+            let user = await User.findById(decoded.id);
+            res.json({ success: true, message: "Enter.", user: user });
         }
         return;
     })
@@ -105,7 +105,7 @@ router.get('/login', function(req, res, next) {
                         }
                         // Check if user has a token; if not, create for them
                         getOrCreateToken(user).then(token => {
-                            res.json({ token });
+                            res.json({ token, user });
                         })
                     });
                 } else if (serviceResponse.authenticationFailure) {
