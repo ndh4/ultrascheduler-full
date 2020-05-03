@@ -1,6 +1,6 @@
-import { all, call, put, takeEvery, takeLatest, take, select, fork } from 'redux-saga/effects'
+import { all, call, put, takeLeading, takeLatest, take, select, fork } from 'redux-saga/effects'
 import { push } from 'connected-react-router'
-import { LOGIN_SUCCESS, LOGIN_FAILURE, LOGIN_REQUESTED, GET_SERVICE, SAVE_SERVICE, SET_RECENT_UPDATE } from '../actions/AuthActions';
+import { LOGIN_SUCCESS, LOGIN_FAILURE, LOGIN_REQUESTED, GET_SERVICE, SAVE_SERVICE, SET_RECENT_UPDATE, SEEN_RECENT_UPDATE_SUCCESS, SEEN_RECENT_UPDATE_REQUEST } from '../actions/AuthActions';
 import { ADD_COURSE_REQUEST, REMOVE_COURSE_REQUEST, TOGGLE_COURSE_REQUEST, SET_SCHEDULE } from '../actions/CoursesActions';
 import { history } from '../configureStore';
 import { sessionToDraftCourse } from '../utils/SessionUtils';
@@ -120,6 +120,24 @@ const fetchSchedule = (term) => {
             return body;
         })
     })
+}
+
+const seenRecentUpdate = ({}) => {
+    let body = {
+        recentUpdate: false
+    };
+    return fetch("/api/users/update", {
+        method: "PUT",
+        body: JSON.stringify(body),
+        headers: {
+            'Authorization': 'Bearer ' + config.token,
+            'Content-Type': "application/json"
+        },
+    }).then(response => {
+        return;
+    }).catch(error => {
+        console.error(error);
+    });
 }
 
 function* getService(action) {
@@ -300,6 +318,16 @@ function* toggleCourseRequest(action) {
     }
 }
 
+function* seenRecentUpdateRequest(action) {
+    try {
+        yield call(seenRecentUpdate, {});
+
+        yield put({ type: SEEN_RECENT_UPDATE_SUCCESS })
+    } catch(e) {
+        yield put({ type: "SEEN_RECENT_UPDATE_FAILED", message: e.message })
+    }
+}
+
 /*
   Alternatively you may use takeLatest.
 
@@ -335,6 +363,10 @@ function* toggleCourseWatcher() {
     yield takeLatest(TOGGLE_COURSE_REQUEST, toggleCourseRequest);
 }
 
+function* seenRecentUpdateWatcher() {
+    yield takeLeading(SEEN_RECENT_UPDATE_REQUEST, seenRecentUpdateRequest);
+}
+
 export default function* rootSaga() {
     yield all([
         serviceWatcher(),
@@ -343,6 +375,7 @@ export default function* rootSaga() {
         verifyWatcher(),
         addCourseWatcher(),
         removeCourseWatcher(),
-        toggleCourseWatcher()
+        toggleCourseWatcher(),
+        seenRecentUpdateWatcher()
     ])
 };

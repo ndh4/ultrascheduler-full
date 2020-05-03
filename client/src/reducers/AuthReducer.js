@@ -22,7 +22,7 @@ const AuthReducer = (state=defaultAuthReducerState, action) => {
             case ACTIONS.SET_RECENT_UPDATE:
                 // Set recent update based on received state
                 return {...state, recentUpdate: action.recentUpdate }
-            case ACTIONS.SEEN_RECENT_UPDATE:
+            case ACTIONS.SEEN_RECENT_UPDATE_SUCCESS:
                 // After a user has acknowledged the update, we don't want to continue showing it to them
                 return {...state, recentUpdate: false }
             default:

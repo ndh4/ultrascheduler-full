@@ -5,8 +5,26 @@ import ClassSelector from "../draftview/ClassSelector";
 import CourseSearch from "../search/CourseSearch";
 import config from '../../config';
 import { connect } from 'react-redux';
+import { useToasts } from 'react-toast-notifications';
+import { seenRecentUpdateRequest } from '../../actions/AuthActions';
 
-const Main = ({ recentUpdate }) => {
+// Toast for notifications
+
+const Main = ({ recentUpdate, seenRecentUpdateRequest }) => {
+    // Add toast
+    let { addToast } = useToasts();
+
+    useEffect(
+        () => {
+            if (recentUpdate) {
+                let message = "We've recently updated our systems to optimize your user experience. \n \
+                This required the removal of all current course data. However, courses will now be updated with \
+                the latest information every hour.";
+                addToast(message, { appearance: 'info', onDismiss: () => seenRecentUpdateRequest() });
+            }
+        }, []
+    )
+
     const [depts, setDepts] = useState([]);
     const fetchDepts = async () => {
         let response = await fetch(config.backendURL + "/courses/getAllSubjects?term=202030");
@@ -45,6 +63,6 @@ export default connect(
         recentUpdate: state.auth.recentUpdate
     }),
     (dispatch) => ({
-
+        seenRecentUpdateRequest: () => dispatch(seenRecentUpdateRequest())
     })
 )(Main);
