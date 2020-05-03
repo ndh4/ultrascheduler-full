@@ -45,7 +45,6 @@ const verifyToken = (token) => {
     }).then(response => {
         return response.json().then(body => {
             return { verificationStatus: body.success, user: body.user };
-            // return body.success;
         })
     })
 }

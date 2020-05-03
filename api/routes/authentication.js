@@ -51,7 +51,7 @@ router.get('/verify', (req, res, next) => {
 
     return jwt.verify(token, config.secret, async (err, decoded) => {
         if (err) {
-            res.json({ success: false, message: "Nope." });
+            res.json({ success: false, message: "Nope.", user: {} });
         } else {
             // Get user object
             let user = await User.findById(decoded.id);
