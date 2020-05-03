@@ -1,6 +1,7 @@
 const User = require("../models/usersModel").user;
 const Course = require("../models/coursesModel").course;
 const Session = require("../models/coursesModel").session;
+const Schedule = require("../models/schedulesModel").schedule;
 
 var express = require('express');
 var router = express.Router();
@@ -21,48 +22,28 @@ const getUser = async (req) => {
 const populateSchedule = async (schedule) => {
 	let courses = [];
 	// Get all sessionIDs 
-	for (let sparseCourseObj of schedule.courses) {
-		let { sessionID, visible } = sparseCourseObj;
-		let returnObject = {
-			sessionID,
-			visible,
-			term: schedule.term,
-		};
+	for (let draftSession of schedule.draftSessions) {
+		let { session, visible } = draftSession;
 
 		let queriedSession = await Session.findById(sessionID).populate({ path: "instructors" }).populate({ path: "course" });
 
-		// Query specific course
-		// let queriedCourse = await Course.findById(courseID);
-		// returnObject.courseName = queriedCourse.subject + " " + queriedCourse.courseNum;
-		// returnObject.longTitle = queriedCourse.longTitle;
-
-		// // Query specific session
-		// let queriedSession = await (Session.findById(sessionID).populate({ path: "instructors" }));
-		// returnObject.crn = queriedSession.crn;
-		// returnObject.instructors = queriedSession.instructors;
-
-		// // Create class & lab objects
-		// returnObject.class = queriedSession.class;
-		// returnObject.lab = queriedSession.lab;
-
-		// if (queriedSession.class.days.length > 0) {
-		// 	// Has class
-		// 	returnObject.class["hasClass"] = true;
-		// } else {
-		// 	returnObject.class["hasClass"] = false;
-		// }
-
-		// if (queriedSession.lab.days.length > 0) {
-		// 	// Has lab
-		// 	returnObject.lab["hasLab"] = true;
-		// } else {
-		// 	returnObject.lab["hasLab"] = false;
-		// }
-
-		// courses.push(returnObject);
-		courses.push({ session: queriedSession, detail: queriedSession.course, visible: sparseCourseObj.visible })
+		courses.push({ session: queriedSession, detail: queriedSession.course, visible: draftSession.visible, term: schedule.term })
 	}
 	return courses;
+}
+
+const createEmptySchedule = (user, queryTerm) => {
+	// If no schedule found, create empty one
+	let newScheduleInfo = {
+		user: user._id,
+		term: queryTerm,
+		draftSessions: []
+	};
+
+	// Create new schedule object
+	Schedule.create(newScheduleInfo);
+
+	return;
 }
 
 /* GET users listing. */
@@ -75,27 +56,24 @@ router.get('/schedule', async (req, res, next) => {
 
 	// Send their schedule(s)
 	if (queryTerm == "") {
-		// Return all
-		res.send(400); // No term specified
+		res.sendStatus(400); // No term specified
 		return;
 	} else {
-		for (let schedule of user.schedules) {
-			if (schedule.term == queryTerm) {
-				// Populate schedule
-				let populatedSchedule = await populateSchedule(schedule);
-				res.json(populatedSchedule);
-				return;
-			}
+		// Search in schedule db for their schedules
+		let schedule = await Schedule.findOne({ user: user._id, term: queryTerm });
+
+		if (schedule) {
+			// Populate schedule
+			let populatedSchedule = await populateSchedule(schedule);
+			res.json(populatedSchedule);
+			return;
+		} else {
+			createEmptySchedule(user, queryTerm);
+
+			// Speed things up, just send back empty array since that is all the sessions array has
+			res.json([]);
+			return;
 		}
-		// If no schedule found, create empty one
-		let termSchedule = {
-			term: queryTerm,
-			courses: []
-		};
-		user.schedules.push(termSchedule);
-		user.save();
-		res.json(termSchedule.courses);
-		return;
 	}
 });
 
@@ -103,96 +81,60 @@ router.post("/addCourse", async (req, res, next) => {
 	// Get user from request
 	let user = await getUser(req);
 
-	// Get or create user schedule corresponding to desired term
-	let existingScheduleIdx = -1;
-	for (let idx in user.schedules) {
-		let schedule = user.schedules[idx];
-		if (schedule.term == req.body.term) {
-			existingScheduleIdx = idx;
-		}
+	// Filter for update operation
+	let filter = { user: user, term: req.body.term };
+
+	// Create update payload (which is just a new course)
+	let draftSessionObject = { session: req.body.sessionID, visible: true }
+	let update = { $push: { draftSessions: draftSessionObject } };
+
+	// If schedule exists, add course to its sessions; otherwise, create schedule then add course
+	try {
+		Schedule.findOneAndUpdate(filter, update, { upsert: true, new: true });
+		res.sendStatus(200);
+	} catch {
+		res.sendStatus(500);
 	}
-
-	if (existingScheduleIdx > -1) {
-		// Add to existing schedule
-		user.schedules[existingScheduleIdx].courses.push({ courseID: req.body.courseID, sessionID: req.body.sessionID, visible: true });
-	} else {
-		// Create new schedule object
-		user.schedules.push({
-			term: req.body.term,
-			courses: [ { courseID: req.body.courseID, sessionID: req.body.sessionID, visible: true } ]
-		});
-	}
-
-	// Save the updated schedule
-	user.save();
-
-	res.send(200);
+	return;
 })
 
 router.delete("/removeCourse", async (req, res, next) => {
 	// Get user from request
 	let user = await getUser(req);
 
-	console.log(req.body);
+	// Filter for update operation
+	let filter = { user: user, term: req.body.term };
 
-	// Get user schedule corresponding to desired term (or return error)
-	let existingScheduleIdx = -1;
-	for (let idx in user.schedules) {
-		let schedule = user.schedules[idx];
-		if (schedule.term == req.body.term) {
-			existingScheduleIdx = idx;
-		}
+	// Create update payload (which is just a new course)
+	let update = { $pull: { draftSessions: { session: req.body.sessionID } } };
+
+	// If schedule exists, remove course from its sessions; otherwise, do nothing (no sense in creating a schedule here)
+	try {
+		Schedule.findOneAndUpdate(filter, update, { upsert: false, new: true });
+		res.sendStatus(200);
+	} catch {
+		res.sendStatus(500);
 	}
-
-	if (existingScheduleIdx > -1) {
-		// Remove from existing schedule
-		let updatedSchedule = user.schedules[existingScheduleIdx].courses.filter(courseObj => courseObj.sessionID != req.body.sessionID);
-		user.schedules[existingScheduleIdx].courses = updatedSchedule;
-	} else {
-		// No such term to remove from
-		res.send(404);
-		return;
-	}
-
-	// Save the updated schedule
-	user.save();
-
-	res.send(200);
-	return;
 })
 
 router.put("/toggleCourse", async (req, res, next) => {
 	// Get user from request
 	let user = await getUser(req);
 
-	// Get user schedule corresponding to desired term (or return error)
-	let existingScheduleIdx = -1;
-	for (let idx in user.schedules) {
-		let schedule = user.schedules[idx];
-		if (schedule.term == req.body.term) {
-			existingScheduleIdx = idx;
-		}
+	// Filter for update operation
+	let filter = { user: user, term: req.body.term };
+
+	// Create update payload (which is just a new course)
+	let update = { $bit: { "draftSessions.$[elem].visible": { xor: NumberInt(1) } } };
+
+	// If schedule exists, toggle course in its sessions; otherwise, do nothing (no sense in creating a schedule here)
+	try {
+		Schedule.findOneAndUpdate(filter, update, { upsert: false, new: true });
+		res.sendStatus(200);
+	} catch {
+		res.sendStatus(500);
 	}
-
-	if (existingScheduleIdx > -1) {
-		// Toggle from existing schedule
-		let updatedSchedule = user.schedules[existingScheduleIdx].courses.map(courseObj => {
-			if (courseObj.sessionID == req.body.sessionID) {
-				// Toggle visibility
-				courseObj.visible = !courseObj.visible;
-			}
-			return courseObj;
-		});
-		user.schedules[existingScheduleIdx].courses = updatedSchedule;
-	} else {
-		// No such term to toggle in
-		res.send(404);
-	}
-
-	// Save the updated schedule
-	user.save();
-
-	res.send(200);
+	return;
 })
 
 router.get('/info', async (req, res, next) => {

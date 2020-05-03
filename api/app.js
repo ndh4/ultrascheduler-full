@@ -13,6 +13,7 @@ var coursesRouter = require('./routes/courses');
 var instructorsRouter = require('./routes/instructors');
 var authenticationRouter = require('./routes/authentication');
 var deployRouter = require('./routes/deploy');
+var syncRouter = require('./routes/sync');
 
 var app = express();
 
@@ -29,6 +30,7 @@ app.use('/api/courses', coursesRouter);
 app.use('/api/instructors', instructorsRouter);
 app.use('/api/auth', authenticationRouter);
 app.use('/api/deploy', deployRouter);
+app.use('/api/sync', syncRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
