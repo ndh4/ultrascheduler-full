@@ -213,7 +213,7 @@ router.get("/newSearchCourses", (req, res, next) => {
 	let querySubject = req.query.subject;
 
 	let sessions = Session.collection.aggregate([
-		{ $match: { term: queryTerm } },
+		{ $match: { term: parseInt(queryTerm) } },
 		{ $lookup: 
 			{
 				from: "courses",
