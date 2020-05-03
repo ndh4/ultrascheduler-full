@@ -18,4 +18,6 @@ steps:
   dir: 'client'
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy", "client/client.yaml", "-v", "$_GAE_VERSION"]
+- name: "gcr.io/cloud-builders/gcloud"
+  args: ["app", "services", "client/client.yaml", "set-traffic", "--splits", "$_GAE_TRAFFIC"]
 timeout: "1600s"
