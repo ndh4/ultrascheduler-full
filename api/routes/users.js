@@ -168,6 +168,14 @@ router.put('/logout', async (req, res, next) => {
 	res.status(200);
 });
 
+router.put('/update', async (req, res, next) => {
+	let user = await getUser(req);
+
+	await User.updateOne({ _id: user._id }, req.body, (err, updated) => {
+		res.sendStatus(200);
+	})
+})
+
 router.delete('/deleteUser', (req, res, next) => {
 	// Get id from JWT
 	let {id, netid} = req.user;
