@@ -5,6 +5,16 @@ const Session = require("../models/coursesModel").session;
 var express = require("express");
 var router = express.Router();
 
+const sortSubjects = (subjects) => {
+	return subjects.sort((a, b) => {
+		if (a > b) {
+			return 1;
+		} else {
+			return -1;
+		}
+	})
+}
+
 router.get("/getSingleCourse", (req, res, next) => {
 	let querySubject = req.query.subject;
 	let queryCourseCode = req.query.code;
@@ -36,11 +46,36 @@ router.get("/getCoursesBySubject", (req, res, next) => {
  * Return unique list of all subjects (COMP, APPL, etc)
  */
 router.get("/getAllSubjects", (req, res, next) => {
-	// Gets all unique values of the subject field
-	Course.collection.distinct("subject")
-	.then((uniqueSubjects) => {
-		// Return the array
-		res.json(uniqueSubjects);
+	let queryTerm = req.query.term;
+
+	if (queryTerm == "") {
+		res.sendStatus(400);
+		return;
+	}
+
+	let subjects = Session.collection.aggregate([
+		{ $match: { "term": parseInt(queryTerm) } },
+		{
+			$lookup: {
+				from: "courses",
+				localField: "course",
+            	foreignField: "_id",
+           		as: "course"
+			}
+		},
+		{ $unwind: "$course" },
+		{
+			$group: {
+				_id: "$course.subject"
+			}
+		}
+	]);
+
+	subjects.toArray().then(result => {
+		// Concat together
+		result = result.map(obj => obj._id);
+		result = sortSubjects(result);
+		res.json(result);
 	})
 });
 
@@ -213,7 +248,7 @@ router.get("/newSearchCourses", (req, res, next) => {
 	let querySubject = req.query.subject;
 
 	let sessions = Session.collection.aggregate([
-		{ $match: { term: queryTerm } },
+		{ $match: { term: parseInt(queryTerm) } },
 		{ $lookup: 
 			{
 				from: "courses",

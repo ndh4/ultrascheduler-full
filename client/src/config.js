@@ -1,3 +1,4 @@
 module.exports = {
-    "backendURL": "/api"
+    "backendURL": "/api",
+    "serviceURL": "https://hatch.riceapps.org/auth"
 };

@@ -3,7 +3,8 @@ import * as ACTIONS from "../actions/AuthActions"
 const defaultAuthReducerState = {
     loginRequesting: false,
     loggedIn: false,
-    service: ''
+    service: 'https://hatch.riceapps.org/auth',
+    recentUpdate: false
 }
 
 const AuthReducer = (state=defaultAuthReducerState, action) => {
@@ -18,6 +19,12 @@ const AuthReducer = (state=defaultAuthReducerState, action) => {
                 return {...state, loginRequesting: false};
             case ACTIONS.SAVE_SERVICE:
                 return {...state, service: action.service};
+            case ACTIONS.SET_RECENT_UPDATE:
+                // Set recent update based on received state
+                return {...state, recentUpdate: action.recentUpdate }
+            case ACTIONS.SEEN_RECENT_UPDATE_SUCCESS:
+                // After a user has acknowledged the update, we don't want to continue showing it to them
+                return {...state, recentUpdate: false }
             default:
                 return {...state};
         }

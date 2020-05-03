@@ -47,10 +47,13 @@ var Course = mongoose.model("courses", CourseSchema);
 var SessionSchema = new Schema({
     class: ClassSchema,
     lab: LabSchema,
+    crosslistCourses: [{ type: Schema.Types.ObjectID, ref: Course }],
     crn: Number, 
-    term: String, // such as: "202010", "202120", etc.
+    term: Number, // such as: "202010", "202120", etc.
     enrollment: Number,
     maxEnrollment: Number,
+    crossEnrollment: Number,
+    maxCrossEnrollment: Number,
     waitlisted: Number,
     maxWaitlisted: Number,
     course: {type: Schema.Types.ObjectID, ref: Course},
