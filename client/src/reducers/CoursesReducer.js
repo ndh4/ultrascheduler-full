@@ -2,7 +2,8 @@ import * as ACTIONS from "../actions/CoursesActions"
 
 const defaultCoursesReducerState = {
 		draftCourses: [],
-		draftCoursesLoaded: false,
+                draftCoursesLoaded: false,
+                term: "202110"
 }
 
 const CoursesReducer = (state=defaultCoursesReducerState, action) => {

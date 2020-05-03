@@ -93,6 +93,7 @@ const styles = {
 
 export default connect(
         (state) => ({
+            term: state.courses.term
         }),
         (dispatch) => ({
         }),

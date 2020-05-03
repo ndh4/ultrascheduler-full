@@ -177,7 +177,7 @@ function* authenticateRequest(action) {
 
         // Get current term
         // For now we just have one so we'll hardcode this
-        let term = "Fall 2020";
+        let term = state.courses.term;
 
         // Load schedule
         let schedule = yield call(fetchSchedule, term);
@@ -200,6 +200,9 @@ function* authenticateRequest(action) {
 
 function* verifyRequest(action) {
     try {
+        // Get state
+        const state = yield select();
+
         // Get token
         let token = yield localStorage.getItem('token');
 
@@ -215,7 +218,7 @@ function* verifyRequest(action) {
 
             // Get current term
             // For now we just have one so we'll hardcode this
-            let term = "Fall 2020";
+            let term = state.courses.term;
 
             // Load schedule
             let schedule = yield call(fetchSchedule, term);

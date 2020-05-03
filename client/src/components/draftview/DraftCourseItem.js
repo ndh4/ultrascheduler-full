@@ -37,12 +37,12 @@ const creditsDisplay = (creditsMin, creditsMax) => {
 }
 
 const DraftCourseItem = ({ course, onToggle, onRemove }) => {
-	const emptyCellGenerator = (count) => {
-		let cells = [];
-		for (let i = 0; i < count; i++) {
-			cells.push(<TableCell align="right"></TableCell>);
-		}
-		return cells;
+		const emptyCellGenerator = (count) => {
+			let cells = [];
+			for (let i = 0; i < count; i++) {
+				cells.push(<TableCell align="right"></TableCell>);
+			}
+			return cells;
 		}
 		const createCourseTimeCells = (courseTime, exists) => {
 				return exists ? (

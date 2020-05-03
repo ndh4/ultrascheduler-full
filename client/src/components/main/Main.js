@@ -4,7 +4,6 @@ import CourseCalendar from "../calendar/Calendar";
 import ClassSelector from "../draftview/ClassSelector";
 import CourseSearch from "../search/CourseSearch";
 import config from '../../config';
-import { CUR_TERM } from '../../constants/Defaults';
 
 const Main = () => {
     const [depts, setDepts] = useState([]);
@@ -29,7 +28,7 @@ const Main = () => {
             </div>
             <div className="Container" style={{ padding: "2%" }}>
                 <div style={{ float: "left", width: '30%' }}>
-                    <CourseSearch depts={depts} term={CUR_TERM}/>
+                    <CourseSearch depts={depts} />
                 </div>
                 <div style={{ float: "left", width: '70%' }}>
                     <CourseCalendar />
