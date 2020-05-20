@@ -1,8 +1,35 @@
-import { Course, CourseTC } from '../models';
+import { Course, CourseTC, Session, SessionTC } from '../models';
+import { toInputObjectType } from 'graphql-compose';
+
+// Create a field NOT on the mongoose model; easy way to fetch schedule for a user in one trip
+CourseTC.addFields({
+    sessions: [SessionTC],
+});
+
+CourseTC.addRelation("sessions", {
+    "resolver": () => SessionTC.getResolver('findByCourse'),
+    args: SessionTC.getInputTypeComposer(),
+    prepareArgs: {
+        _id: (source) => source._id,
+    },
+    projection: { session: 1 }
+});
+
+CourseTC.addResolver({
+    name: "findManyInSubject",
+    type: [CourseTC],
+    args: { subject: "String!", ascending: "Boolean!" },
+    resolve: async ({ source, args, context, info }) => {
+        // -(field) puts into descending order
+        let sortParam = args.ascending ? "courseNum" : "-courseNum";
+        return await Course.find({ subject: args.subject }).sort(sortParam);
+    }
+})
 
 const CourseQuery = {
     courseOne: CourseTC.getResolver('findOne'),
-    courseMany: CourseTC.getResolver('findMany')
+    courseMany: CourseTC.getResolver('findMany'),
+    courseManyInSubject: CourseTC.getResolver('findManyInSubject')
 };
 
 const CourseMutation = {

@@ -10,11 +10,14 @@ UserTC.addRelation("schedules", {
 });
 
 const UserQuery = {
-    userOne: UserTC.getResolver('findOne')
+    userOne: UserTC.getResolver('findOne'),
+    userMany: UserTC.getResolver('findMany')
 };
 
 const UserMutation = {
-    userCreateOne: UserTC.getResolver('createOne')
+    userCreateOne: UserTC.getResolver('createOne'),
+    userUpdateOne: UserTC.getResolver('updateOne'),
+    userRemoveOne: UserTC.getResolver('removeOne')
 };
 
 export { UserQuery, UserMutation };
