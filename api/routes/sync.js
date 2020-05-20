@@ -1,6 +1,6 @@
-const Course = require("../models/coursesModel").course;
-const Instructor = require("../models/instructorsModel").instructor;
-const Session = require("../models/coursesModel").session;
+const { Course } = require("../models/CourseModel");
+const { Instructor } = require("../models/InstructorModel");
+const { Session } = require("../models/SessionModel");
 
 const { fork, execFile } = require("child_process");
 

@@ -8,7 +8,7 @@ var request = require('request');
 var xmlParser = require('xml2js').parseString;
 var stripPrefix = require('xml2js').processors.stripPrefix;
 
-var User = require('../models/usersModel').user;
+var { User } = require('../models/UserModel');
 
 let config = {
     CASValidateURL: 'https://idp.rice.edu/idp/profile/cas/serviceValidate',

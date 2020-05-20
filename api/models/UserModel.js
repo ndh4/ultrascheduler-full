@@ -1,3 +1,5 @@
+import { composeWithMongoose } from 'graphql-compose-mongoose';
+
 var mongoose = require('mongoose')
     , Schema = mongoose.Schema
 
@@ -13,6 +15,5 @@ var UserSchema = new Schema({
     recentUpdate: { type: Boolean } // this field used for displaying banners/modals on version updates
 })
 
-var User = mongoose.model("users", UserSchema);
-
-exports.user = User;
+export const User = mongoose.model("users", UserSchema);
+export const UserTC = composeWithMongoose(User);
