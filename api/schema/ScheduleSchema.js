@@ -26,6 +26,22 @@ DraftSessionTC.addRelation("session", {
     projection: { session: 1 }
 });
 
+/**
+ * Custom Resolvers
+ */
+
+/**
+ * Used to find all schedules for a particular user
+ */
+ScheduleTC.addResolver({
+    name: "findManyByUser",
+    type: [ScheduleTC],
+    args: { _id: "ID!" },
+    resolve: async ({ source, args, context, info }) => {
+        return await Schedule.find({ user: args._id });
+    }
+})
+
 const ScheduleQuery = {
     scheduleOne: ScheduleTC.getResolver('findOne')
 };
