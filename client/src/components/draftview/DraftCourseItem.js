@@ -56,8 +56,26 @@ const instructorsToNames = (instructors) => {
 const TOGGLE_DRAFT_SESSION_VISIBILITY = gql`
 	mutation ToggleCourse($scheduleID: ID!, $sessionID: ID!) {
 		scheduleToggleSession(scheduleID:$scheduleID, sessionID:$sessionID) {
+			_id
 			term
 			draftSessions {
+				_id
+				session {
+					_id
+				}
+				visible
+			}
+		}
+	}
+`
+
+const REMOVE_DRAFT_SESSION = gql`
+	mutation RemoveDraftSession($scheduleID: ID!, $sessionID: ID!) {
+		scheduleRemoveSession(scheduleID:$scheduleID, sessionID:$sessionID) {
+			_id
+			term
+			draftSessions {
+				_id
 				session {
 					_id
 				}
@@ -95,9 +113,15 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, onToggle, onRem
 			TOGGLE_DRAFT_SESSION_VISIBILITY,
 			{ 
 				variables: { scheduleID: scheduleID, sessionID: session._id },
-				refetchQueries: [{ query: GET_USER_SCHEDULE }]
 			},
 		)
+
+		let [removeDraftSession, ] = useMutation(
+			REMOVE_DRAFT_SESSION,
+			{
+				variables: { scheduleID: scheduleID, sessionID: session._id }
+			}
+		);
 
 		return (
 		<TableRow key={session.crn}>
@@ -136,7 +160,7 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, onToggle, onRem
 				<TableCell align="right">{instructorsToNames(session.instructors).join(", ")}</TableCell>
 				<TableCell align="right">
 						<Tooltip title="Delete">
-								<IconButton aria-label="delete" onClick={() => onRemove(session)}>
+								<IconButton aria-label="delete" onClick={() => removeDraftSession()}>
 								<DeleteIcon />
 								</IconButton>
 						</Tooltip>

@@ -18,6 +18,7 @@ export const GET_USER_SCHEDULE = gql`
                 _id
                 term
                 draftSessions {
+                    _id
                     visible
                     session {
                         _id
