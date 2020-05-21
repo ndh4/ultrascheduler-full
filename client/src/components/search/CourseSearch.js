@@ -74,7 +74,7 @@ const CourseSearch = ({ term, depts }) => {
                 />
                 <button style={styles.button} onClick={() => handleSearchClasses()}>Search</button>
             </div>
-            <CourseList searchResults={searchResults} />
+            <CourseList department={getDept.value} searchResults={searchResults} />
         </div>
         );
 }

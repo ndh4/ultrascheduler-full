@@ -9,8 +9,42 @@ import { sessionToDraftCourse } from "../../utils/SessionUtils";
 import {addCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
 
 import moment from "moment";
+import { useQuery, gql } from "@apollo/client";
 
+const GET_DEPT_COURSES = gql`
+    query GetDeptCourses($subject: String!, $term: Float!) {
+        courseMany(filter: { subject: $subject } ) {
+            _id
+            subject
+            courseNum
+            longTitle
+            sessions(filter: { term: $term } ) {
+                crn
+                class {
+                    days
+                    startTime
+                    endTime
+                }
+                lab {
+                    days
+                    startTime
+                    endTime
+                }
+                instructors {
+                    firstName
+                    lastName
+                }
+            }
+        }
+    }
+`
+
+// These should go to utils
 const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
+
+const courseToLabel = (course) => {
+    return course.subject + " " + course.courseNum + " || " + course.longTitle;
+}
 
 /**
  * 
@@ -27,7 +61,7 @@ const instructorsToNames = (instructors) => {
 }
 
 const sessionToString = (session) => {
-    let result = [];
+    let courseResult = [];
     // Find class times
     if (session.class.days.length > 0) {
         let classTime = "Class: " + session.class.days.join("")
@@ -36,7 +70,7 @@ const sessionToString = (session) => {
         let endTime = formatTime(session.class.endTime);
 
         classTime += " " + startTime + " - " + endTime
-        result.push(<p style={{ padding: "5px" }}>{classTime}</p>);
+        courseResult.push(<p style={{ padding: "5px" }}>{classTime}</p>);
     }
     // Find lab times
     if (session.lab.days.length > 0) {
@@ -47,14 +81,14 @@ const sessionToString = (session) => {
         let endTime = formatTime(session.lab.endTime);
 
         labTime += " " + startTime + " - " + endTime
-        result.push(<p style={{ padding: "5px" }}>{labTime}</p>);
+        courseResult.push(<p style={{ padding: "5px" }}>{labTime}</p>);
     }
     // Finally find instructors
     if (session.instructors.length > 0) {
         let instructorNames = instructorsToNames(session.instructors);
-        result.push(<p style={{ padding: "5px" }}>{instructorNames.join(", ")}</p>)
+        courseResult.push(<p style={{ padding: "5px" }}>{instructorNames.join(", ")}</p>)
     }
-    return ((result.length > 0) ? result : ["No information found for this session."]);
+    return ((courseResult.length > 0) ? courseResult : ["No information found for this session."]);
 }
 
 const styles = {
@@ -64,7 +98,7 @@ const styles = {
     },
   };
 
-const SessionItem = ({res, session, draftCourses, addCourseRequest, removeCourseRequest }) => {
+const SessionItem = ({course, session, draftCourses, addCourseRequest, removeCourseRequest }) => {
     // Check if this course is in draftCourses
     let courseSelected = -1;
     for (let idx in draftCourses) {
@@ -87,7 +121,7 @@ const SessionItem = ({res, session, draftCourses, addCourseRequest, removeCourse
                 } else {
                     // Track add
                     Event("COURSE_LIST", "Add Course to Schedule: " + crnString, crnString);
-                    addCourseRequest(sessionToDraftCourse(session, res.detail, session.term));
+                    addCourseRequest(sessionToDraftCourse(session, course.detail, session.term));
                 }
             }} 
             style={{ alignItems: "left" }} 
@@ -99,10 +133,28 @@ const SessionItem = ({res, session, draftCourses, addCourseRequest, removeCourse
     );
 }
 
-const CourseList = ({ searchResults, draftCourses, addCourseRequest, removeCourseRequest }) => {
+const CourseList = ({ department, searchcourseResults, draftCourses, addCourseRequest, removeCourseRequest }) => {
     const [courseSelected, setCourseSelected] = useState([]);
 
-    if (searchResults == []) {
+    if (department == "") {
+        return (<br />)
+    }
+
+    // Department isn't empty, so we need to fetch courseResults
+    const { data, loading, error } = useQuery(
+        GET_DEPT_COURSES,
+        { variables: { subject: department, term: 202110 } }
+    );
+
+    if (loading) return (<p>Loading...</p>);
+    if (error) return (<p>Error :(</p>);
+    if (!data) return (<p>No Data...</p>);
+
+    console.log(data);
+
+    const courseResults = data.courseMany;
+
+    if (searchcourseResults == []) {
         return (<br />);
     }
 
@@ -128,20 +180,21 @@ const CourseList = ({ searchResults, draftCourses, addCourseRequest, removeCours
             component="nav"
             aria-labelledby="nested-list-subheader"
             >
-                {searchResults.map(res => {
+                {courseResults.map(course => {
+                    let label = courseToLabel(course);
                     return (
                         <div>
                             <ListItem 
-                            key={res.label} 
-                            onClick={() => (courseSelected.includes(res.label)) ? courseSelectedRemove(res.label) : courseSelectedAdd(res.label)}
+                            key={label} 
+                            onClick={() => (courseSelected.includes(label)) ? courseSelectedRemove(label) : courseSelectedAdd(label)}
                             button>
-                                {res.label}
+                                {label}
                             </ListItem>
-                            <Collapse in={(courseSelected.includes(res.label)) ? true : false} timeout="auto" unmountOnExit>
+                            <Collapse in={(courseSelected.includes(label)) ? true : false} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
-                                {res.sessions.map(session => (
+                                {course.sessions.map(session => (
                                     <SessionItem 
-                                    res={res} 
+                                    course={course} 
                                     session={session} 
                                     draftCourses={draftCourses} 
                                     addCourseRequest={addCourseRequest} 
