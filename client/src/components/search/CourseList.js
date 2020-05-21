@@ -115,18 +115,59 @@ const ADD_DRAFT_SESSION = gql`
     }
 `
 
+const QUERY_DRAFT_SESSIONS = gql`
+    query GetDraftSession($netid: String!, $term: String!) {
+        userOne(filter:{netid:"wsm3"}) {
+            schedules(filter:{term:"202110"}) {
+                _id
+                draftSessions @client {
+                    _id
+                    visible
+                    session {
+                        _id
+                    }
+                }
+            }
+        }
+    }
+`
+
+/**
+ * This is found in DraftCourseItem.js too; should be in utils
+ */
+const REMOVE_DRAFT_SESSION = gql`
+	mutation RemoveDraftSession($scheduleID: ID!, $sessionID: ID!) {
+		scheduleRemoveSession(scheduleID:$scheduleID, sessionID:$sessionID) {
+			_id
+			term
+			draftSessions {
+				_id
+				session {
+					_id
+				}
+				visible
+			}
+		}
+	}
+`
+
 const SessionItem = ({scheduleID, course, session, draftCourses, addCourseRequest, removeCourseRequest }) => {
     // Check if this course is in draftCourses
     let courseSelected = -1;
     for (let idx in draftCourses) {
         let course = draftCourses[idx];
-        if (course.crn == session.crn) {
+        if (course.session._id == session._id) {
             courseSelected = idx;
         }
     }
 
     let [addDraftSession, ] = useMutation(
         ADD_DRAFT_SESSION,
+        { variables: { scheduleID: scheduleID, sessionID: session._id } }
+    )
+
+    let [removeDraftSession, ] = useMutation(
+        REMOVE_DRAFT_SESSION,
         { variables: { scheduleID: scheduleID, sessionID: session._id } }
     )
 
@@ -140,7 +181,8 @@ const SessionItem = ({scheduleID, course, session, draftCourses, addCourseReques
                 if (courseSelected > -1) {
                     // Track remove
                     Event("COURSE_LIST", "Remove Course from Schedule: " + crnString, crnString);
-                    removeCourseRequest(draftCourses[courseSelected]);
+                    removeDraftSession();
+                    // removeCourseRequest(draftCourses[courseSelected]);
                 } else {
                     // Track add
                     Event("COURSE_LIST", "Add Course to Schedule: " + crnString, crnString);
@@ -170,6 +212,8 @@ const CourseList = ({ scheduleID, department, searchcourseResults, draftCourses,
         { variables: { subject: department, term: 202110 } }
     );
 
+    let { data: queryData } = useQuery(QUERY_DRAFT_SESSIONS);
+
     if (loading) return (<p>Loading...</p>);
     if (error) return (<p>Error :(</p>);
     if (!data) return (<p>No Data...</p>);
@@ -177,6 +221,7 @@ const CourseList = ({ scheduleID, department, searchcourseResults, draftCourses,
     console.log(data);
 
     const courseResults = data.courseMany;
+    let draftSessions = queryData.userOne.schedules[0].draftSessions;
 
     if (searchcourseResults == []) {
         return (<br />);
@@ -220,7 +265,7 @@ const CourseList = ({ scheduleID, department, searchcourseResults, draftCourses,
                                     <SessionItem 
                                     course={course} 
                                     session={session} 
-                                    draftCourses={draftCourses} 
+                                    draftCourses={draftSessions} 
                                     scheduleID={scheduleID}
                                     addCourseRequest={addCourseRequest} 
                                     removeCourseRequest={removeCourseRequest} />
