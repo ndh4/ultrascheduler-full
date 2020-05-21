@@ -106,7 +106,7 @@ const Main = ({ recentUpdate, seenRecentUpdateRequest }) => {
             </div>
             <div className="Container" style={{ padding: "2%" }}>
                 <div style={{ float: "left", width: '30%' }}>
-                    <CourseSearch depts={depts} />
+                    <CourseSearch scheduleID={schedule._id} depts={depts} />
                 </div>
                 <div style={{ float: "left", width: '70%' }}>
                     <CourseCalendar draftSessions={schedule.draftSessions} />

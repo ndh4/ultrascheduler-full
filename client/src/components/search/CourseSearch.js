@@ -7,7 +7,7 @@ import { initGA, Event } from "../../utils/analytics";
 
 const dummy = {label:"", value:""};
 
-const CourseSearch = ({ term, depts }) => {
+const CourseSearch = ({ term, depts, scheduleID }) => {
         const [getDept, setDept] = useState(dummy);
         const [searchResults, setSearchResults] = useState([]);
     
@@ -74,7 +74,7 @@ const CourseSearch = ({ term, depts }) => {
                 />
                 <button style={styles.button} onClick={() => handleSearchClasses()}>Search</button>
             </div>
-            <CourseList department={getDept.value} searchResults={searchResults} />
+            <CourseList scheduleID={scheduleID} department={getDept.value} searchResults={searchResults} />
         </div>
         );
 }

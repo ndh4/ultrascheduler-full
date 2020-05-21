@@ -9,7 +9,7 @@ import { sessionToDraftCourse } from "../../utils/SessionUtils";
 import {addCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
 
 import moment from "moment";
-import { useQuery, gql } from "@apollo/client";
+import { useQuery, gql, useMutation } from "@apollo/client";
 
 const GET_DEPT_COURSES = gql`
     query GetDeptCourses($subject: String!, $term: Float!) {
@@ -19,6 +19,7 @@ const GET_DEPT_COURSES = gql`
             courseNum
             longTitle
             sessions(filter: { term: $term } ) {
+                _id
                 crn
                 class {
                     days
@@ -98,7 +99,23 @@ const styles = {
     },
   };
 
-const SessionItem = ({course, session, draftCourses, addCourseRequest, removeCourseRequest }) => {
+const ADD_DRAFT_SESSION = gql`
+    mutation AddDraftSession($scheduleID: ID!, $sessionID: ID!) {
+        scheduleAddSession(scheduleID:$scheduleID, sessionID:$sessionID) {
+            _id
+            term
+            draftSessions {
+                _id
+                session {
+                    _id
+                }
+                visible
+            }
+        }
+    }
+`
+
+const SessionItem = ({scheduleID, course, session, draftCourses, addCourseRequest, removeCourseRequest }) => {
     // Check if this course is in draftCourses
     let courseSelected = -1;
     for (let idx in draftCourses) {
@@ -107,6 +124,12 @@ const SessionItem = ({course, session, draftCourses, addCourseRequest, removeCou
             courseSelected = idx;
         }
     }
+
+    let [addDraftSession, ] = useMutation(
+        ADD_DRAFT_SESSION,
+        { variables: { scheduleID: scheduleID, sessionID: session._id } }
+    )
+
     return (
     <div key={session.crn} style={{ borderStyle: 'solid', display: "inline-block" }}>
         <input 
@@ -121,7 +144,8 @@ const SessionItem = ({course, session, draftCourses, addCourseRequest, removeCou
                 } else {
                     // Track add
                     Event("COURSE_LIST", "Add Course to Schedule: " + crnString, crnString);
-                    addCourseRequest(sessionToDraftCourse(session, course.detail, session.term));
+                    addDraftSession();
+                    // addCourseRequest(sessionToDraftCourse(session, course.detail, session.term));
                 }
             }} 
             style={{ alignItems: "left" }} 
@@ -133,7 +157,7 @@ const SessionItem = ({course, session, draftCourses, addCourseRequest, removeCou
     );
 }
 
-const CourseList = ({ department, searchcourseResults, draftCourses, addCourseRequest, removeCourseRequest }) => {
+const CourseList = ({ scheduleID, department, searchcourseResults, draftCourses, addCourseRequest, removeCourseRequest }) => {
     const [courseSelected, setCourseSelected] = useState([]);
 
     if (department == "") {
@@ -197,6 +221,7 @@ const CourseList = ({ department, searchcourseResults, draftCourses, addCourseRe
                                     course={course} 
                                     session={session} 
                                     draftCourses={draftCourses} 
+                                    scheduleID={scheduleID}
                                     addCourseRequest={addCourseRequest} 
                                     removeCourseRequest={removeCourseRequest} />
                                 ))}

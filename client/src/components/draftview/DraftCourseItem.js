@@ -85,6 +85,8 @@ const REMOVE_DRAFT_SESSION = gql`
 	}
 `
 
+
+
 const DraftCourseItem = ({ scheduleID, visible, session, course, onToggle, onRemove }) => {
 		const emptyCellGenerator = (count) => {
 			let cells = [];
