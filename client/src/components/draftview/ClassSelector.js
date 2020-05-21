@@ -31,7 +31,7 @@ const useStyles = makeStyles({
 	  },
   };
 
-const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest}) => {
+const ClassSelector = ({draftSessions, toggleCourseRequest, removeCourseRequest}) => {
 	const classes = useStyles();
 	// Get headers
 	let headers = ["Visible", "Course Code", "CRN", "Credits", "Distribution", "Class Days", "Class Time", "Lab Days", "Lab Times", "Instructor(s)", "Remove"]
@@ -56,13 +56,15 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 	}
 
 	// Calculate total credit hours
-	let creditTotal = draftCourses.reduce((totalCredits, currentCourse) => {
-		if (currentCourse.visible) {
-			return totalCredits + currentCourse.creditsMin;
+	let creditTotal = draftSessions.reduce((totalCredits, draftSession) => {
+		if (draftSession.visible) {
+			return totalCredits + draftSession.session.course.creditsMin;
 		} else {
 			return totalCredits;
 		}
 	}, 0);
+
+	console.log(creditTotal);
 
 	return (
 		<TableContainer component={Paper}>
@@ -80,9 +82,11 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 					</TableRow>
 				</TableHead>
 				<TableBody>
-				{draftCourses.map((course) => (
+				{draftSessions.map((draftSession) => (
 					<DraftCourseItem 
-						course={course}
+						visible={draftSession.visible}
+						session={draftSession.session}
+						course={draftSession.session.course}
 						onToggle={toggleCourseRequest}
 						onRemove={handleCourseRemoveRequest}/>
 				))}
@@ -101,7 +105,7 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 
 export default connect(
         (state) => ({
-            draftCourses: state.courses.draftCourses,
+            // draftSessions: state.courses.draftSessions,
         }),
         (dispatch) => ({
 			toggleCourseRequest: course => dispatch(toggleCourseRequest(course)),

@@ -36,7 +36,21 @@ const creditsDisplay = (creditsMin, creditsMax) => {
 	}
 }
 
-const DraftCourseItem = ({ course, onToggle, onRemove }) => {
+/**
+ * TODO: MOVE THIS TO utils.js
+ * @param {instructor} instructors 
+ * {id: xxx, firstName: xxx, lastName: xxx}
+ */
+const instructorsToNames = (instructors) => {
+    let instructorNames = [];
+    for (let instructor of instructors) {
+        let instructorName = instructor.firstName + " " + instructor.lastName;
+        instructorNames.push(instructorName);
+    }
+    return instructorNames;
+}
+
+const DraftCourseItem = ({ visible, session, course, onToggle, onRemove }) => {
 		const emptyCellGenerator = (count) => {
 			let cells = [];
 			for (let i = 0; i < count; i++) {
@@ -44,25 +58,28 @@ const DraftCourseItem = ({ course, onToggle, onRemove }) => {
 			}
 			return cells;
 		}
-		const createCourseTimeCells = (courseTime, exists) => {
-				return exists ? (
-						<Fragment>
-								<TableCell align="right">{courseTime.days}</TableCell>
-								<TableCell align="right">
-										{classTimeString(courseTime.startTime, courseTime.endTime)}
-								</TableCell>
-						</Fragment>) 
-						: <Fragment>{emptyCellGenerator(2)}</Fragment>;
+
+		const createSectionTimeCells = (section) => {
+			if (!section.startTime || !section.endTime) {
+				return (<Fragment>{emptyCellGenerator(2)}</Fragment>)
+			} else {
+				return (
+					<Fragment>
+						<TableCell align="right">{section.days}</TableCell>
+						<TableCell align="right">
+								{classTimeString(section.startTime, section.endTime)}
+						</TableCell>
+					</Fragment>
+				)
+			}
 		}
 
-		console.log(course);
-
 		return (
-		<TableRow key={course.crn}>
+		<TableRow key={session.crn}>
 				<TableCell padding="checkbox">
 						<Checkbox
-						checked={course.visible}
-						onClick={() => onToggle(course)}
+						checked={visible}
+						onClick={() => onToggle(session)}
 						/>
 				</TableCell>
 				<TableCell align="right" component="th" scope="row">
@@ -70,15 +87,15 @@ const DraftCourseItem = ({ course, onToggle, onRemove }) => {
 								<ReactGA.OutboundLink 
 								style={{ color: "#272D2D", textDecoration: 'none' }} 
 								eventLabel="course_description" 
-								to={createURL("202110", course.crn, URLTypes.DETAIL)} 
+								to={createURL("202110", session.crn, URLTypes.DETAIL)} 
 								target="_blank">
-										<span style={{ color: "272D2D" }}>{course.courseName}</span>
+										<span style={{ color: "272D2D" }}>{course.longTitle}</span>
 								</ReactGA.OutboundLink>
 						</Tooltip>
 						<Tooltip title="View Evaluations">
 								<ReactGA.OutboundLink 
 								eventLabel="course_evaluation" 
-								to={createURL("202110", course.crn, URLTypes.EVAL)} 
+								to={createURL("202110", session.crn, URLTypes.EVAL)} 
 								target="_blank">
 										<IconButton aria-label="evaluations">
 										<QuestionAnswerIcon />
@@ -86,15 +103,15 @@ const DraftCourseItem = ({ course, onToggle, onRemove }) => {
 								</ReactGA.OutboundLink>
 						</Tooltip>
 				</TableCell>
-				<TableCell align="right">{course.crn}</TableCell>
+				<TableCell align="right">{session.crn}</TableCell>
 				<TableCell align="right">{creditsDisplay(course.creditsMin, course.creditsMax)}</TableCell>
 				<TableCell align="right">{course.distribution}</TableCell>
-				{createCourseTimeCells(course.class, course.class.hasClass)}
-				{createCourseTimeCells(course.lab, course.class.hasLab)}
-				<TableCell align="right">{course.instructors.join(", ")}</TableCell>
+				{createSectionTimeCells(session.class)}
+				{createSectionTimeCells(session.lab)}
+				<TableCell align="right">{instructorsToNames(session.instructors).join(", ")}</TableCell>
 				<TableCell align="right">
 						<Tooltip title="Delete">
-								<IconButton aria-label="delete" onClick={() => onRemove(course)}>
+								<IconButton aria-label="delete" onClick={() => onRemove(session)}>
 								<DeleteIcon />
 								</IconButton>
 						</Tooltip>

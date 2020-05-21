@@ -28,7 +28,6 @@ const PrivateRoute = ({ children, loggedIn, verifyRequest, ...rest }) => {
 const Routes = ({ loggedIn, draftCoursesLoaded, verifyRequest, getService }) => {
     // Get service to start
     getService();
-
     return (
         <Switch>
             <Route path="/auth">
@@ -41,7 +40,8 @@ const Routes = ({ loggedIn, draftCoursesLoaded, verifyRequest, getService }) => 
             path="/schedule" 
             loggedIn={loggedIn} 
             verifyRequest={verifyRequest}>
-                {draftCoursesLoaded ? <Main /> : <LoadingScreen />}
+                <Main />
+                {/* {draftCoursesLoaded ? <Main /> : <LoadingScreen />} */}
             </PrivateRoute>
             <PrivateRoute 
             path="/"
