@@ -44,6 +44,8 @@ const GET_USER_SCHEDULE = gql`
                             creditsMin
                             creditsMax
                             longTitle
+                            subject
+                            courseNum
                             distribution
                         }
                     }
@@ -106,7 +108,7 @@ const Main = ({ recentUpdate, seenRecentUpdateRequest }) => {
                     <CourseSearch depts={depts} />
                 </div>
                 <div style={{ float: "left", width: '70%' }}>
-                    <CourseCalendar />
+                    <CourseCalendar draftSessions={schedule.draftSessions} />
                 </div>
             </div>
 		</div>
