@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {connect} from 'react-redux';
 import coursetimes from "../../utils/coursetimes";
 import moment from 'moment'
-import CourseWeek from "./CourseWeek"
+import { CourseWeek } from "./CourseWeek"
 import { Calendar, Views, momentLocalizer }  from "react-big-calendar"
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { WEEKSTART } from "../../constants/Defaults";
@@ -20,7 +20,7 @@ const dayCode2dayString = {
     "U": "Sunday"
 }
 
-const courseToCourseCode = (course) => {
+const courseToCourseLabel = (course) => {
     return course.subject + " " + course.courseNum;
 }
 
@@ -31,7 +31,7 @@ const convertSectionToEvents = (section, session) => {
     }
 
     // Necessary for event title
-    let courseCode = courseToCourseCode(session.course);
+    let courseLabel = courseToCourseLabel(session.course);
 
     // Create moment objects for the time
     let momentStart = moment(section.startTime, 'HH:mm');
@@ -50,7 +50,7 @@ const convertSectionToEvents = (section, session) => {
 
         events.push({
             id: id++,
-            title: courseCode,
+            title: courseLabel,
             desc: session.course.longTitle,
             source: section,
             start: eventStart.toDate(),
@@ -98,6 +98,7 @@ const CourseCalendar = ({ draftSessions, courses }) => {
             defaultView={Views.WEEK}
             formats={{ dayFormat: 'dddd' }} // Calendar columns show "Monday", "Tuesday", ...
             views={{month: false, week: CourseWeek, day: false}}
+            drilldownView={null}
             defaultDate={moment("Sunday", "dddd")} // Always start on Sunday of the week
             onSelectEvent={event => alert(event.title + "\n" + event.desc + "\n")}
             toolbar={false}
