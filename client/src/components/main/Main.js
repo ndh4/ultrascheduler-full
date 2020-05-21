@@ -10,7 +10,7 @@ import { seenRecentUpdateRequest } from '../../actions/AuthActions';
 import { useQuery, gql } from '@apollo/client';
 import LoadingScreen from '../LoadingScreen';
 
-const GET_USER_SCHEDULE = gql`
+export const GET_USER_SCHEDULE = gql`
     # Write your query or mutation here
     query GetUserSchedule {
         userOne(filter:{netid:"wsm3"}) {
@@ -101,7 +101,7 @@ const Main = ({ recentUpdate, seenRecentUpdateRequest }) => {
         <div className="App" style={{ display: "inline", color: "#272D2D" }}>
 			<Header />
             <div style={{ padding: "2%" }}>
-                <ClassSelector draftSessions={schedule.draftSessions} />
+                <ClassSelector scheduleID={schedule._id} draftSessions={schedule.draftSessions} />
             </div>
             <div className="Container" style={{ padding: "2%" }}>
                 <div style={{ float: "left", width: '30%' }}>

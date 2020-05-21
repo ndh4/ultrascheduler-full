@@ -14,6 +14,9 @@ import Tooltip from '@material-ui/core/Tooltip';
 import ReactGA from "react-ga";
 import { classTimeString } from '../../utils/CourseTimeTransforms';
 import URLTypes from "../../constants/URLTypes";
+import { gql, useMutation } from "@apollo/client";
+
+import { GET_USER_SCHEDULE } from '../main/Main';
 
 const createURL = (termcode, crn, type=URLTypes.DETAIL) => {
 	switch (type) {
@@ -50,7 +53,21 @@ const instructorsToNames = (instructors) => {
     return instructorNames;
 }
 
-const DraftCourseItem = ({ visible, session, course, onToggle, onRemove }) => {
+const TOGGLE_DRAFT_SESSION_VISIBILITY = gql`
+	mutation ToggleCourse($scheduleID: ID!, $sessionID: ID!) {
+		scheduleToggleSession(scheduleID:$scheduleID, sessionID:$sessionID) {
+			term
+			draftSessions {
+				session {
+					_id
+				}
+				visible
+			}
+		}
+	}
+`
+
+const DraftCourseItem = ({ scheduleID, visible, session, course, onToggle, onRemove }) => {
 		const emptyCellGenerator = (count) => {
 			let cells = [];
 			for (let i = 0; i < count; i++) {
@@ -74,12 +91,20 @@ const DraftCourseItem = ({ visible, session, course, onToggle, onRemove }) => {
 			}
 		}
 
+		let [toggleVisibility, ] = useMutation(
+			TOGGLE_DRAFT_SESSION_VISIBILITY,
+			{ 
+				variables: { scheduleID: scheduleID, sessionID: session._id },
+				refetchQueries: [{ query: GET_USER_SCHEDULE }]
+			},
+		)
+
 		return (
 		<TableRow key={session.crn}>
 				<TableCell padding="checkbox">
 						<Checkbox
 						checked={visible}
-						onClick={() => onToggle(session)}
+						onClick={() => toggleVisibility()}
 						/>
 				</TableCell>
 				<TableCell align="right" component="th" scope="row">

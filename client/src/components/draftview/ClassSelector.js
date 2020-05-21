@@ -31,7 +31,7 @@ const useStyles = makeStyles({
 	  },
   };
 
-const ClassSelector = ({draftSessions, toggleCourseRequest, removeCourseRequest}) => {
+const ClassSelector = ({draftSessions, scheduleID, toggleCourseRequest, removeCourseRequest}) => {
 	const classes = useStyles();
 	// Get headers
 	let headers = ["Visible", "Course Code", "CRN", "Credits", "Distribution", "Class Days", "Class Time", "Lab Days", "Lab Times", "Instructor(s)", "Remove"]
@@ -87,6 +87,7 @@ const ClassSelector = ({draftSessions, toggleCourseRequest, removeCourseRequest}
 						visible={draftSession.visible}
 						session={draftSession.session}
 						course={draftSession.session.course}
+						scheduleID={scheduleID}
 						onToggle={toggleCourseRequest}
 						onRemove={handleCourseRemoveRequest}/>
 				))}
