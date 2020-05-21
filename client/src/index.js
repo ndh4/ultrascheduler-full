@@ -13,17 +13,21 @@ import configureStore, { history } from './configureStore';
 // Setup Toast for Notifications
 import { ToastProvider } from 'react-toast-notifications'
 
+// Import apollo client for graphql
+import { client } from './apollo';
+import { ApolloProvider } from '@apollo/client'
+
 const store = configureStore({});
 
 render(
-    <Provider store={store}>
-        <ConnectedRouter history={history}>
-            <ToastProvider>
-                <div>
+    <ApolloProvider client={client}>
+        <Provider store={store}>
+            <ConnectedRouter history={history}>
+                <ToastProvider>
                     <Routes />
-                </div>
-            </ToastProvider>
-        </ConnectedRouter>
-    </Provider>, 
+                </ToastProvider>
+            </ConnectedRouter>
+        </Provider>
+    </ApolloProvider>, 
     document.querySelector('#app')
 )
