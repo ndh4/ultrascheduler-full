@@ -36,9 +36,16 @@ DraftSessionTC.addRelation("session", {
 ScheduleTC.addResolver({
     name: "findManyByUser",
     type: [ScheduleTC],
-    args: { _id: "ID!" },
+    args: { _id: "ID!", filter: ScheduleTC.getInputTypeComposer() },
     resolve: async ({ source, args, context, info }) => {
-        return await Schedule.find({ user: args._id });
+        let filter = { user: args._id };
+        if (args.filter) {
+            // For all fields in the filter, add them to our filter
+            for (let key of Object.keys(args.filter)) {
+                filter[key] = args.filter[key];
+            }
+        }
+        return await Schedule.find(filter);
     }
 })
 
