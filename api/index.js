@@ -8,17 +8,15 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const jwt = require('jsonwebtoken');
 var exjwt = require('express-jwt');
-var cors = require('cors')
+// var cors = require('cors')
 
 import { PORT } from './config';
 
 // Apollo Imports
 import Schema from './schema';
 
-// var indexRouter = require('./routes/index');
-// var usersRouter = require('./routes/users');
-// var coursesRouter = require('./routes/courses');
-// var instructorsRouter = require('./routes/instructors');
+var usersRouter = require('./routes/users');
+var coursesRouter = require('./routes/courses');
 var authenticationRouter = require('./routes/authentication');
 var deployRouter = require('./routes/deploy');
 var syncRouter = require('./routes/sync');
@@ -29,6 +27,11 @@ const server = new ApolloServer({
 });
 
 var app = express();
+
+// Apply cors for dev purposes
+// app.use(cors())
+
+// Connect apollo with express
 server.applyMiddleware({ app });
 
 // Create WebSockets server for subscriptions: https://stackoverflow.com/questions/59254814/apollo-server-express-subscriptions-error
@@ -42,10 +45,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use('/', indexRouter);
-// app.use('/api/users', exjwt({secret: 'testsec'}), usersRouter);
-// app.use('/api/courses', coursesRouter);
-// app.use('/api/instructors', instructorsRouter);
+app.use('/api/users', exjwt({secret: 'testsec'}), usersRouter);
+app.use('/api/courses', coursesRouter);
 app.use('/api/auth', authenticationRouter);
 app.use('/api/deploy', deployRouter);
 app.use('/api/sync', syncRouter);
