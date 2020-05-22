@@ -84,7 +84,7 @@ router.get('/login', function(req, res, next) {
                 explicitArray: false
             }, function (err, result) {
                 if (err) return res.status(500);
-                serviceResponse = result.serviceResponse;
+                let serviceResponse = result.serviceResponse;
                 console.log(serviceResponse);
                 var authSucceded = serviceResponse.authenticationSuccess;
                 if (authSucceded) {

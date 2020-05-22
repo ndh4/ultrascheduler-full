@@ -8,7 +8,7 @@ import { User } from './UserModel';
 import { Session } from './SessionModel';
 
 var DraftSessionSchema = new Schema({
-    visible: { type: Number, enum: [0, 1] },
+    visible: { type: Number, enum: [0, 1], default: 1 },
     session: { type: Schema.Types.ObjectID, ref: Session },
 })
 

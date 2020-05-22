@@ -63,7 +63,7 @@ ScheduleTC.addResolver({
         let operation = args.push ? "$addToSet" : "$pull";
         // Setup update based on operation
         let update = {}
-        update[operation] = { draftSessions: { visible: true, session: args.sessionID } };
+        update[operation] = { draftSessions: { session: args.sessionID } };
         // Execute update
         const schedule = await Schedule.updateOne(
             { _id: args.scheduleID }, // find Vendor by id
