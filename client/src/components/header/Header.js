@@ -7,10 +7,13 @@ import RiceAppsLogo from "../../riceappslogo.png";
 import { initGA, OutboundLink } from "../../utils/analytics";
 
 function Header() {
+    // Where we collect feedback
     let feedbackURL = "https://forms.gle/6uyRuTxKgP3n53vB6";
 
+    // This initializes Google Analytics
     initGA();
 
+    // Redirects people to our Medium page on a new page if they click our logo to learn more about us
     const handleLogoClick = () => {
         OutboundLink("Clicked Logo.", window.open("https://medium.com/riceapps", "_blank"));
     }

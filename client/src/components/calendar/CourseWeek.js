@@ -36,7 +36,7 @@ const navigate = (date, action) => {
 }
 
 const title = (date) => {
-    return "Meme";
+    return "hatch.";
 }
 
 const CourseWeekComponent = (props) => {

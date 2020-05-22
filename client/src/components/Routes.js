@@ -5,8 +5,11 @@ import Login from './login/Login';
 import Main from './main/Main';
 import { verifyRequest, getService } from '../actions/AuthActions'
 import { connect } from 'react-redux'
-import LoadingScreen from './LoadingScreen';
 
+/**
+ * Defines a private route - if the user is NOT logged in or has an invalid token, 
+ * then we redirect them to the login page.
+ */
 const PrivateRoute = ({ children, loggedIn, verifyRequest, ...rest }) => {
     return (
         <Route {...rest} render={(props) => {
@@ -25,9 +28,14 @@ const PrivateRoute = ({ children, loggedIn, verifyRequest, ...rest }) => {
     )
 }
 
-const Routes = ({ loggedIn, draftCoursesLoaded, verifyRequest, getService }) => {
-    // Get service to start
+/**
+ * Defines all the routes for our system.
+ * @param {*} param0 
+ */
+const Routes = ({ loggedIn, verifyRequest, getService }) => {
+    // Initially, we need to get the "serviceURL" (used for IDP authentication) from the backend
     getService();
+
     return (
         <Switch>
             <Route path="/auth">
@@ -41,7 +49,6 @@ const Routes = ({ loggedIn, draftCoursesLoaded, verifyRequest, getService }) => 
             loggedIn={loggedIn} 
             verifyRequest={verifyRequest}>
                 <Main />
-                {/* {draftCoursesLoaded ? <Main /> : <LoadingScreen />} */}
             </PrivateRoute>
             <PrivateRoute 
             path="/"
@@ -56,7 +63,6 @@ const Routes = ({ loggedIn, draftCoursesLoaded, verifyRequest, getService }) => 
 export default connect(
     (state) => ({
         loggedIn: state.auth.loggedIn,
-        draftCoursesLoaded: state.courses.draftCoursesLoaded
     }),
     (dispatch) => ({
         verifyRequest: () => dispatch(verifyRequest()),

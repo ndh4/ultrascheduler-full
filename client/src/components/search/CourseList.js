@@ -5,7 +5,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Collapse from '@material-ui/core/Collapse';
 import { Event } from "../../utils/analytics";
-import { sessionToDraftCourse } from "../../utils/SessionUtils";
 import {addCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
 
 import moment from "moment";
@@ -151,22 +150,22 @@ const REMOVE_DRAFT_SESSION = gql`
 	}
 `
 
-const SessionItem = ({scheduleID, course, session, draftCourses, addCourseRequest, removeCourseRequest }) => {
-    // Check if this course is in draftCourses
-    let courseSelected = -1;
-    for (let idx in draftCourses) {
-        let course = draftCourses[idx];
-        if (course.session._id == session._id) {
-            courseSelected = idx;
+const SessionItem = ({ scheduleID, session, draftSessions }) => {
+    let sessionSelected = false;
+
+    // Check if this course is in draftSessions
+    for (let draftSession of draftSessions) {
+        if (draftSession.session._id == session._id) {
+            sessionSelected = true;
         }
     }
 
-    let [addDraftSession, ] = useMutation(
+    let [addDraftSession, { data, loading, error } ] = useMutation(
         ADD_DRAFT_SESSION,
         { variables: { scheduleID: scheduleID, sessionID: session._id } }
     )
 
-    let [removeDraftSession, ] = useMutation(
+    let [removeDraftSession, { dataOnRemove, loadingOnRemove, errorOnRemove } ] = useMutation(
         REMOVE_DRAFT_SESSION,
         { variables: { scheduleID: scheduleID, sessionID: session._id } }
     )
@@ -175,19 +174,27 @@ const SessionItem = ({scheduleID, course, session, draftCourses, addCourseReques
     <div key={session.crn} style={{ borderStyle: 'solid', display: "inline-block" }}>
         <input 
             type="checkbox" 
-            checked={courseSelected > -1}
-            onClick={() => {
+            checked={sessionSelected}
+            onChange={() => {
+                // Simple transformation of CRN to a string
                 let crnString = String.toString(session.crn);
-                if (courseSelected > -1) {
-                    // Track remove
+
+                if (sessionSelected) {
+                    // Track remove with GA
                     Event("COURSE_LIST", "Remove Course from Schedule: " + crnString, crnString);
+
+                    console.log("Boom.");
+
+                    // Execute mutation to remove this session of the course from user's draftsessions
                     removeDraftSession();
-                    // removeCourseRequest(draftCourses[courseSelected]);
+
+                    console.log("No errors...?");
                 } else {
-                    // Track add
+                    // Track add with GA
                     Event("COURSE_LIST", "Add Course to Schedule: " + crnString, crnString);
+
+                    // Execute mutation to add this session of the course to the user's draftsessions
                     addDraftSession();
-                    // addCourseRequest(sessionToDraftCourse(session, course.detail, session.term));
                 }
             }} 
             style={{ alignItems: "left" }} 
@@ -199,35 +206,36 @@ const SessionItem = ({scheduleID, course, session, draftCourses, addCourseReques
     );
 }
 
-const CourseList = ({ scheduleID, department, searchcourseResults, draftCourses, addCourseRequest, removeCourseRequest }) => {
+const CourseList = ({ scheduleID, department, searchcourseResults }) => {
     const [courseSelected, setCourseSelected] = useState([]);
+
+    // Department isn't empty, so we need to fetch the courses for the department
+    const { data: deptCourseData, loading, error } = useQuery(
+        GET_DEPT_COURSES,
+        { variables: { subject: department, term: 202110 } }
+    );
+
+    // We also want to fetch (from our cache, so this does NOT call the backend) the user's draftSessions
+    let { data: userScheduleData } = useQuery(QUERY_DRAFT_SESSIONS);
 
     if (department == "") {
         return (<br />)
     }
 
-    // Department isn't empty, so we need to fetch courseResults
-    const { data, loading, error } = useQuery(
-        GET_DEPT_COURSES,
-        { variables: { subject: department, term: 202110 } }
-    );
-
-    let { data: queryData } = useQuery(QUERY_DRAFT_SESSIONS);
-
     if (loading) return (<p>Loading...</p>);
     if (error) return (<p>Error :(</p>);
-    if (!data) return (<p>No Data...</p>);
+    if (!deptCourseData) return (<p>No Data...</p>);
 
-    console.log(data);
+    // Once the data has loaded, we want to extract the course results for the department
+    const courseResults = deptCourseData.courseMany;
+    // We also want to extract the user's draftSessions, nested inside their schedule
+    let draftSessions = userScheduleData.userOne.schedules[0].draftSessions;
 
-    const courseResults = data.courseMany;
-    let draftSessions = queryData.userOne.schedules[0].draftSessions;
-
-    if (searchcourseResults == []) {
-        return (<br />);
-    }
-
-    const courseSelectedAdd = (courseLabel) => {
+    /**
+     * Adds course to list of courses with their collapsibles open in the search menu,
+     * effectively opening its collapsible
+     */
+    const addToCoursesSelected = (courseLabel) => {
         let copy = courseSelected.slice();
         
         // Add course with this label
@@ -235,7 +243,11 @@ const CourseList = ({ scheduleID, department, searchcourseResults, draftCourses,
         setCourseSelected(copy);
     }
 
-    const courseSelectedRemove = (courseLabel) => {
+    /**
+     * Removes course from list of courses with their collapsibles open in the search menu,
+     * effectively closing its collapsible
+     */
+    const removeFromCoursesSelected = (courseLabel) => {
         let copy = courseSelected.slice();
 
         // Filter out all courses with this label
@@ -255,7 +267,7 @@ const CourseList = ({ scheduleID, department, searchcourseResults, draftCourses,
                         <div>
                             <ListItem 
                             key={label} 
-                            onClick={() => (courseSelected.includes(label)) ? courseSelectedRemove(label) : courseSelectedAdd(label)}
+                            onClick={() => (courseSelected.includes(label)) ? removeFromCoursesSelected(label) : addToCoursesSelected(label)}
                             button>
                                 {label}
                             </ListItem>
@@ -265,10 +277,9 @@ const CourseList = ({ scheduleID, department, searchcourseResults, draftCourses,
                                     <SessionItem 
                                     course={course} 
                                     session={session} 
-                                    draftCourses={draftSessions} 
+                                    draftSessions={draftSessions} 
                                     scheduleID={scheduleID}
-                                    addCourseRequest={addCourseRequest} 
-                                    removeCourseRequest={removeCourseRequest} />
+                                    />
                                 ))}
                                 </List>
                             </Collapse>
@@ -281,12 +292,4 @@ const CourseList = ({ scheduleID, department, searchcourseResults, draftCourses,
 
 }
 
-export default connect(
-    (state) => ({
-        draftCourses: state.courses.draftCourses
-    }),
-    (dispatch) => ({
-        addCourseRequest: (course) => dispatch(addCourseRequest(course)),
-        removeCourseRequest: (course) => dispatch(removeCourseRequest(course))
-    }),
-)(CourseList);
+export default CourseList;

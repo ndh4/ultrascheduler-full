@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import {connect} from 'react-redux';
-import coursetimes from "../../utils/coursetimes";
 import moment from 'moment'
 import { CourseWeek } from "./CourseWeek"
 import { Calendar, Views, momentLocalizer }  from "react-big-calendar"
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import { WEEKSTART } from "../../constants/Defaults";
 
 const localizer = momentLocalizer(moment)
 let id = 1;
@@ -86,8 +84,7 @@ const draftSessionsToEvents = (draftSessions) => {
     return events;
 }
 
-const CourseCalendar = ({ draftSessions, courses }) => {
-    // draftSessionsToEvents(draftSessions);
+const CourseCalendar = ({ draftSessions }) => {
     return (
         <div>
             <Calendar
@@ -112,11 +109,4 @@ const style = {
     height: '100%'
 }
 
-export default connect(
-    (state) => ({
-            courses: state.courses.draftCourses,
-    }),
-    (dispatch) => ({
-        
-    }),
-)(CourseCalendar);
+export default CourseCalendar;
