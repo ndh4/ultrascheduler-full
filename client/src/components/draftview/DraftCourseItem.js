@@ -30,6 +30,9 @@ const createURL = (termcode, crn, type=URLTypes.DETAIL) => {
 	}
 }
 
+/**
+ * If creditsMax is present (i.e. there is a range of possible credits) then display the range. Otherwise, just display the minimum number of credits.
+ */
 const creditsDisplay = (creditsMin, creditsMax) => {
 	if (creditsMax == null) {
 		// Only display credit min

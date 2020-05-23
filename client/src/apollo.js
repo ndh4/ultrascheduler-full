@@ -1,5 +1,5 @@
 // Apollo Client Setup
-import { ApolloClient, HttpLink, InMemoryCache, ApolloProvider, split } from '@apollo/client';
+import { ApolloClient, HttpLink, InMemoryCache, ApolloProvider, split, gql } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
 
 // Apollo Subscriptions Setup
@@ -14,25 +14,43 @@ const httpLink = new HttpLink({
 const wsLink = new WebSocketLink({
     uri: `ws://localhost:3000/graphql`,
     options: {
-      reconnect: true
+        reconnect: true
     }
 });
 
 // Uses wsLink for subscriptions, httpLink for queries & mutations (everything else)
 const splitLink = split(
     ({ query }) => {
-      const definition = getMainDefinition(query);
-      return (
-        definition.kind === 'OperationDefinition' &&
-        definition.operation === 'subscription'
-      );
+        const definition = getMainDefinition(query);
+        return (
+            definition.kind === 'OperationDefinition' &&
+            definition.operation === 'subscription'
+        );
     },
     wsLink,
     httpLink,
 );
 
+// Setup cache
+const cache = new InMemoryCache();
+
 // Initialize Client
 export const client = new ApolloClient({
     cache: new InMemoryCache(),
-    link: splitLink
+    link: splitLink,
+});
+
+// Initial local state
+const initialState = {
+    service: "https://hatch.riceapps.org/auth",
+}
+
+// Initialize cache with a state
+cache.writeQuery({
+    query: gql`
+        query InitialState {
+        service
+        }
+  `,
+    data: initialState
 });

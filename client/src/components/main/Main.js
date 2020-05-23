@@ -3,7 +3,6 @@ import Header from "../header/Header";
 import CourseCalendar from "../calendar/Calendar";
 import ClassSelector from "../draftview/ClassSelector";
 import CourseSearch from "../search/CourseSearch";
-import config from '../../config';
 import { connect } from 'react-redux';
 import { useToasts } from 'react-toast-notifications';
 import { seenRecentUpdateRequest } from '../../actions/AuthActions';
@@ -12,11 +11,10 @@ import LoadingScreen from '../LoadingScreen';
 
 export const GET_USER_SCHEDULE = gql`
     # Write your query or mutation here
-    query GetUserSchedule {
-        userOne(filter:{netid:"wsm3"}) {
-            schedules(filter:{term:"202110"}) {
+    query GetUserSchedule($netid: String!, $term: String!) {
+        userOne( filter: { netid: $netid } ) {
+            schedules( filter: { term: $term } ) {
                 _id
-                term
                 draftSessions {
                     _id
                     visible
@@ -57,11 +55,7 @@ export const GET_USER_SCHEDULE = gql`
 `
 
 // Toast for notifications
-
 const Main = ({ recentUpdate, seenRecentUpdateRequest }) => {
-    // Apollo enters here
-    const { data, loading, error } = useQuery(GET_USER_SCHEDULE)
-
     // Add toast
     let { addToast } = useToasts();
 
@@ -73,23 +67,13 @@ const Main = ({ recentUpdate, seenRecentUpdateRequest }) => {
                 the latest information every hour.";
                 addToast(message, { appearance: 'info', onDismiss: () => seenRecentUpdateRequest() });
             }
-        }, []
+        }, [recentUpdate]
     )
 
-    const [depts, setDepts] = useState([]);
-    const fetchDepts = async () => {
-        let response = await fetch(config.backendURL + "/courses/getAllSubjects?term=202030");
-        let result = await response.json();
-        return result;
-    }
-    useEffect(
-        () => {
-            fetchDepts()
-            .then(subjects => {
-                console.log("Fetched subjects");
-                setDepts(subjects.map(dept => ({label: dept, value: dept})));
-            })
-        }, []
+    // Query for the schedule of the user that is logged in
+    const { data, loading, error } = useQuery(
+        GET_USER_SCHEDULE,
+        { variables: { netid: "wsm3", term: "202110" } }
     );
 
     if (loading) return (<LoadingScreen />);
@@ -106,7 +90,7 @@ const Main = ({ recentUpdate, seenRecentUpdateRequest }) => {
             </div>
             <div className="Container" style={{ padding: "2%" }}>
                 <div style={{ float: "left", width: '30%' }}>
-                    <CourseSearch scheduleID={schedule._id} depts={depts} />
+                    <CourseSearch scheduleID={schedule._id} />
                 </div>
                 <div style={{ float: "left", width: '70%' }}>
                     <CourseCalendar draftSessions={schedule.draftSessions} />
