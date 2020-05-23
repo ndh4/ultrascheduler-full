@@ -1,4 +1,5 @@
 import { Schedule, ScheduleTC, UserTC, SessionTC } from '../models';
+import { checkScheduleUserMatch } from '../utils/authorizationUtils';
 
 /**
  * Relations (necessary for any fields that link to other types in the schema)
@@ -59,21 +60,12 @@ ScheduleTC.addResolver({
     // day is an enum, so we want to get its enum from the model directly
     args: { scheduleID: "ID!", push: "Boolean", sessionID: "ID!" },
     resolve: async ({ source, args, context, info }) => {
-        // If no JWT exists for this request, then throw error
-        if (!context.decodedJWT) {
-            throw Error("Bearer token needed for this operation.");
+        // Check that requested schedule and requesting user match
+        let match = checkScheduleUserMatch(args.scheduleID, context.decodedJWT);
+        if (!match) {
+            throw Error("Decoded user and Schedule do not match!");
         }
-        
-        // Extract user id and netid from the decoded JWT
-        let { id: userID, netid } = context.decodedJWT;
 
-        // Check that this schedule belongs to this user
-        let exists = Schedule.exists({ scheduleID: args.scheduleID, user: userID });
-        if (!exists) {
-            // Schedule and user do not match, throw error
-            throw Error("Schedule and user do not match.");
-        }
-        
         // This determines whether we add or remove from the array
         let operation = args.push ? "$addToSet" : "$pull";
 
@@ -100,6 +92,12 @@ ScheduleTC.addResolver({
     type: ScheduleTC,
     args: { scheduleID: "ID!", sessionID: "ID!" },
     resolve: async ({ source, args, context, info }) => {
+        // Check that requested schedule and requesting user match
+        let match = checkScheduleUserMatch(args.scheduleID, context.decodedJWT);
+        if (!match) {
+            throw Error("Decoded user and Schedule do not match!");
+        }
+
         let options = {
             upsert: false,
             new: true,
@@ -117,7 +115,7 @@ ScheduleTC.addResolver({
 })
 
 const ScheduleQuery = {
-    scheduleOne: ScheduleTC.getResolver('findOne')
+    scheduleOne: ScheduleTC.getResolver('findOne', [authMiddleware])
 };
 
 const ScheduleMutation = {
@@ -132,5 +130,17 @@ const ScheduleMutation = {
         return next(rp);
     }),
 };
+
+async function authMiddleware(resolve, source, args, context, info) {
+    // Without header, throw error
+    if (!context.decodedJWT) {
+        throw new Error("You need to be logged in.");
+    }
+
+    let { id } = context.decodedJWT;
+
+    // Allows a user to only access THEIR schedules, while still maintaining any other filters from the request
+    return resolve(source, {...args, filter: {...args.filter, user: id } }, context, info);
+}
 
 export { ScheduleQuery, ScheduleMutation };

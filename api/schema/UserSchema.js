@@ -1,5 +1,6 @@
 import { User, UserTC, ScheduleTC } from '../models';
 import { authenticateTicket, verifyToken, createToken } from '../utils/authenticationUtils';
+import mongoose from 'mongoose';
 
 // Create a field NOT on the mongoose model; easy way to fetch schedule for a user in one trip
 UserTC.addRelation("schedules", {
@@ -68,15 +69,25 @@ UserTC.addResolver({
     }
 })
 
+// Using auth middleware for sensitive info: https://github.com/graphql-compose/graphql-compose-mongoose/issues/158
 const UserQuery = {
-    userOne: UserTC.getResolver('findOne'),
-    userMany: UserTC.getResolver('findMany')
+    userOne: UserTC.getResolver('findOne', [authMiddleware]),
 };
 
 const UserMutation = {
-    userCreateOne: UserTC.getResolver('createOne'),
     userUpdateOne: UserTC.getResolver('updateOne'),
-    userRemoveOne: UserTC.getResolver('removeOne')
 };
+
+async function authMiddleware(resolve, source, args, context, info) {
+    // Without header, throw error
+    if (!context.decodedJWT) {
+        throw new Error("You need to be logged in.");
+    }
+
+    let { id } = context.decodedJWT;
+
+    // Allows a user to only access THEIR user object
+    return resolve(source, { filter: { _id: id } }, context, info);
+}
 
 export { UserQuery, UserMutation };
