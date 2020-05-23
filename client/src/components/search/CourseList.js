@@ -149,7 +149,6 @@ const REMOVE_DRAFT_SESSION = gql`
 `
 
 const SessionItem = ({ scheduleID, session, draftSessions }) => {
-    console.log("Hello!");
     let sessionSelected = false;
 
     // Check if this course is in draftSessions

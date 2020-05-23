@@ -16,8 +16,6 @@ import { classTimeString } from '../../utils/CourseTimeTransforms';
 import URLTypes from "../../constants/URLTypes";
 import { gql, useMutation } from "@apollo/client";
 
-import { GET_USER_SCHEDULE } from '../main/Main';
-
 const createURL = (termcode, crn, type=URLTypes.DETAIL) => {
 	switch (type) {
 		case URLTypes.DETAIL:
@@ -56,6 +54,13 @@ const instructorsToNames = (instructors) => {
     return instructorNames;
 }
 
+/**
+ * GraphQL Mutations
+ */
+
+/**
+ * Toggles the visibility setting for this draft session
+ */
 const TOGGLE_DRAFT_SESSION_VISIBILITY = gql`
 	mutation ToggleCourse($scheduleID: ID!, $sessionID: ID!) {
 		scheduleToggleSession(scheduleID:$scheduleID, sessionID:$sessionID) {
@@ -72,6 +77,9 @@ const TOGGLE_DRAFT_SESSION_VISIBILITY = gql`
 	}
 `
 
+/**
+ * Removes the draft session from the schedule
+ */
 const REMOVE_DRAFT_SESSION = gql`
 	mutation RemoveDraftSession($scheduleID: ID!, $sessionID: ID!) {
 		scheduleRemoveSession(scheduleID:$scheduleID, sessionID:$sessionID) {

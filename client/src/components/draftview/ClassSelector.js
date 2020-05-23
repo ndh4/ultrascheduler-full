@@ -10,11 +10,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import SwipeableViews from "react-swipeable-views";
 
-// Tracking
-import {toggleCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
-import { initGA, Event } from "../../utils/analytics";
 import DraftCourseItem from "./DraftCourseItem";
-import { TableFooter, Tab } from "@material-ui/core";
 
 
 const useStyles = makeStyles({
@@ -31,29 +27,10 @@ const useStyles = makeStyles({
 	  },
   };
 
-const ClassSelector = ({draftSessions, scheduleID, toggleCourseRequest, removeCourseRequest}) => {
+const ClassSelector = ({ draftSessions, scheduleID }) => {
 	const classes = useStyles();
 	// Get headers
 	let headers = ["Visible", "Course Code", "CRN", "Credits", "Distribution", "Class Days", "Class Time", "Lab Days", "Lab Times", "Instructor(s)", "Remove"]
-
-	// Initialize GA before use
-	initGA();
-
-	const handleCourseRemoveRequest = (course) => {
-		let crnString = String.toString(course.crn);
-		// Tracking 
-		Event("COURSE_SELECTOR", "Remove Course from Schedule: " + crnString, crnString);
-		// Remove course
-		removeCourseRequest(course)
-	}
-
-	const emptyCellGenerator = (count) => {
-		let cells = [];
-		for (let i = 0; i < count; i++) {
-			cells.push(<TableCell align="right"></TableCell>);
-		}
-		return cells;
-	}
 
 	// Calculate total credit hours
 	let creditTotal = draftSessions.reduce((totalCredits, draftSession) => {
@@ -63,8 +40,6 @@ const ClassSelector = ({draftSessions, scheduleID, toggleCourseRequest, removeCo
 			return totalCredits;
 		}
 	}, 0);
-
-	console.log(creditTotal);
 
 	return (
 		<TableContainer component={Paper}>
@@ -88,8 +63,7 @@ const ClassSelector = ({draftSessions, scheduleID, toggleCourseRequest, removeCo
 						session={draftSession.session}
 						course={draftSession.session.course}
 						scheduleID={scheduleID}
-						onToggle={toggleCourseRequest}
-						onRemove={handleCourseRemoveRequest}/>
+					/>
 				))}
 				</TableBody>
 			</Table>
@@ -103,13 +77,4 @@ const ClassSelector = ({draftSessions, scheduleID, toggleCourseRequest, removeCo
 	)
 }
 
-
-export default connect(
-        (state) => ({
-            // draftSessions: state.courses.draftSessions,
-        }),
-        (dispatch) => ({
-			toggleCourseRequest: course => dispatch(toggleCourseRequest(course)),
-			removeCourseRequest: course => dispatch(removeCourseRequest(course))
-        }),
-)(ClassSelector);
+export default ClassSelector;
