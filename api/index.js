@@ -26,10 +26,11 @@ var syncRouter = require('./routes/sync');
 const server = new ApolloServer({ 
     schema: Schema,
     context: async ({ req }) => {
-      // Get user token from headers: https://www.apollographql.com/docs/apollo-server/security/authentication/#putting-user-info-on-the-context
-      const token = req.headers.authorization || '';
-      const user = await getUserFromToken(token);
-      return { user };
+      // Gets the decoded jwt object which our exjwt (below) creates for us as req.user
+      // Inspiration from: https://www.apollographql.com/blog/setting-up-authentication-and-authorization-with-apollo-federation
+      const decodedJWT = req.user || null;
+      // const user = await getUserFromToken(token);
+      return { decodedJWT };
     }
 });
 
@@ -37,6 +38,13 @@ var app = express();
 
 // Apply cors for dev purposes
 app.use(cors())
+
+// Add JWT so that it is AVAILABLE; does NOT protect all routes (nor do we want it to)
+// Inspiration from: https://www.apollographql.com/blog/setting-up-authentication-and-authorization-with-apollo-federation
+app.use(exjwt({
+  secret: 'testsec',
+  credentialsRequired: false
+}));
 
 // Connect apollo with express
 server.applyMiddleware({ app });
@@ -54,7 +62,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/users', exjwt({secret: 'testsec'}), usersRouter);
 app.use('/api/courses', coursesRouter);
-app.use('/api/auth', authenticationRouter);
+// app.use('/api/auth', authenticationRouter);
 app.use('/api/deploy', deployRouter);
 app.use('/api/sync', syncRouter);
 

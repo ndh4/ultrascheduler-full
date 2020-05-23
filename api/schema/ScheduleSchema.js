@@ -59,16 +59,34 @@ ScheduleTC.addResolver({
     // day is an enum, so we want to get its enum from the model directly
     args: { scheduleID: "ID!", push: "Boolean", sessionID: "ID!" },
     resolve: async ({ source, args, context, info }) => {
+        // If no JWT exists for this request, then throw error
+        if (!context.decodedJWT) {
+            throw Error("Bearer token needed for this operation.");
+        }
+        
+        // Extract user id and netid from the decoded JWT
+        let { id: userID, netid } = context.decodedJWT;
+
+        // Check that this schedule belongs to this user
+        let exists = Schedule.exists({ scheduleID: args.scheduleID, user: userID });
+        if (!exists) {
+            // Schedule and user do not match, throw error
+            throw Error("Schedule and user do not match.");
+        }
+        
         // This determines whether we add or remove from the array
         let operation = args.push ? "$addToSet" : "$pull";
+
         // Setup update based on operation
         let update = {}
         update[operation] = { draftSessions: { session: args.sessionID } };
+        
         // Execute update
         const schedule = await Schedule.updateOne(
             { _id: args.scheduleID }, // find Vendor by id
             update
         );
+        
         if (!schedule) return null; 
         return Schedule.findById(args.scheduleID); // Finally return the new schedule object
     }

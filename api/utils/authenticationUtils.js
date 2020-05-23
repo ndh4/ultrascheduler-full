@@ -43,7 +43,8 @@ export const createToken = (user) => {
  * Given a token, finds the associated user.
  */
 export const getUserFromToken = async (token) => {
-    return await User.find({ token: token });
+    let user = await User.find({ token: token });
+    return user;
 }
 
 /**
