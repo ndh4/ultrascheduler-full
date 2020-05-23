@@ -3,9 +3,7 @@ import Header from "../header/Header";
 import CourseCalendar from "../calendar/Calendar";
 import ClassSelector from "../draftview/ClassSelector";
 import CourseSearch from "../search/CourseSearch";
-import { connect } from 'react-redux';
 import { useToasts } from 'react-toast-notifications';
-import { seenRecentUpdateRequest } from '../../actions/AuthActions';
 import { useQuery, gql, useMutation } from '@apollo/client';
 import LoadingScreen from '../LoadingScreen';
 

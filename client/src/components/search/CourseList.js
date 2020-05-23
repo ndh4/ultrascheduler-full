@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {connect} from 'react-redux';
 import SwipeableViews from "react-swipeable-views";
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Collapse from '@material-ui/core/Collapse';
 import { Event } from "../../utils/analytics";
-import {addCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
 
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";

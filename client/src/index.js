@@ -2,13 +2,12 @@ import './index.css'
 
 import React, { Component } from 'react'
 import {render} from 'react-dom'
-import { Provider } from 'react-redux'
+import { Router } from 'react-router';
 import Routes from './components/Routes'
 
-import { ConnectedRouter } from 'connected-react-router'
-
-// Import store
-import configureStore, { history } from './configureStore';
+// Setup history
+import { createBrowserHistory } from 'history';
+export const history = createBrowserHistory();
 
 // Setup Toast for Notifications
 import { ToastProvider } from 'react-toast-notifications'
@@ -17,17 +16,13 @@ import { ToastProvider } from 'react-toast-notifications'
 import { client } from './apollo';
 import { ApolloProvider } from '@apollo/client'
 
-const store = configureStore({});
-
 render(
     <ApolloProvider client={client}>
-        <Provider store={store}>
-            <ConnectedRouter history={history}>
-                <ToastProvider>
-                    <Routes />
-                </ToastProvider>
-            </ConnectedRouter>
-        </Provider>
+        <Router history={history}>
+            <ToastProvider>
+                <Routes />
+            </ToastProvider>
+        </Router>
     </ApolloProvider>, 
     document.querySelector('#app')
 )
