@@ -22,10 +22,20 @@ const VERIFY_USER = gql`
 `;
 
 /**
+ * This simply fetches from our cache whether a recent update has occurred
+ */
+const GET_RECENT_UPDATE = gql`
+    query GetRecentUpdate {
+        recentUpdate @client
+    }
+`
+
+/**
  * Defines a private route - if the user is NOT logged in or has an invalid token, 
  * then we redirect them to the login page.
  */
 const PrivateRoute = ({ children, ...rest }) => {
+    let client = useApolloClient();
     // Check if token is stored
     if (localStorage.getItem('token') === null) {
         return <Redirect to="login" />
@@ -52,6 +62,15 @@ const PrivateRoute = ({ children, ...rest }) => {
             // Redirect the user
             return (<Redirect to="login" />);
         }
+
+        // Check whether any recent updates have come in
+        let { recentUpdate } = data.verifyUser;
+
+        // Upon verification, store the returned information
+        client.writeQuery({
+            query: GET_RECENT_UPDATE,
+            data: { recentUpdate: recentUpdate }
+        });
 
         // Everything looks good! Now let's send the user on their way
         return (

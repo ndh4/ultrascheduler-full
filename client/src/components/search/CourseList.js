@@ -115,16 +115,14 @@ const ADD_DRAFT_SESSION = gql`
 `
 
 const QUERY_DRAFT_SESSIONS = gql`
-    query GetDraftSession($netid: String!, $term: String!) {
-        userOne(filter:{netid:"wsm3"}) {
-            schedules(filter:{term:"202110"}) {
+    query GetDraftSession($term: String!) {
+        scheduleOne(filter: { term: $term } ) {
+            _id
+            draftSessions {
                 _id
-                draftSessions @client {
+                visible
+                session {
                     _id
-                    visible
-                    session {
-                        _id
-                    }
                 }
             }
         }
@@ -151,6 +149,7 @@ const REMOVE_DRAFT_SESSION = gql`
 `
 
 const SessionItem = ({ scheduleID, session, draftSessions }) => {
+    console.log("Hello!");
     let sessionSelected = false;
 
     // Check if this course is in draftSessions
@@ -216,7 +215,10 @@ const CourseList = ({ scheduleID, department, searchcourseResults }) => {
     );
 
     // We also want to fetch (from our cache, so this does NOT call the backend) the user's draftSessions
-    let { data: userScheduleData } = useQuery(QUERY_DRAFT_SESSIONS);
+    let { data: scheduleData } = useQuery(
+        QUERY_DRAFT_SESSIONS,
+        { variables: { term: "202110" } }
+    );
 
     if (department == "") {
         return (<br />)
@@ -229,7 +231,7 @@ const CourseList = ({ scheduleID, department, searchcourseResults }) => {
     // Once the data has loaded, we want to extract the course results for the department
     const courseResults = deptCourseData.courseMany;
     // We also want to extract the user's draftSessions, nested inside their schedule
-    let draftSessions = userScheduleData.userOne.schedules[0].draftSessions;
+    let draftSessions = scheduleData.scheduleOne.draftSessions;
 
     /**
      * Adds course to list of courses with their collapsibles open in the search menu,
@@ -237,7 +239,7 @@ const CourseList = ({ scheduleID, department, searchcourseResults }) => {
      */
     const addToCoursesSelected = (courseLabel) => {
         let copy = courseSelected.slice();
-        
+
         // Add course with this label
         copy.push(courseLabel);
         setCourseSelected(copy);
@@ -262,16 +264,16 @@ const CourseList = ({ scheduleID, department, searchcourseResults }) => {
             aria-labelledby="nested-list-subheader"
             >
                 {courseResults.map(course => {
-                    let label = courseToLabel(course);
+                    let id = course._id;
                     return (
                         <div>
                             <ListItem 
-                            key={label} 
-                            onClick={() => (courseSelected.includes(label)) ? removeFromCoursesSelected(label) : addToCoursesSelected(label)}
+                            key={id} 
+                            onClick={() => (courseSelected.includes(id)) ? removeFromCoursesSelected(id) : addToCoursesSelected(id)}
                             button>
-                                {label}
+                                {courseToLabel(course)}
                             </ListItem>
-                            <Collapse in={(courseSelected.includes(label)) ? true : false} timeout="auto" unmountOnExit>
+                            <Collapse in={(courseSelected.includes(id)) ? true : false} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
                                 {course.sessions.map(session => (
                                     <SessionItem 

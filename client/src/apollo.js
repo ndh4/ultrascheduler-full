@@ -58,6 +58,7 @@ export const client = new ApolloClient({
 // Initial local state
 const initialState = {
     service: "https://hatch.riceapps.org/auth",
+    recentUpdate: false
 }
 
 // Initialize cache with a state
@@ -65,6 +66,7 @@ cache.writeQuery({
     query: gql`
         query InitialState {
             service
+            recentUpdate
         }
   `,
     data: initialState
