@@ -9,13 +9,15 @@ import { SessionQuery, SessionMutation } from './SessionSchema';
 import { CourseQuery, CourseMutation } from './CourseSchema';
 import { InstructorQuery, InstructorMutation } from './InstructorSchema';
 import { ScheduleQuery, ScheduleMutation } from './ScheduleSchema';
+import { AuthQuery, AuthMutation } from './AuthSchema';
 
 schemaComposer.Query.addFields({
     ...UserQuery,
     ...SessionQuery,
     ...CourseQuery,
     ...InstructorQuery,
-    ...ScheduleQuery
+    ...ScheduleQuery,
+    ...AuthQuery
 });
 
 schemaComposer.Mutation.addFields({
@@ -23,7 +25,8 @@ schemaComposer.Mutation.addFields({
     ...SessionMutation,
     ...CourseMutation,
     ...InstructorMutation,
-    ...ScheduleMutation
+    ...ScheduleMutation,
+    ...AuthMutation
 });
 
 schemaComposer.Subscription.addFields({

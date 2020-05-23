@@ -8,12 +8,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const jwt = require('jsonwebtoken');
 var exjwt = require('express-jwt');
-// var cors = require('cors')
+var cors = require('cors')
 
 import { PORT } from './config';
 
 // Apollo Imports
 import Schema from './schema';
+import { getUserFromToken } from './utils/authenticationUtils';
 
 var usersRouter = require('./routes/users');
 var coursesRouter = require('./routes/courses');
@@ -24,12 +25,18 @@ var syncRouter = require('./routes/sync');
 // Setup Apollo
 const server = new ApolloServer({ 
     schema: Schema,
+    context: async ({ req }) => {
+      // Get user token from headers: https://www.apollographql.com/docs/apollo-server/security/authentication/#putting-user-info-on-the-context
+      const token = req.headers.authorization || '';
+      const user = await getUserFromToken(token);
+      return { user };
+    }
 });
 
 var app = express();
 
 // Apply cors for dev purposes
-// app.use(cors())
+app.use(cors())
 
 // Connect apollo with express
 server.applyMiddleware({ app });
