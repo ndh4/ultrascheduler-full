@@ -75,7 +75,7 @@ const UserQuery = {
 };
 
 const UserMutation = {
-    userUpdateOne: UserTC.getResolver('updateOne'),
+    userUpdateOne: UserTC.getResolver('updateOne', [authMiddleware]),
 };
 
 async function authMiddleware(resolve, source, args, context, info) {
@@ -87,7 +87,7 @@ async function authMiddleware(resolve, source, args, context, info) {
     let { id } = context.decodedJWT;
 
     // Allows a user to only access THEIR user object
-    return resolve(source, { filter: { _id: id } }, context, info);
+    return resolve(source, {...args, filter: { _id: id } }, context, info);
 }
 
 export { UserQuery, UserMutation };
