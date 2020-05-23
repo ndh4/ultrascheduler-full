@@ -14,11 +14,8 @@ import { PORT } from './config';
 
 // Apollo Imports
 import Schema from './schema';
-import { getUserFromToken } from './utils/authenticationUtils';
 
-var usersRouter = require('./routes/users');
 var coursesRouter = require('./routes/courses');
-var authenticationRouter = require('./routes/authentication');
 var deployRouter = require('./routes/deploy');
 var syncRouter = require('./routes/sync');
 
@@ -60,9 +57,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api/users', exjwt({secret: 'testsec'}), usersRouter);
 app.use('/api/courses', coursesRouter);
-// app.use('/api/auth', authenticationRouter);
 app.use('/api/deploy', deployRouter);
 app.use('/api/sync', syncRouter);
 
@@ -89,8 +84,8 @@ app.use(function(err, req, res, next) {
 
 // Need to call httpServer.listen instead of app.listen so that the WebSockets (subscriptions) server runs
 httpServer.listen({ port: PORT }, () => {
-    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
-    console.log(`🚀 Subscriptions ready at ws://localhost:4000${server.subscriptionsPath}`);
+    console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
+    console.log(`🚀 Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`);
 });
 
 // module.exports = app;
