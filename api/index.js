@@ -52,11 +52,11 @@ app.use(exjwt({
 server.applyMiddleware({ app });
 
 // Create WebSockets server for subscriptions: https://stackoverflow.com/questions/59254814/apollo-server-express-subscriptions-error
-const httpsServer = https.createServer({
-  key: fs.readFileSync(path.resolve(__dirname, "./ssl/key.pem")),
-  cert: fs.readFileSync(path.resolve(__dirname, "./ssl/cert.pem"))
-}, app);
-server.installSubscriptionHandlers(httpsServer);
+// const httpsServer = https.createServer({
+//   key: fs.readFileSync(path.resolve(__dirname, "./ssl/key.pem")),
+//   cert: fs.readFileSync(path.resolve(__dirname, "./ssl/cert.pem"))
+// }, app);
+// server.installSubscriptionHandlers(httpsServer);
 
 // view engine setup
 app.use(logger('dev'));
@@ -91,10 +91,10 @@ app.use(function(err, req, res, next) {
 });
 
 // Need to call httpsServer.listen instead of app.listen so that the WebSockets (subscriptions) server runs
-httpsServer.listen({ port: PORT }, () => {
-    console.log(httpsServer.address());
+app.listen({ port: PORT }, () => {
+    // console.log(httpsServer.address());
     console.log(`🚀 Server ready at https://localhost:${PORT}${server.graphqlPath}`);
-    console.log(`🚀 Subscriptions ready at wss://localhost:${PORT}${server.subscriptionsPath}`);
+    // console.log(`🚀 Subscriptions ready at wss://localhost:${PORT}${server.subscriptionsPath}`);
 });
 
 // module.exports = app;
