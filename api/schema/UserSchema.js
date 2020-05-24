@@ -32,7 +32,7 @@ UserTC.addResolver({
             let { netid } = authenticationResponse;
 
             // Check if user exists based on netid
-            let exists = User.exists({ netid: netid });
+            let exists = await User.exists({ netid: netid });
             if (!exists) {
                 // Create user
                 user = await User.create({ netid: netid });
