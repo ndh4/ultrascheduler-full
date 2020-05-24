@@ -1,7 +1,9 @@
 var createError = require('http-errors');
 var express = require('express');
 const { ApolloServer } = require('apollo-server-express');
-import http from 'http';
+// import http from 'http';
+import https from 'https';
+import fs from 'fs';
 
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -47,8 +49,11 @@ app.use(exjwt({
 server.applyMiddleware({ app });
 
 // Create WebSockets server for subscriptions: https://stackoverflow.com/questions/59254814/apollo-server-express-subscriptions-error
-const httpServer = http.createServer(app);
-server.installSubscriptionHandlers(httpServer);
+const httpsServer = https.createServer({
+  key: fs.readFileSync(path.resolve(__dirname, "./ssl/key.pem")),
+  cert: fs.readFileSync(path.resolve(__dirname, "./ssl/cert.pem"))
+}, app);
+server.installSubscriptionHandlers(httpsServer);
 
 // view engine setup
 app.use(logger('dev'));
@@ -82,10 +87,11 @@ app.use(function(err, req, res, next) {
   res.send('error');
 });
 
-// Need to call httpServer.listen instead of app.listen so that the WebSockets (subscriptions) server runs
-httpServer.listen({ port: PORT }, () => {
-    console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
-    console.log(`🚀 Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`);
+// Need to call httpsServer.listen instead of app.listen so that the WebSockets (subscriptions) server runs
+httpsServer.listen({ port: PORT }, () => {
+    console.log(httpsServer.address());
+    console.log(`🚀 Server ready at https://localhost:${PORT}${server.graphqlPath}`);
+    console.log(`🚀 Subscriptions ready at wss://localhost:${PORT}${server.subscriptionsPath}`);
 });
 
 // module.exports = app;
