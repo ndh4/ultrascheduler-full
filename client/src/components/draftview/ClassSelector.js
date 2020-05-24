@@ -1,5 +1,4 @@
 import React from "react";
-import {connect} from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -10,11 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import SwipeableViews from "react-swipeable-views";
 
-// Tracking
-import {toggleCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
-import { initGA, Event } from "../../utils/analytics";
 import DraftCourseItem from "./DraftCourseItem";
-import { TableFooter, Tab } from "@material-ui/core";
 
 
 const useStyles = makeStyles({
@@ -31,34 +26,15 @@ const useStyles = makeStyles({
 	  },
   };
 
-const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest}) => {
+const ClassSelector = ({ draftSessions, scheduleID }) => {
 	const classes = useStyles();
 	// Get headers
 	let headers = ["Visible", "Course Code", "CRN", "Credits", "Distribution", "Class Days", "Class Time", "Lab Days", "Lab Times", "Instructor(s)", "Remove"]
 
-	// Initialize GA before use
-	initGA();
-
-	const handleCourseRemoveRequest = (course) => {
-		let crnString = String.toString(course.crn);
-		// Tracking 
-		Event("COURSE_SELECTOR", "Remove Course from Schedule: " + crnString, crnString);
-		// Remove course
-		removeCourseRequest(course)
-	}
-
-	const emptyCellGenerator = (count) => {
-		let cells = [];
-		for (let i = 0; i < count; i++) {
-			cells.push(<TableCell align="right"></TableCell>);
-		}
-		return cells;
-	}
-
 	// Calculate total credit hours
-	let creditTotal = draftCourses.reduce((totalCredits, currentCourse) => {
-		if (currentCourse.visible) {
-			return totalCredits + currentCourse.creditsMin;
+	let creditTotal = draftSessions.reduce((totalCredits, draftSession) => {
+		if (draftSession.visible) {
+			return totalCredits + draftSession.session.course.creditsMin;
 		} else {
 			return totalCredits;
 		}
@@ -80,11 +56,13 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 					</TableRow>
 				</TableHead>
 				<TableBody>
-				{draftCourses.map((course) => (
+				{draftSessions.map((draftSession) => (
 					<DraftCourseItem 
-						course={course}
-						onToggle={toggleCourseRequest}
-						onRemove={handleCourseRemoveRequest}/>
+						visible={draftSession.visible}
+						session={draftSession.session}
+						course={draftSession.session.course}
+						scheduleID={scheduleID}
+					/>
 				))}
 				</TableBody>
 			</Table>
@@ -98,13 +76,4 @@ const ClassSelector = ({draftCourses, toggleCourseRequest, removeCourseRequest})
 	)
 }
 
-
-export default connect(
-        (state) => ({
-            draftCourses: state.courses.draftCourses,
-        }),
-        (dispatch) => ({
-			toggleCourseRequest: course => dispatch(toggleCourseRequest(course)),
-			removeCourseRequest: course => dispatch(removeCourseRequest(course))
-        }),
-)(ClassSelector);
+export default ClassSelector;

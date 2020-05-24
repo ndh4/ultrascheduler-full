@@ -3,11 +3,12 @@ var mongoose = require('mongoose')
 
 require('../db')
 
-const Session = require("./coursesModel").session;
-const User = require("./usersModel").user;
+import { composeWithMongoose } from 'graphql-compose-mongoose';
+import { User } from './UserModel';
+import { Session } from './SessionModel';
 
 var DraftSessionSchema = new Schema({
-    visible: { type: Number, enum: [0, 1] },
+    visible: { type: Number, enum: [0, 1], default: 1 },
     session: { type: Schema.Types.ObjectID, ref: Session },
 })
 
@@ -17,6 +18,5 @@ var ScheduleSchema = new Schema({
     user: { type: Schema.Types.ObjectID, ref: User }
 })
 
-var Schedule = mongoose.model("schedules", ScheduleSchema);
-
-exports.schedule = Schedule;
+export const Schedule = mongoose.model("schedules", ScheduleSchema);
+export const ScheduleTC = composeWithMongoose(Schedule);

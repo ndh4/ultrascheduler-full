@@ -2,8 +2,10 @@ var mongoose = require('mongoose')
     , Schema = mongoose.Schema
 
 require('../db')
+import { composeWithMongoose } from 'graphql-compose-mongoose';
 
-const Instructor = require("../models/instructorsModel").instructor;
+import { Instructor } from './InstructorModel';
+import { Course } from './CourseModel';
 
 var ClassSchema = new Schema({
     startTime: String,
@@ -16,33 +18,6 @@ var LabSchema = new Schema({
     endTime: String, 
     days: [ { type: String, enum: ['M', 'T', 'W', 'R', 'F', 'S', 'U']}]
 })
-
-var RestrictionSchema = new Schema({
-    type: String,
-    setting: { type: String, enum: ['I', 'E'] }, // Only inclusive or exclusive
-    params: [String]
-})
-
-// var TermSchema = new Schema({
-//     term: String,
-//     sessions: [ { type: Schema.Types.ObjectId, ref: Session } ]
-// })
-
-var CourseSchema = new Schema({
-    subject: String,
-    courseNum: Number,
-    longTitle: String,
-    creditsMin: Number,
-    creditsMax: Number,
-    restrictions: [ { type: RestrictionSchema } ],
-    prereqs: String,
-    coreqs: [ String ],
-    mutualExclusions: [ String ],
-    distribution: String
-    // terms: [ TermSchema ],
-});
-
-var Course = mongoose.model("courses", CourseSchema);
 
 var SessionSchema = new Schema({
     class: ClassSchema,
@@ -60,7 +35,5 @@ var SessionSchema = new Schema({
     instructors: [{type: Schema.Types.ObjectID, ref: Instructor}]
 })
 
-var Session = mongoose.model("sessions", SessionSchema);
-
-exports.course = Course;
-exports.session = Session;
+export const Session = mongoose.model("sessions", SessionSchema);
+export const SessionTC = composeWithMongoose(Session);

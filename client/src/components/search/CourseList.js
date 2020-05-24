@@ -1,16 +1,48 @@
 import React, { useState, useEffect } from "react";
-import {connect} from 'react-redux';
 import SwipeableViews from "react-swipeable-views";
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Collapse from '@material-ui/core/Collapse';
 import { Event } from "../../utils/analytics";
-import { sessionToDraftCourse } from "../../utils/SessionUtils";
-import {addCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
 
 import moment from "moment";
+import { useQuery, gql, useMutation } from "@apollo/client";
 
+const GET_DEPT_COURSES = gql`
+    query GetDeptCourses($subject: String!, $term: Float!) {
+        courseMany(filter: { subject: $subject } ) {
+            _id
+            subject
+            courseNum
+            longTitle
+            sessions(filter: { term: $term } ) {
+                _id
+                crn
+                class {
+                    days
+                    startTime
+                    endTime
+                }
+                lab {
+                    days
+                    startTime
+                    endTime
+                }
+                instructors {
+                    firstName
+                    lastName
+                }
+            }
+        }
+    }
+`
+
+// These should go to utils
 const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
+
+const courseToLabel = (course) => {
+    return course.subject + " " + course.courseNum + " || " + course.longTitle;
+}
 
 /**
  * 
@@ -27,7 +59,7 @@ const instructorsToNames = (instructors) => {
 }
 
 const sessionToString = (session) => {
-    let result = [];
+    let courseResult = [];
     // Find class times
     if (session.class.days.length > 0) {
         let classTime = "Class: " + session.class.days.join("")
@@ -36,7 +68,7 @@ const sessionToString = (session) => {
         let endTime = formatTime(session.class.endTime);
 
         classTime += " " + startTime + " - " + endTime
-        result.push(<p style={{ padding: "5px" }}>{classTime}</p>);
+        courseResult.push(<p style={{ padding: "5px" }}>{classTime}</p>);
     }
     // Find lab times
     if (session.lab.days.length > 0) {
@@ -47,14 +79,14 @@ const sessionToString = (session) => {
         let endTime = formatTime(session.lab.endTime);
 
         labTime += " " + startTime + " - " + endTime
-        result.push(<p style={{ padding: "5px" }}>{labTime}</p>);
+        courseResult.push(<p style={{ padding: "5px" }}>{labTime}</p>);
     }
     // Finally find instructors
     if (session.instructors.length > 0) {
         let instructorNames = instructorsToNames(session.instructors);
-        result.push(<p style={{ padding: "5px" }}>{instructorNames.join(", ")}</p>)
+        courseResult.push(<p style={{ padding: "5px" }}>{instructorNames.join(", ")}</p>)
     }
-    return ((result.length > 0) ? result : ["No information found for this session."]);
+    return ((courseResult.length > 0) ? courseResult : ["No information found for this session."]);
 }
 
 const styles = {
@@ -64,30 +96,101 @@ const styles = {
     },
   };
 
-const SessionItem = ({res, session, draftCourses, addCourseRequest, removeCourseRequest }) => {
-    // Check if this course is in draftCourses
-    let courseSelected = -1;
-    for (let idx in draftCourses) {
-        let course = draftCourses[idx];
-        if (course.crn == session.crn) {
-            courseSelected = idx;
+const ADD_DRAFT_SESSION = gql`
+    mutation AddDraftSession($scheduleID: ID!, $sessionID: ID!) {
+        scheduleAddSession(scheduleID:$scheduleID, sessionID:$sessionID) {
+            _id
+            term
+            draftSessions {
+                _id
+                session {
+                    _id
+                }
+                visible
+            }
         }
     }
+`
+
+const QUERY_DRAFT_SESSIONS = gql`
+    query GetDraftSession($term: String!) {
+        scheduleOne(filter: { term: $term } ) {
+            _id
+            draftSessions {
+                _id
+                visible
+                session {
+                    _id
+                }
+            }
+        }
+    }
+`
+
+/**
+ * This is found in DraftCourseItem.js too; should be in utils
+ */
+const REMOVE_DRAFT_SESSION = gql`
+	mutation RemoveDraftSession($scheduleID: ID!, $sessionID: ID!) {
+		scheduleRemoveSession(scheduleID:$scheduleID, sessionID:$sessionID) {
+			_id
+			term
+			draftSessions {
+				_id
+				session {
+					_id
+				}
+				visible
+			}
+		}
+	}
+`
+
+const SessionItem = ({ scheduleID, session, draftSessions }) => {
+    let sessionSelected = false;
+
+    // Check if this course is in draftSessions
+    for (let draftSession of draftSessions) {
+        if (draftSession.session._id == session._id) {
+            sessionSelected = true;
+        }
+    }
+
+    let [addDraftSession, { data, loading, error } ] = useMutation(
+        ADD_DRAFT_SESSION,
+        { variables: { scheduleID: scheduleID, sessionID: session._id } }
+    )
+
+    let [removeDraftSession, { dataOnRemove, loadingOnRemove, errorOnRemove } ] = useMutation(
+        REMOVE_DRAFT_SESSION,
+        { variables: { scheduleID: scheduleID, sessionID: session._id } }
+    )
+
     return (
     <div key={session.crn} style={{ borderStyle: 'solid', display: "inline-block" }}>
         <input 
             type="checkbox" 
-            checked={courseSelected > -1}
-            onClick={() => {
+            checked={sessionSelected}
+            onChange={() => {
+                // Simple transformation of CRN to a string
                 let crnString = String.toString(session.crn);
-                if (courseSelected > -1) {
-                    // Track remove
+
+                if (sessionSelected) {
+                    // Track remove with GA
                     Event("COURSE_LIST", "Remove Course from Schedule: " + crnString, crnString);
-                    removeCourseRequest(draftCourses[courseSelected]);
+
+                    console.log("Boom.");
+
+                    // Execute mutation to remove this session of the course from user's draftsessions
+                    removeDraftSession();
+
+                    console.log("No errors...?");
                 } else {
-                    // Track add
+                    // Track add with GA
                     Event("COURSE_LIST", "Add Course to Schedule: " + crnString, crnString);
-                    addCourseRequest(sessionToDraftCourse(session, res.detail, session.term));
+
+                    // Execute mutation to add this session of the course to the user's draftsessions
+                    addDraftSession();
                 }
             }} 
             style={{ alignItems: "left" }} 
@@ -99,22 +202,51 @@ const SessionItem = ({res, session, draftCourses, addCourseRequest, removeCourse
     );
 }
 
-const CourseList = ({ searchResults, draftCourses, addCourseRequest, removeCourseRequest }) => {
+const CourseList = ({ scheduleID, department, searchcourseResults }) => {
     const [courseSelected, setCourseSelected] = useState([]);
 
-    if (searchResults == []) {
-        return (<br />);
+    // Department isn't empty, so we need to fetch the courses for the department
+    const { data: deptCourseData, loading, error } = useQuery(
+        GET_DEPT_COURSES,
+        { variables: { subject: department, term: 202110 } }
+    );
+
+    // We also want to fetch (from our cache, so this does NOT call the backend) the user's draftSessions
+    let { data: scheduleData } = useQuery(
+        QUERY_DRAFT_SESSIONS,
+        { variables: { term: "202110" } }
+    );
+
+    if (department == "") {
+        return (<br />)
     }
 
-    const courseSelectedAdd = (courseLabel) => {
+    if (loading) return (<p>Loading...</p>);
+    if (error) return (<p>Error :(</p>);
+    if (!deptCourseData) return (<p>No Data...</p>);
+
+    // Once the data has loaded, we want to extract the course results for the department
+    const courseResults = deptCourseData.courseMany;
+    // We also want to extract the user's draftSessions, nested inside their schedule
+    let draftSessions = scheduleData.scheduleOne.draftSessions;
+
+    /**
+     * Adds course to list of courses with their collapsibles open in the search menu,
+     * effectively opening its collapsible
+     */
+    const addToCoursesSelected = (courseLabel) => {
         let copy = courseSelected.slice();
-        
+
         // Add course with this label
         copy.push(courseLabel);
         setCourseSelected(copy);
     }
 
-    const courseSelectedRemove = (courseLabel) => {
+    /**
+     * Removes course from list of courses with their collapsibles open in the search menu,
+     * effectively closing its collapsible
+     */
+    const removeFromCoursesSelected = (courseLabel) => {
         let copy = courseSelected.slice();
 
         // Filter out all courses with this label
@@ -128,24 +260,25 @@ const CourseList = ({ searchResults, draftCourses, addCourseRequest, removeCours
             component="nav"
             aria-labelledby="nested-list-subheader"
             >
-                {searchResults.map(res => {
+                {courseResults.map(course => {
+                    let id = course._id;
                     return (
                         <div>
                             <ListItem 
-                            key={res.label} 
-                            onClick={() => (courseSelected.includes(res.label)) ? courseSelectedRemove(res.label) : courseSelectedAdd(res.label)}
+                            key={id} 
+                            onClick={() => (courseSelected.includes(id)) ? removeFromCoursesSelected(id) : addToCoursesSelected(id)}
                             button>
-                                {res.label}
+                                {courseToLabel(course)}
                             </ListItem>
-                            <Collapse in={(courseSelected.includes(res.label)) ? true : false} timeout="auto" unmountOnExit>
+                            <Collapse in={(courseSelected.includes(id)) ? true : false} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
-                                {res.sessions.map(session => (
+                                {course.sessions.map(session => (
                                     <SessionItem 
-                                    res={res} 
+                                    course={course} 
                                     session={session} 
-                                    draftCourses={draftCourses} 
-                                    addCourseRequest={addCourseRequest} 
-                                    removeCourseRequest={removeCourseRequest} />
+                                    draftSessions={draftSessions} 
+                                    scheduleID={scheduleID}
+                                    />
                                 ))}
                                 </List>
                             </Collapse>
@@ -158,12 +291,4 @@ const CourseList = ({ searchResults, draftCourses, addCourseRequest, removeCours
 
 }
 
-export default connect(
-    (state) => ({
-        draftCourses: state.courses.draftCourses
-    }),
-    (dispatch) => ({
-        addCourseRequest: (course) => dispatch(addCourseRequest(course)),
-        removeCourseRequest: (course) => dispatch(removeCourseRequest(course))
-    }),
-)(CourseList);
+export default CourseList;

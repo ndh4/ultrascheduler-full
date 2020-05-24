@@ -1,7 +1,3 @@
-const Course = require("../models/coursesModel").course;
-const Instructor = require("../models/instructorsModel").instructor;
-const Session = require("../models/coursesModel").session;
-
 const { fork, execFile } = require("child_process");
 
 var express = require("express");

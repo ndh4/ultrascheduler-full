@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const User = require("../models/usersModel").user;
+const { User } = require("../models/UserModel");
 
 let { SERVICE_URL } = require("../config");
 
