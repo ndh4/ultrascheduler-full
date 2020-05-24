@@ -23,30 +23,30 @@ const authLink = setContext((_, { headers }) => {
 // HTTP Backend Link
 const httpLink = new HttpLink({
     // uri: 'http://localhost:3000/graphql',
-    uri: process.env.REACT_APP_GRAPHQL_URL
+    uri: "/graphql"
 });
 
 // WebSocket Backend Link
-const wsLink = new WebSocketLink({
-    // uri: `ws://localhost:3000/graphql`,
-    uri: process.env.REACT_APP_GRAPHQL_WS_URL,
-    options: {
-        reconnect: true
-    }
-});
+// const wsLink = new WebSocketLink({
+//     // uri: `ws://localhost:3000/graphql`,
+//     uri: process.env.REACT_APP_GRAPHQL_WS_URL,
+//     options: {
+//         reconnect: true
+//     }
+// });
 
 // Uses wsLink for subscriptions, httpLink for queries & mutations (everything else)
-const splitLink = split(
-    ({ query }) => {
-        const definition = getMainDefinition(query);
-        return (
-            definition.kind === 'OperationDefinition' &&
-            definition.operation === 'subscription'
-        );
-    },
-    wsLink,
-    httpLink,
-);
+// const splitLink = split(
+//     ({ query }) => {
+//         const definition = getMainDefinition(query);
+//         return (
+//             definition.kind === 'OperationDefinition' &&
+//             definition.operation === 'subscription'
+//         );
+//     },
+//     wsLink,
+//     httpLink,
+// );
 
 // Setup cache
 const cache = new InMemoryCache();
@@ -54,7 +54,7 @@ const cache = new InMemoryCache();
 // Initialize Client
 export const client = new ApolloClient({
     cache: new InMemoryCache(),
-    link: authLink.concat(splitLink),
+    link: authLink.concat(httpLink),
 });
 
 // Initial local state
