@@ -36,9 +36,9 @@ const server = new ApolloServer({
 var app = express();
 
 // Apply cors for dev purposes
-app.use(cors({
-  origin: "https://develop-flex-dot-ultrascheduler.uc.r.appspot.com"
-}))
+// app.use(cors({
+//   origin: "*"
+// }))
 
 // Add JWT so that it is AVAILABLE; does NOT protect all routes (nor do we want it to)
 // Inspiration from: https://www.apollographql.com/blog/setting-up-authentication-and-authorization-with-apollo-federation
