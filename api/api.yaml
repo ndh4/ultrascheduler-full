@@ -1,9 +1,2 @@
-runtime: nodejs
-env: flex
+runtime: nodejs10
 service: api
-
-manual_scaling:
-  instances: 1
-
-network:
-  session_affinity: true
