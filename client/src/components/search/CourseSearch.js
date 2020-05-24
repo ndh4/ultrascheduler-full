@@ -23,7 +23,7 @@ const styles = {
  * @param term: Term to use for subjects (term format: 202030, 202110, etc)
  */
 const fetchDepts = async (term) => {
-    let response = await fetch(config.backendURL + "/courses/getAllSubjects?term=" + term);
+    let response = await fetch("/courses/getAllSubjects?term=" + term);
     let result = await response.json();
     return result;
 }

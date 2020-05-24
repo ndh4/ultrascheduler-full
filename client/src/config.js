@@ -1,5 +1,5 @@
 module.exports = {
-    "backendURL": "http://localhost:3000/api",
-    "gqlURL": "http://localhost:3000/graphql",
-    "serviceURL": "https://hatch.riceapps.org/auth"
+    "backendURL": process.env.REACT_APP_BACKEND_URL,
+    "gqlURL": process.env.REACT_APP_GRAPHQL_URL,
+    "serviceURL": process.env.REACT_APP_SERVICE_URL
 };
