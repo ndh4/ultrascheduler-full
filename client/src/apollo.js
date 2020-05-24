@@ -22,12 +22,14 @@ const authLink = setContext((_, { headers }) => {
 
 // HTTP Backend Link
 const httpLink = new HttpLink({
-    uri: 'http://localhost:3000/graphql'
+    // uri: 'http://localhost:3000/graphql',
+    uri: process.env.REACT_APP_GRAPHQL_URL
 });
 
 // WebSocket Backend Link
 const wsLink = new WebSocketLink({
-    uri: `ws://localhost:3000/graphql`,
+    // uri: `ws://localhost:3000/graphql`,
+    uri: process.env.REACT_APP_GRAPHQL_WS_URL,
     options: {
         reconnect: true
     }
@@ -57,7 +59,7 @@ export const client = new ApolloClient({
 
 // Initial local state
 const initialState = {
-    service: "https://hatch.riceapps.org/auth",
+    service: process.env.REACT_APP_SERVICE_URL,
     recentUpdate: false
 }
 
