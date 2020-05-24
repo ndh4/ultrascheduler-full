@@ -91,7 +91,7 @@ const Routes = ({ }) => {
     // Initially, we need to get the "serviceURL" (used for IDP authentication) from the backend
     useEffect(
         () => {
-            fetch("/api/deploy/service")
+            fetch(process.env.REACT_APP_BACKEND_URL + "/deploy/service")
             .then(response => {
                 response.text().then(service => {
                     // Directly writes the service url to the cache
