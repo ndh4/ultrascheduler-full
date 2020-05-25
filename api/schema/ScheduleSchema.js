@@ -32,6 +32,28 @@ DraftSessionTC.addRelation("session", {
  */
 
 /**
+ * When a user requests their schedule for a term, this will find it or create it if it does not
+ * already exist
+ */
+ScheduleTC.addResolver({
+    name: "findOrCreate",
+    type: ScheduleTC,
+    args: ScheduleTC.getResolver("findOne").getArgs(),
+    resolve: async ({ source, args, context, info }) => {
+        let { term, user } = args.filter;
+
+        // Find schedule for the term
+        let schedule = await Schedule.findOne({ term: term }).exec();
+
+        // Return it if it exists
+        if (schedule) return schedule;
+
+        // Create if it doesn't exist
+        return await Schedule.create({ term: term, user: user });
+    }
+})
+
+/**
  * Used to find all schedules for a particular user
  */
 ScheduleTC.addResolver({
@@ -119,7 +141,7 @@ const ScheduleQuery = {
 };
 
 const ScheduleMutation = {
-    scheduleCreateOne: ScheduleTC.getResolver('createOne'),
+    findOrCreateScheduleOne: ScheduleTC.getResolver('findOrCreate', [authMiddleware]),
     scheduleToggleSession: ScheduleTC.getResolver("scheduleToggleSession"),
     scheduleAddSession: ScheduleTC.getResolver('scheduleUpdateDraftSessions').wrapResolve(next => rp => {
         rp.args.push = true;

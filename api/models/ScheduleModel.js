@@ -13,7 +13,7 @@ var DraftSessionSchema = new Schema({
 })
 
 var ScheduleSchema = new Schema({
-    term: { type: String },
+    term: { type: String, required: true },
     draftSessions: [ DraftSessionSchema ],
     user: { type: Schema.Types.ObjectID, ref: User }
 })
