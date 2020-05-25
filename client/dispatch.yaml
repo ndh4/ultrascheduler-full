@@ -4,5 +4,3 @@ dispatch:
       service: api
     - url: '*/graphql*'
       service: api
-    - url: '/.*'
-      service: default
