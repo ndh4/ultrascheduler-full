@@ -42,8 +42,8 @@ ScheduleTC.addResolver({
     resolve: async ({ source, args, context, info }) => {
         let { term, user } = args.filter;
 
-        // Find schedule for the term
-        let schedule = await Schedule.findOne({ term: term }).exec();
+        // Find schedule for the term for the user
+        let schedule = await Schedule.findOne({ term: term, user: user }).exec();
 
         // Return it if it exists
         if (schedule) return schedule;
@@ -137,11 +137,10 @@ ScheduleTC.addResolver({
 })
 
 const ScheduleQuery = {
-    scheduleOne: ScheduleTC.getResolver('findOne', [authMiddleware])
+    scheduleOne: ScheduleTC.getResolver('findOrCreate', [authMiddleware])
 };
 
 const ScheduleMutation = {
-    findOrCreateScheduleOne: ScheduleTC.getResolver('findOrCreate', [authMiddleware]),
     scheduleToggleSession: ScheduleTC.getResolver("scheduleToggleSession"),
     scheduleAddSession: ScheduleTC.getResolver('scheduleUpdateDraftSessions').wrapResolve(next => rp => {
         rp.args.push = true;

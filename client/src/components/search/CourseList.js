@@ -116,8 +116,10 @@ const QUERY_DRAFT_SESSIONS = gql`
     query GetDraftSession($term: String!) {
         scheduleOne(filter: { term: $term } ) {
             _id
+            __typename
             draftSessions {
                 _id
+                __typename
                 visible
                 session {
                     _id
@@ -134,9 +136,11 @@ const REMOVE_DRAFT_SESSION = gql`
 	mutation RemoveDraftSession($scheduleID: ID!, $sessionID: ID!) {
 		scheduleRemoveSession(scheduleID:$scheduleID, sessionID:$sessionID) {
 			_id
+            __typename
 			term
 			draftSessions {
 				_id
+                __typename
 				session {
 					_id
 				}

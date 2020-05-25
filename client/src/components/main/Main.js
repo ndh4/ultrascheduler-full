@@ -7,9 +7,9 @@ import { useToasts } from 'react-toast-notifications';
 import { useQuery, gql, useMutation } from '@apollo/client';
 import LoadingScreen from '../LoadingScreen';
 
-export const FIND_OR_CREATE_USER_SCHEDULE = gql`
-    mutation FindOrCreateUserSchedule($term: String!) {
-        findOrCreateScheduleOne( filter: { term: $term } ) {
+export const GET_USER_SCHEDULE = gql`
+    query GetUserSchedule($term: String!) {
+        scheduleOne( filter: { term: $term } ) {
             _id
             draftSessions {
                 _id
@@ -93,20 +93,17 @@ const Main = ({ }) => {
         }, [recentUpdate]
     )
 
-    // "Mutation" (really a query) for the schedule of the user that is logged in
-    const [findOrCreateUserSchedule, { data, loading, error }] = useMutation(
-        FIND_OR_CREATE_USER_SCHEDULE,
+    // Query for the schedule of the user that is logged in
+    const { data, loading, error } = useQuery(
+        GET_USER_SCHEDULE,
         { variables: { term: "202110" } }
     );
-
-    // Execute find or create
-    findOrCreateUserSchedule();
 
     if (loading) return (<LoadingScreen />);
     if (error) return (<p>Error :(</p>);
     if (!data) return (<p>No Data...</p>);
 
-    const schedule = data.findOrCreateScheduleOne;
+    const schedule = data.scheduleOne;
 
     return (
         <div className="App" style={{ display: "inline", color: "#272D2D" }}>
