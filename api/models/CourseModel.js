@@ -4,6 +4,7 @@ var mongoose = require('mongoose')
 require('../db')
 
 import { composeWithMongoose } from 'graphql-compose-mongoose';
+import composeWithDataloader from 'graphql-compose-dataloader';
 
 var RestrictionSchema = new Schema({
     type: String,
@@ -25,4 +26,4 @@ var CourseSchema = new Schema({
 });
 
 export const Course = mongoose.model("courses", CourseSchema);
-export const CourseTC = composeWithMongoose(Course);
+export const CourseTC = composeWithDataloader(composeWithMongoose(Course), { cacheExpiration: 3000 });

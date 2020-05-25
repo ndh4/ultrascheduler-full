@@ -3,6 +3,7 @@ var mongoose = require('mongoose')
 
 require('../db')
 import { composeWithMongoose } from 'graphql-compose-mongoose';
+import composeWithDataLoader from 'graphql-compose-dataloader';
 
 import { Instructor } from './InstructorModel';
 import { Course } from './CourseModel';
@@ -36,4 +37,4 @@ var SessionSchema = new Schema({
 })
 
 export const Session = mongoose.model("sessions", SessionSchema);
-export const SessionTC = composeWithMongoose(Session);
+export const SessionTC = composeWithDataLoader(composeWithMongoose(Session), { cacheExpiration: 3000, removeProjection: true });
