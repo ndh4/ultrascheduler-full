@@ -9,13 +9,13 @@ import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
 const GET_DEPT_COURSES = gql`
-    query GetDeptCourses($subject: String!, $term: Float!) {
+    query GetDeptCourses($subject: String!) {
         courseMany(filter: { subject: $subject } ) {
             _id
             subject
             courseNum
             longTitle
-            sessions(filter: { term: $term } ) {
+            sessions {
                 _id
                 crn
                 class {
