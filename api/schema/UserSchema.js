@@ -4,9 +4,12 @@ import mongoose from 'mongoose';
 
 // Create a field NOT on the mongoose model; easy way to fetch schedule for a user in one trip
 UserTC.addRelation("schedules", {
-    "resolver": () => ScheduleTC.getResolver("findManyByUser"),
+    "resolver": () => ScheduleTC.getResolver("findMany"),
+    args: { filter: ScheduleTC.getInputTypeComposer() },
     prepareArgs: {
-        _id: (source) => source._id,
+        filter: (source) => ({
+            user: source._id
+        }),
     },
     projection: { schedules: 1 }
 });

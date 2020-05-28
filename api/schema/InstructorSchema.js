@@ -2,9 +2,12 @@ import { Instructor, InstructorTC, SessionTC } from '../models';
 
 // Create a field NOT on the mongoose model; easy way to fetch sessions that an instructor teaches
 InstructorTC.addRelation("sessions", {
-    "resolver": () => SessionTC.getResolver("findByInstructor"),
+    "resolver": () => SessionTC.getResolver("findMany"),
+    args: { filter: SessionTC.getInputTypeComposer() },
     prepareArgs: {
-        _id: (source) => source._id,
+        filter: (source) => ({
+            instructors: source._id
+        }),
     },
     projection: { sessions: 1 }
 });

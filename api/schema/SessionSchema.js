@@ -23,6 +23,10 @@ SessionTC.addRelation("instructors", {
 /**
  * Custom resolvers
  */
+
+/**
+ * @deprecated
+ */
 SessionTC.addResolver({
     name: "findByInstructor",
     type: [SessionTC],
@@ -39,6 +43,9 @@ SessionTC.addResolver({
     }
 });
 
+/**
+ * @deprecated
+ */
 SessionTC.addResolver({
     name: "findByCourse",
     type: [SessionTC],
@@ -55,6 +62,9 @@ SessionTC.addResolver({
     }
 });
 
+/**
+ * @deprecated
+ */
 SessionTC.addResolver({
     name: "findBySubject",
     type: [CourseTC],

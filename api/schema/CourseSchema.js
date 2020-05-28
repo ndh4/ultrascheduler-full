@@ -7,10 +7,12 @@ CourseTC.addFields({
 });
 
 CourseTC.addRelation("sessions", {
-    "resolver": () => SessionTC.getResolver('findByCourse'),
-    args: SessionTC.getInputTypeComposer(),
+    "resolver": () => SessionTC.getResolver('findMany'),
+    args: { filter: SessionTC.getInputTypeComposer() },
     prepareArgs: {
-        _id: (source) => source._id,
+        filter: (source) => ({
+            course: source._id
+        }),
     },
     projection: { session: 1 }
 });
