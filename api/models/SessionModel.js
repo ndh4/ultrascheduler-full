@@ -38,3 +38,4 @@ var SessionSchema = new Schema({
 
 export const Session = mongoose.model("sessions", SessionSchema);
 export const SessionTC = composeWithDataLoader(composeWithMongoose(Session), { cacheExpiration: 3000, removeProjection: true });
+// export const SessionTC = composeWithMongoose(Session);
