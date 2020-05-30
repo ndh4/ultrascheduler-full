@@ -9,13 +9,13 @@ import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
 const GET_DEPT_COURSES = gql`
-    query GetDeptCourses($subject: String!) {
-        courseMany(filter: { subject: $subject } ) {
+    query GetDeptCourses($subject: String!, $term: Float!) {
+        courseMany(filter: { subject: $subject }, sort:COURSE_NUM_ASC ) {
             _id
             subject
             courseNum
             longTitle
-            sessions {
+            sessions(filter:{term:$term}) {
                 _id
                 crn
                 class {
@@ -36,6 +36,15 @@ const GET_DEPT_COURSES = gql`
         }
     }
 `
+
+/**
+ * Gets the term from local state management
+ */
+const GET_TERM = gql`
+    query {
+        term @client
+    }
+`;
 
 // These should go to utils
 const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
@@ -209,16 +218,20 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
 const CourseList = ({ scheduleID, department, searchcourseResults }) => {
     const [courseSelected, setCourseSelected] = useState([]);
 
+    // Get term from local state management
+    const { data: termData } = useQuery(GET_TERM);
+    let { term } = termData;
+
     // Department isn't empty, so we need to fetch the courses for the department
     const { data: deptCourseData, loading, error } = useQuery(
         GET_DEPT_COURSES,
-        { variables: { subject: department, term: 202110 } }
+        { variables: { subject: department, term: term } }
     );
 
     // We also want to fetch (from our cache, so this does NOT call the backend) the user's draftSessions
     let { data: scheduleData } = useQuery(
         QUERY_DRAFT_SESSIONS,
-        { variables: { term: "202110" } }
+        { variables: { term: term.toString() } }
     );
 
     if (department == "") {

@@ -53,8 +53,9 @@ export const GET_USER_SCHEDULE = gql`
  * This simply fetches from our cache whether a recent update has occurred
  * TODO: CREATE FRAGMENTS / PLACE TO STORE ALL OF THESE SINCE THIS ONE IS ALSO IN ROUTES.JS
  */
-const GET_RECENT_UPDATE = gql`
-    query GetRecentUpdate {
+const GET_LOCAL_DATA = gql`
+    query GetLocalData {
+        term @client
         recentUpdate @client
     }
 `
@@ -73,8 +74,8 @@ const SEEN_RECENT_UPDATE = gql`
 // Toast for notifications
 const Main = ({ }) => {
     // Check for recent update from cache
-    let { data: storeData } = useQuery(GET_RECENT_UPDATE);
-    let { recentUpdate } = storeData;
+    let { data: storeData } = useQuery(GET_LOCAL_DATA);
+    let { term, recentUpdate } = storeData;
 
     // Need to be able to update recentUpdate field on the user when they dismiss
     let [ seenRecentUpdate, ] = useMutation(SEEN_RECENT_UPDATE);
@@ -96,7 +97,7 @@ const Main = ({ }) => {
     // Query for the schedule of the user that is logged in
     const { data, loading, error } = useQuery(
         GET_USER_SCHEDULE,
-        { variables: { term: "202110" } }
+        { variables: { term: new String(term) } }
     );
 
     if (loading) return (<LoadingScreen />);

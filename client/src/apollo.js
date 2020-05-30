@@ -22,8 +22,8 @@ const authLink = setContext((_, { headers }) => {
 
 // HTTP Backend Link
 const httpLink = new HttpLink({
-    // uri: 'http://localhost:3000/graphql',
-    uri: "/graphql"
+    uri: 'http://localhost:3000/graphql',
+    // uri: "/graphql"
 });
 
 // WebSocket Backend Link
@@ -60,15 +60,17 @@ export const client = new ApolloClient({
 // Initial local state
 const initialState = {
     service: process.env.REACT_APP_SERVICE_URL,
-    recentUpdate: false
+    recentUpdate: false,
+    term: 202110,
 }
 
 // Initialize cache with a state
-cache.writeQuery({
+client.writeQuery({
     query: gql`
         query InitialState {
             service
             recentUpdate
+            term
         }
   `,
     data: initialState

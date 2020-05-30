@@ -3,6 +3,7 @@ import Selection from "./Selection";
 import CourseList from "./CourseList";
 import config from '../../config';
 import { initGA } from "../../utils/analytics";
+import { useQuery, gql } from "@apollo/client";
 
 const dummy = { label: "", value: "" };
 
@@ -19,6 +20,16 @@ const styles = {
 }
 
 /**
+ * TODO: MAKE A FRAGMENT! THIS IS USED IN TWO PLACES
+ * Gets the term from local state management
+ */
+const GET_TERM = gql`
+    query {
+        term @client
+    }
+`;
+
+/**
  * Fetches all departments for a particular term
  * @param term: Term to use for subjects (term format: 202030, 202110, etc)
  */
@@ -31,10 +42,11 @@ const fetchDepts = async (term) => {
 const CourseSearch = ({ scheduleID }) => {
     const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
     const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
+    const { data: { term } } = useQuery(GET_TERM); // Gets the term which we need to request subjects from
 
     useEffect(
         () => {
-            fetchDepts("202030")
+            fetchDepts(term)
             .then(subjects => {
                 // Transform each subject into an object that can be used with the selector
                 setDepts(subjects.map(dept => ({label: dept, value: dept})));
