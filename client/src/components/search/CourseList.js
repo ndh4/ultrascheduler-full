@@ -243,7 +243,11 @@ const CourseList = ({ scheduleID, department, searchcourseResults }) => {
     if (!deptCourseData) return (<p>No Data...</p>);
 
     // Once the data has loaded, we want to extract the course results for the department
-    const courseResults = deptCourseData.courseMany;
+    let courseResults = deptCourseData.courseMany;
+
+    // We need to filter out any courses which have 0 sessions
+    courseResults = courseResults.filter(course => course.sessions.length > 0);
+
     // We also want to extract the user's draftSessions, nested inside their schedule
     let draftSessions = scheduleData.scheduleOne.draftSessions;
 
