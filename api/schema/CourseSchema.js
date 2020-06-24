@@ -7,6 +7,8 @@ import { toInputObjectType } from 'graphql-compose';
  * THIS IS THE BEST WAY TO DO RELATIONS WHEN YOU HAVE A SUBFIELD THAT IS A SEPARATE 
  * MONGO COLLECTION WHICH LINKS TO THE CURRENT MONGO COLLECTION ON ONE FIELD; YOU JUST HAVE TO 
  * DO THIS AND USE THE "source._id" in the "resolve" field (and projection of that _id in the "projection" field) 
+ * Inspired from: https://github.com/graphql-compose/graphql-compose/issues/176
+ * and from: https://github.com/graphql-compose/graphql-compose/issues/94
  */
 CourseTC.addFields({
     sessions: ({
@@ -49,6 +51,35 @@ const CourseQuery = {
         name: "COURSE_NUM_DESC",
         description: "Simple sort by course number in descending order.",
         value: { courseNum: -1 }
+    })
+    .addSortArg({
+        name: "SUBJECT_AND_COURSE_NUM_ASC",
+        description: "Sort by subject then course number in ascending order.",
+        value: { subject: 1, courseNum: 1 }
+    })
+    .addSortArg({
+        name: "SUBJECT_AND_COURSE_NUM_DESC",
+        description: "Sort by subject then course number in descending order.",
+        value: { subject: -1, courseNum: -1 }
+    })
+    .addFilterArg({
+        name: 'longTitleRegExp', // From here: https://github.com/graphql-compose/graphql-compose-examples/blob/master/examples/northwind/models/product.js#L38,L49
+        type: 'String',
+        description: "Search for a course by a RegExp of its title",
+        query: (query, value) => {
+            query.longTitle = new RegExp("^.*" + value + ".*", 'i'); // case insensitive regex search
+        }
+    })
+    .addFilterArg({
+        name: 'courseCodeRegExp', // From here: https://github.com/graphql-compose/graphql-compose-examples/blob/master/examples/northwind/models/product.js#L38,L49
+        type: 'String',
+        description: "Search for a course by a RegExp of its course code (subject & courseNum)",
+        query: (query, value) => {
+            // Split value into subject & code
+            let [subject, code] = value.split(" ");
+            query.subject = new RegExp("^.*" + subject + ".*", 'i'); // case insensitive regex search
+            query.courseNum = code;
+        }
     }),
     courseManyInSubject: CourseTC.getResolver('findManyInSubject')
 };
