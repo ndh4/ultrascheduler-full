@@ -8,6 +8,7 @@
     "clean": "nwb clean-app",
     "start": "nwb serve-react-app --port $PORT",
     "test": "nwb test-react",
+    "dev": "nwb serve-react-app --port 3001",
     "test:coverage": "nwb test-react --coverage",
     "test:watch": "nwb test-react --server"
   },

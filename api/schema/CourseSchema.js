@@ -1,5 +1,6 @@
 import { Course, CourseTC, Session, SessionTC } from '../models';
 import { toInputObjectType } from 'graphql-compose';
+import { getSubjects } from '../utils/courseUtils';
 
 /**
  * THIS IS THE MOST IMPORTANT LINE HERE - IT TOOK ALMOST 2 WEEKS TO GET THIS RIGHT
@@ -81,7 +82,15 @@ const CourseQuery = {
             query.courseNum = code;
         }
     }),
-    courseManyInSubject: CourseTC.getResolver('findManyInSubject')
+    courseManyInSubject: CourseTC.getResolver('findManyInSubject'),
+    departments: {
+        name: "departments",
+        type: "[String]",
+        args: { term: "Int!" },
+        resolve: async (_, args) => {
+            return await getSubjects(args.term);
+        }
+    }
 };
 
 const CourseMutation = {
