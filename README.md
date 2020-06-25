@@ -13,7 +13,7 @@ NOTE: Ensure that your backend is running on Port 3000. Otherwise, some local de
 
 In the `client` folder, here are the steps you'll need in order to run your frontend:
 1. Run `npm install`
-2. Use `npm run dev` in order to run your application. Now, whenever you make changes to the application, the app will reload.
+2. Use `npm start` in order to run your application. Now, whenever you make changes to the application, the app will reload.
 NOTE: Ensure that your frontend is running on Port 3001. Otherwise, some local development settings (specifically related to authentication) will not work. If you have questions or need to run the application on a different port, please contact your mentor.
 
 ## Great, I'm all set up - but now I want to make changes. Anything I should be aware of?
