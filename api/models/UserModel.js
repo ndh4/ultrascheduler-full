@@ -12,7 +12,7 @@ var UserSchema = new Schema({
     majors: [ { type: String, maxlength: 4 } ],
     phone: { type: String },
     token: { type: String },
-    recentUpdate: { type: Boolean } // this field used for displaying banners/modals on version updates
+    recentUpdate: { type: Boolean }, // this field used for displaying banners/modals on version updates
 })
 
 export const User = mongoose.model("users", UserSchema);

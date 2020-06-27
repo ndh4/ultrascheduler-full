@@ -10,6 +10,8 @@ import { CourseQuery, CourseMutation } from './CourseSchema';
 import { InstructorQuery, InstructorMutation } from './InstructorSchema';
 import { ScheduleQuery, ScheduleMutation } from './ScheduleSchema';
 import { AuthQuery, AuthMutation } from './AuthSchema';
+import { DeployQuery } from './DeploySchema';
+import { StudyGroupQuery, StudyGroupMutation } from './StudyGroupSchema';
 
 schemaComposer.Query.addFields({
     ...UserQuery,
@@ -17,7 +19,9 @@ schemaComposer.Query.addFields({
     ...CourseQuery,
     ...InstructorQuery,
     ...ScheduleQuery,
-    ...AuthQuery
+    ...AuthQuery,
+    ...DeployQuery,
+    ...StudyGroupQuery
 });
 
 schemaComposer.Mutation.addFields({
@@ -26,7 +30,8 @@ schemaComposer.Mutation.addFields({
     ...CourseMutation,
     ...InstructorMutation,
     ...ScheduleMutation,
-    ...AuthMutation
+    ...AuthMutation,
+    ...StudyGroupMutation
 });
 
 schemaComposer.Subscription.addFields({

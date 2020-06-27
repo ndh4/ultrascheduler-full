@@ -26,7 +26,7 @@ CourseTC.addFields({
         projection: {
             _id: true
         }
-    })
+    }),
 });
 
 CourseTC.addResolver({

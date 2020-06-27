@@ -26,5 +26,5 @@ var CourseSchema = new Schema({
 });
 
 export const Course = mongoose.model("courses", CourseSchema);
-export const CourseTC = composeWithDataloader(composeWithMongoose(Course), { cacheExpiration: 3000, removeProjection: true, debug: true });
-// export const CourseTC = composeWithMongoose(Course);
+// export const CourseTC = composeWithDataloader(composeWithMongoose(Course), { cacheExpiration: 3000, removeProjection: true, debug: true });
+export const CourseTC = composeWithMongoose(Course);
