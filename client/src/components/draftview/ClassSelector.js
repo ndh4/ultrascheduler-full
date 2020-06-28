@@ -29,7 +29,7 @@ const useStyles = makeStyles({
 const ClassSelector = ({ draftSessions, scheduleID }) => {
 	const classes = useStyles();
 	// Get headers
-	let headers = ["Visible", "Course Code", "CRN", "Credits", "Distribution", "Class Days", "Class Time", "Lab Days", "Lab Times", "Instructor(s)", "Remove"]
+	let headers = ["Visible", "Course Code", "CRN", "Credits", "Distribution", "Class Days", "Class Time", "Lab Days", "Lab Times", "Instructor(s)", "GroupMe", "Remove"]
 
 	// Calculate total credit hours
 	let creditTotal = draftSessions.reduce((totalCredits, draftSession) => {
