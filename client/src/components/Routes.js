@@ -23,9 +23,14 @@ const VERIFY_USER = gql`
 /**
  * This simply fetches from our cache whether a recent update has occurred
  */
-const GET_RECENT_UPDATE = gql`
-	query GetRecentUpdate {
-		recentUpdate @client
+const GET_USER_INFO = gql`
+	query GetUserInfo {
+		user @client {
+			_id
+			netid
+			token
+			recentUpdate @client
+		}
 	}
 `;
 
@@ -61,13 +66,10 @@ const PrivateRoute = ({ children, ...rest }) => {
 			return <Redirect to="login" />;
 		}
 
-		// Check whether any recent updates have come in
-		let { recentUpdate } = data.verifyUser;
-
 		// Upon verification, store the returned information
 		client.writeQuery({
-			query: GET_RECENT_UPDATE,
-			data: { recentUpdate: recentUpdate },
+			query: GET_USER_INFO,
+			data: { user: data.verifyUser },
 		});
 
 		// Everything looks good! Now let's send the user on their way
