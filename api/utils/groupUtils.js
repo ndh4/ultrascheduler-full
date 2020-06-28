@@ -1,5 +1,5 @@
 import { GROUPME_ACCESS_TOKEN } from "../config";
-import { StudyGroup, Session } from "../models";
+import { StudyGroup, Session, User } from "../models";
 import fetch from "node-fetch";
 
 export const addMemberToGroup = (groupID, netid, phone) => {
@@ -31,11 +31,11 @@ export const addMemberToGroup = (groupID, netid, phone) => {
 		});
 };
 
-export const createGroup = (session, accessToken) => {
+export const createGroup = (session, userID) => {
 	const { course, crn, _id } = session;
     const { subject, courseNum } = course;
 	return fetch(
-		`https://api.groupme.com/v3/groups?token=${accessToken}`,
+		`https://api.groupme.com/v3/groups?token=${GROUPME_ACCESS_TOKEN}`,
 		{
 			method: "POST",
 			body: JSON.stringify({
@@ -46,12 +46,19 @@ export const createGroup = (session, accessToken) => {
 		}
 	)
 		.then((data) => {
-			return data.json().then((r) => {
+			return data.json().then(async (r) => {
+                let groupId = r.response.group_id;
+
+                let user = await User.findById(userID);
+
+                // Now add the user that triggered this creation
+                addMemberToGroup(groupId, user.netid, user.phone);
+
 				// Create corresponding mongoose object
 				return StudyGroup.create({
 					groupId: r.response.group_id,
 					session: _id,
-					members: [],
+					members: [userID],
 				});
 			});
 		})

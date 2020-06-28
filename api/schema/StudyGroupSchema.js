@@ -115,9 +115,9 @@ StudyGroupTC.addResolver({
 StudyGroupTC.addResolver({
 	name: "create",
 	type: StudyGroupTC,
-	args: { accessToken: "String!", sessionID: "MongoID!" },
+	args: { userID: "MongoID", sessionID: "MongoID!" },
 	resolve: async ({ source, args, context, info }) => {
-		let { accessToken, sessionID } = args;
+		let { sessionID, userID } = args;
 
 		// First check if group exists
 		let exists = await StudyGroup.exists({ session: sessionID });
@@ -126,7 +126,7 @@ StudyGroupTC.addResolver({
 		let session = await Session.findById(sessionID).populate("course");
 
 		// Otherwise create group
-		let createdGroup = await createGroup(session, accessToken);
+		let createdGroup = await createGroup(session, userID);
 
 		return createdGroup;
 	},
