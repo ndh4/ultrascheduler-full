@@ -27,7 +27,6 @@ const createURL = (termcode, crn, type = URLTypes.DETAIL) => {
             return "https://rice.edu/";
     }
 };
-console.log("hi");
 /**
  * If creditsMax is present (i.e. there is a range of possible credits) then display the range. Otherwise, just display the minimum number of credits.
  */
@@ -119,6 +118,7 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
                         {section.days}{" "}
                         {classTimeString(section.startTime, section.endTime)}
                     </TableCell>
+                    {/*<TableCell>{section.enrollment}</TableCell>*/}
                 </Fragment>
             );
         }
@@ -172,6 +172,20 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
             <TableCell align="right">{course.distribution}</TableCell>
             {createSectionTimeCells(session.class)}
             {createSectionTimeCells(session.lab)}
+            <TableCell align="right">
+                {"Actual: "}
+                {session.enrollment}
+                <br></br>
+                {"Max: "}
+                {session.maxEnrollment}
+            </TableCell>
+            <TableCell align="right">
+                {"Actual: "}
+                {session.waitlisted}
+                <br></br>
+                {"Max: "}
+                {session.maxWaitlisted}
+            </TableCell>
             <TableCell align="right">
                 {instructorsToNames(session.instructors).join(", ")}
             </TableCell>
