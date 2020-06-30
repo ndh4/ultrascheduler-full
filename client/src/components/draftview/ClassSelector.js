@@ -37,7 +37,7 @@ const ClassSelector = ({ draftSessions, scheduleID }) => {
         "Class Times",
         "Lab Times",
         "Enrollment",
-        "Waitlist Size",
+        "Waitlisted",
         "Instructor(s)",
         "Remove",
     ];

@@ -169,7 +169,11 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
             <TableCell align="right">
                 {creditsDisplay(course.creditsMin, course.creditsMax)}
             </TableCell>
-            <TableCell align="right">{course.distribution}</TableCell>
+            <TableCell align="right">
+                {course.distribution.substr(
+                    course.distribution.indexOf(" ") + 1
+                )}
+            </TableCell>
             {createSectionTimeCells(session.class)}
             {createSectionTimeCells(session.lab)}
             <TableCell align="right">
