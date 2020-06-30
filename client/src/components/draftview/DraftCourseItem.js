@@ -16,7 +16,7 @@ import { classTimeString } from '../../utils/CourseTimeTransforms';
 import URLTypes from "../../constants/URLTypes";
 import { gql, useMutation } from "@apollo/client";
 
-const createURL = (termcode, crn, type=URLTypes.DETAIL) => {
+const createURL = (termcode, crn, type = URLTypes.DETAIL) => {
 	switch (type) {
 		case URLTypes.DETAIL:
 			return `https://courses.rice.edu/courses/!SWKSCAT.cat?p_action=COURSE&p_term=${termcode}&p_crn=${crn}`;
@@ -46,12 +46,12 @@ const creditsDisplay = (creditsMin, creditsMax) => {
  * {id: xxx, firstName: xxx, lastName: xxx}
  */
 const instructorsToNames = (instructors) => {
-    let instructorNames = [];
-    for (let instructor of instructors) {
-        let instructorName = instructor.firstName + " " + instructor.lastName;
-        instructorNames.push(instructorName);
-    }
-    return instructorNames;
+	let instructorNames = [];
+	for (let instructor of instructors) {
+		let instructorName = instructor.firstName + " " + instructor.lastName;
+		instructorNames.push(instructorName);
+	}
+	return instructorNames;
 }
 
 /**
@@ -97,85 +97,85 @@ const REMOVE_DRAFT_SESSION = gql`
 `
 
 const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
-		const emptyCellGenerator = (count) => {
-			let cells = [];
-			for (let i = 0; i < count; i++) {
-				cells.push(<TableCell align="right"></TableCell>);
-			}
-			return cells;
+	const emptyCellGenerator = (count) => {
+		let cells = [];
+		for (let i = 0; i < count; i++) {
+			cells.push(<TableCell align="right"></TableCell>);
 		}
+		return cells;
+	}
 
-		const createSectionTimeCells = (section) => {
-			if (!section.startTime || !section.endTime) {
-				return (<Fragment>{emptyCellGenerator(2)}</Fragment>)
-			} else {
-				return (
-					<Fragment>
-						<TableCell align="right">{section.days}</TableCell>
-						<TableCell align="right">
-								{classTimeString(section.startTime, section.endTime)}
-						</TableCell>
-					</Fragment>
-				)
-			}
+	const createSectionTimeCells = (section) => {
+		if (!section.startTime || !section.endTime) {
+			return (<Fragment>{emptyCellGenerator(1)}</Fragment>)
+		} else {
+			return (
+				<Fragment>
+					<TableCell align="right">
+						{section.days}{" "}
+						{classTimeString(section.startTime, section.endTime)}
+					</TableCell>
+				</Fragment>
+			)
 		}
+	}
 
-		let [toggleVisibility, ] = useMutation(
-			TOGGLE_DRAFT_SESSION_VISIBILITY,
-			{ 
-				variables: { scheduleID: scheduleID, sessionID: session._id },
-			},
-		)
+	let [toggleVisibility,] = useMutation(
+		TOGGLE_DRAFT_SESSION_VISIBILITY,
+		{
+			variables: { scheduleID: scheduleID, sessionID: session._id },
+		},
+	)
 
-		let [removeDraftSession, ] = useMutation(
-			REMOVE_DRAFT_SESSION,
-			{
-				variables: { scheduleID: scheduleID, sessionID: session._id }
-			}
-		);
+	let [removeDraftSession,] = useMutation(
+		REMOVE_DRAFT_SESSION,
+		{
+			variables: { scheduleID: scheduleID, sessionID: session._id }
+		}
+	);
 
-		return (
+	return (
 		<TableRow key={session.crn}>
-				<TableCell padding="checkbox">
-						<Checkbox
-						checked={visible}
-						onClick={() => toggleVisibility()}
-						/>
-				</TableCell>
-				<TableCell align="right" component="th" scope="row">
-						<Tooltip title="View Course Details">
-								<ReactGA.OutboundLink 
-								style={{ color: "#272D2D", textDecoration: 'none' }} 
-								eventLabel="course_description" 
-								to={createURL("202110", session.crn, URLTypes.DETAIL)} 
-								target="_blank">
-										<span style={{ color: "272D2D" }}>{course.longTitle}</span>
-								</ReactGA.OutboundLink>
-						</Tooltip>
-						<Tooltip title="View Evaluations">
-								<ReactGA.OutboundLink 
-								eventLabel="course_evaluation" 
-								to={createURL("202110", session.crn, URLTypes.EVAL)} 
-								target="_blank">
-										<IconButton aria-label="evaluations">
-										<QuestionAnswerIcon />
-										</IconButton>
-								</ReactGA.OutboundLink>
-						</Tooltip>
-				</TableCell>
-				<TableCell align="right">{session.crn}</TableCell>
-				<TableCell align="right">{creditsDisplay(course.creditsMin, course.creditsMax)}</TableCell>
-				<TableCell align="right">{course.distribution}</TableCell>
-				{createSectionTimeCells(session.class)}
-				{createSectionTimeCells(session.lab)}
-				<TableCell align="right">{instructorsToNames(session.instructors).join(", ")}</TableCell>
-				<TableCell align="right">
-						<Tooltip title="Delete">
-								<IconButton aria-label="delete" onClick={() => removeDraftSession()}>
-								<DeleteIcon />
-								</IconButton>
-						</Tooltip>
-				</TableCell>
+			<TableCell padding="checkbox">
+				<Checkbox
+					checked={visible}
+					onClick={() => toggleVisibility()}
+				/>
+			</TableCell>
+			<TableCell align="right" component="th" scope="row">
+				<Tooltip title="View Course Details">
+					<ReactGA.OutboundLink
+						style={{ color: "#272D2D", textDecoration: 'none' }}
+						eventLabel="course_description"
+						to={createURL("202110", session.crn, URLTypes.DETAIL)}
+						target="_blank">
+						<span style={{ color: "272D2D" }}>{course.longTitle}</span>
+					</ReactGA.OutboundLink>
+				</Tooltip>
+				<Tooltip title="View Evaluations">
+					<ReactGA.OutboundLink
+						eventLabel="course_evaluation"
+						to={createURL("202110", session.crn, URLTypes.EVAL)}
+						target="_blank">
+						<IconButton aria-label="evaluations">
+							<QuestionAnswerIcon />
+						</IconButton>
+					</ReactGA.OutboundLink>
+				</Tooltip>
+			</TableCell>
+			<TableCell align="right">{session.crn}</TableCell>
+			<TableCell align="right">{creditsDisplay(course.creditsMin, course.creditsMax)}</TableCell>
+			<TableCell align="right">{course.distribution}</TableCell>
+			{createSectionTimeCells(session.class)}
+			{createSectionTimeCells(session.lab)}
+			<TableCell align="right">{instructorsToNames(session.instructors).join(", ")}</TableCell>
+			<TableCell align="right">
+				<Tooltip title="Delete">
+					<IconButton aria-label="delete" onClick={() => removeDraftSession()}>
+						<DeleteIcon />
+					</IconButton>
+				</Tooltip>
+			</TableCell>
 		</TableRow>);
 }
 
