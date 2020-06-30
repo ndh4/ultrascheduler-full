@@ -16,20 +16,20 @@ const useStyles = makeStyles({
 	table: {
 		width: "100%"
 	}
-  });
+});
 
-  const styles = {
-	  slideContainer: {
-	    maxHeight: '50vh',
-	    maxWidth: '100vw',
-	    WebkitOverflowScrolling: 'touch', // iOS momentum scrolling
-	  },
-  };
+const styles = {
+	slideContainer: {
+		maxHeight: '50vh',
+		maxWidth: '100vw',
+		WebkitOverflowScrolling: 'touch', // iOS momentum scrolling
+	},
+};
 
 const ClassSelector = ({ draftSessions, scheduleID }) => {
 	const classes = useStyles();
 	// Get headers
-	let headers = ["Visible", "Course Code", "CRN", "Credits", "Distribution", "Class Days", "Class Time", "Lab Days", "Lab Times", "Instructor(s)", "Remove"]
+	let headers = ["Visible", "Course Code", "CRN", "Credits", "Distribution", "Class Times", "Lab Times", "Instructor(s)", "Remove"]
 
 	// Calculate total credit hours
 	let creditTotal = draftSessions.reduce((totalCredits, draftSession) => {
@@ -43,29 +43,29 @@ const ClassSelector = ({ draftSessions, scheduleID }) => {
 	return (
 		<TableContainer component={Paper}>
 			<SwipeableViews containerStyle={styles.slideContainer}>
-			<Table stickyHeader={true} stickyFooter={true} className={classes.table} aria-label="simple table">
-				<TableHead>
-					<TableRow>
-						{headers.map((heading, idx) => {
-							if (idx == 0) {
-								return (<TableCell>{heading}</TableCell>)
-							} else {
-								return (<TableCell align="right">{heading}</TableCell>)
-							}
-						})}
-					</TableRow>
-				</TableHead>
-				<TableBody>
-				{draftSessions.map((draftSession) => (
-					<DraftCourseItem 
-						visible={draftSession.visible}
-						session={draftSession.session}
-						course={draftSession.session.course}
-						scheduleID={scheduleID}
-					/>
-				))}
-				</TableBody>
-			</Table>
+				<Table stickyHeader={true} stickyFooter={true} className={classes.table} aria-label="simple table">
+					<TableHead>
+						<TableRow>
+							{headers.map((heading, idx) => {
+								if (idx == 0) {
+									return (<TableCell>{heading}</TableCell>)
+								} else {
+									return (<TableCell align="right">{heading}</TableCell>)
+								}
+							})}
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{draftSessions.map((draftSession) => (
+							<DraftCourseItem
+								visible={draftSession.visible}
+								session={draftSession.session}
+								course={draftSession.session.course}
+								scheduleID={scheduleID}
+							/>
+						))}
+					</TableBody>
+				</Table>
 			</SwipeableViews>
 			<Table>
 				<TableRow>
