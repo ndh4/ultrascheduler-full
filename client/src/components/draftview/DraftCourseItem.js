@@ -17,6 +17,8 @@ import ReactGA from "react-ga";
 import { classTimeString } from "../../utils/CourseTimeTransforms";
 import URLTypes from "../../constants/URLTypes";
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { TableBody } from "@material-ui/core";
+import Prereq from "./Prereq";
 
 const createURL = (termcode, crn, type = URLTypes.DETAIL) => {
     switch (type) {
@@ -112,28 +114,6 @@ const FETCH_INSTRUCTORS = gql`
     }
 `;
 
-// /* Component for collapsible displaying prereqs and coreqs of a course*/
-// const collapse = (
-//   <TableRow>
-//     <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-//       <Collapse in={open} timeout="auto" unmountOnExit>
-//         <Table size="small">
-//           <TableHead>
-//             <TableRow>
-//               <TableCell>Prerequisites</TableCell>
-//               <TableCell>Corequisites</TableCell>
-//             </TableRow>
-//           </TableHead>
-//           <TableBody>
-//             <TableCell>{course.prereqs}</TableCell>
-//             <TableCell>{course.coreqs}</TableCell>
-//           </TableBody>
-//         </Table>
-//       </Collapse>
-//     </TableCell>
-//   </TableRow>
-// );
-
 const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
     const emptyCellGenerator = (count) => {
         let cells = [];
@@ -145,12 +125,12 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
 
     const createSectionTimeCells = (section) => {
         if (!section.startTime || !section.endTime) {
-            return <Fragment>{emptyCellGenerator(2)}</Fragment>;
+            return <Fragment>{emptyCellGenerator(1)}</Fragment>;
         } else {
             return (
                 <Fragment>
-                    <TableCell align="right">{section.days}</TableCell>
                     <TableCell align="right">
+                        {section.days}{" "}
                         {classTimeString(section.startTime, section.endTime)}
                     </TableCell>
                 </Fragment>
@@ -173,65 +153,27 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
         }
     );
 
-    console.log("longTitle: ", course.longTitle);
-    console.log("coereqs: ", course.coreqs);
-    console.log("rereqs:", course.prereqs);
-
+    /**
+     * Toggle function for toggling the collapsible display of prerequisites and corequisites
+     */
     const [open, setOpen] = useState(false);
 
+    const togglePrereq = () => setOpen(!open);
+
     return (
-        <TableRow key={session.crn}>
-            <TableCell padding="checkbox">
-                <Checkbox
-                    checked={visible}
-                    onClick={() => toggleVisibility()}
-                />
-            </TableCell>
-            <TableCell align="right" component="th" scope="row">
-                <Tooltip title="View Course Details">
-                    <ReactGA.OutboundLink
-                        style={{ color: "#272D2D", textDecoration: "none" }}
-                        eventLabel="course_description"
-                        to={createURL("202110", session.crn, URLTypes.DETAIL)}
-                        target="_blank"
-                    >
-                        <span style={{ color: "272D2D" }}>
-                            {course.longTitle}
-                        </span>
-                    </ReactGA.OutboundLink>
-                </Tooltip>
-                <Tooltip title="View Evaluations">
-                    <ReactGA.OutboundLink
-                        eventLabel="course_evaluation"
-                        to={createURL("202110", session.crn, URLTypes.EVAL)}
-                        target="_blank"
-                    >
-                        <IconButton aria-label="evaluations">
-                            <QuestionAnswerIcon />
-                        </IconButton>
-                    </ReactGA.OutboundLink>
-                </Tooltip>
-                <IconButton
-                    aria-label="expand row"
-                    size="small"
-                    onClick={() => setOpen(!open)}
-                >
-                    {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                </IconButton>
-            </TableCell>
-            <TableCell align="right">{session.crn}</TableCell>
-            <TableCell align="right">
-                {creditsDisplay(course.creditsMin, course.creditsMax)}
-            </TableCell>
-            <TableCell align="right">{course.distribution}</TableCell>
-            {createSectionTimeCells(session.class)}
-            {createSectionTimeCells(session.lab)}
-            <TableCell align="right">
-                {instructorsToNames(session.instructors).map((instructor) => (
-                    <Tooltip title="View Instructor Evaluation">
+        <TableBody>
+            <TableRow key={session.crn}>
+                <TableCell padding="checkbox">
+                    <Checkbox
+                        checked={visible}
+                        onClick={() => toggleVisibility()}
+                    />
+                </TableCell>
+                <TableCell align="right" component="th" scope="row">
+                    <Tooltip title="View Course Details">
                         <ReactGA.OutboundLink
                             style={{ color: "#272D2D", textDecoration: "none" }}
-                            eventLabel="instructor_evaluation"
+                            eventLabel="course_description"
                             to={createURL(
                                 "202110",
                                 session.crn,
@@ -240,24 +182,79 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
                             target="_blank"
                         >
                             <span style={{ color: "272D2D" }}>
-                                {instructor}
+                                {course.longTitle}
                             </span>
                         </ReactGA.OutboundLink>
                     </Tooltip>
-                ))}
-                {/* {instructorsToNames(session.instructors).join(", ")} */}
-            </TableCell>
-            <TableCell align="right">
-                <Tooltip title="Delete">
+                    <Tooltip title="View Evaluations">
+                        <ReactGA.OutboundLink
+                            eventLabel="course_evaluation"
+                            to={createURL("202110", session.crn, URLTypes.EVAL)}
+                            target="_blank"
+                        >
+                            <IconButton aria-label="evaluations">
+                                <QuestionAnswerIcon />
+                            </IconButton>
+                        </ReactGA.OutboundLink>
+                    </Tooltip>
                     <IconButton
-                        aria-label="delete"
-                        onClick={() => removeDraftSession()}
+                        aria-label="expand row"
+                        size="small"
+                        onClick={togglePrereq}
                     >
-                        <DeleteIcon />
+                        {open ? (
+                            <KeyboardArrowUpIcon />
+                        ) : (
+                            <KeyboardArrowDownIcon />
+                        )}
                     </IconButton>
-                </Tooltip>
-            </TableCell>
-        </TableRow>
+                </TableCell>
+                <TableCell align="right">{session.crn}</TableCell>
+                <TableCell align="right">
+                    {creditsDisplay(course.creditsMin, course.creditsMax)}
+                </TableCell>
+                <TableCell align="right">{course.distribution}</TableCell>
+                {createSectionTimeCells(session.class)}
+                {createSectionTimeCells(session.lab)}
+                <TableCell align="right">
+                    {instructorsToNames(session.instructors).map(
+                        (instructor) => (
+                            <Tooltip title="View Instructor Evaluation">
+                                <ReactGA.OutboundLink
+                                    style={{
+                                        color: "#272D2D",
+                                        textDecoration: "none",
+                                    }}
+                                    eventLabel="instructor_evaluation"
+                                    to={createURL(
+                                        "202110",
+                                        session.crn,
+                                        URLTypes.DETAIL
+                                    )}
+                                    target="_blank"
+                                >
+                                    <span style={{ color: "272D2D" }}>
+                                        {instructor}
+                                    </span>
+                                </ReactGA.OutboundLink>
+                            </Tooltip>
+                        )
+                    )}
+                    {/* {instructorsToNames(session.instructors).join(", ")} */}
+                </TableCell>
+                <TableCell align="right">
+                    <Tooltip title="Delete">
+                        <IconButton
+                            aria-label="delete"
+                            onClick={() => removeDraftSession()}
+                        >
+                            <DeleteIcon />
+                        </IconButton>
+                    </Tooltip>
+                </TableCell>
+            </TableRow>
+            <Prereq course={course} open={open} />
+        </TableBody>
     );
 };
 

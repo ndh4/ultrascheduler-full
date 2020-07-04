@@ -1,7 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
@@ -10,7 +9,6 @@ import Paper from "@material-ui/core/Paper";
 import SwipeableViews from "react-swipeable-views";
 
 import DraftCourseItem from "./DraftCourseItem";
-import Prereq from "./Prereq";
 
 const useStyles = makeStyles({
     table: {
@@ -74,16 +72,14 @@ const ClassSelector = ({ draftSessions, scheduleID }) => {
                             })}
                         </TableRow>
                     </TableHead>
-                    <TableBody>
-                        {draftSessions.map((draftSession) => (
-                            <DraftCourseItem
-                                visible={draftSession.visible}
-                                session={draftSession.session}
-                                course={draftSession.session.course}
-                                scheduleID={scheduleID}
-                            />
-                        ))}
-                    </TableBody>
+                    {draftSessions.map((draftSession) => (
+                        <DraftCourseItem
+                            visible={draftSession.visible}
+                            session={draftSession.session}
+                            course={draftSession.session.course}
+                            scheduleID={scheduleID}
+                        />
+                    ))}
                 </Table>
             </SwipeableViews>
             <Table>
