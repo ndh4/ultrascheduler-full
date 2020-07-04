@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 // Course evals
@@ -9,14 +9,14 @@ import Checkbox from "@material-ui/core/Checkbox";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 
 // Tracking
 import ReactGA from "react-ga";
 import { classTimeString } from "../../utils/CourseTimeTransforms";
 import URLTypes from "../../constants/URLTypes";
-import { gql, useMutation } from "@apollo/client";
-
-import fetchInstrInfo from "./FetchInstructorInfo";
+import { gql, useMutation, useQuery } from "@apollo/client";
 
 const createURL = (termcode, crn, type = URLTypes.DETAIL) => {
   switch (type) {
@@ -56,8 +56,6 @@ const creditsDisplay = (creditsMin, creditsMax) => {
  * {id: xxx, firstName: xxx, lastName: xxx}
  */
 const instructorsToNames = (instructors) => {
-  console.log("inside instructors to name");
-  fetchInstrInfo("202010");
   let instructorNames = [];
   for (let instructor of instructors) {
     let instructorName = instructor.firstName + " " + instructor.lastName;
@@ -108,6 +106,34 @@ const REMOVE_DRAFT_SESSION = gql`
   }
 `;
 
+const FETCH_INSTRUCTORS = gql`
+  query instructorList($termcode: String!) {
+    WEBID
+  }
+`;
+
+// /* Component for collapsible displaying prereqs and coreqs of a course*/
+// const collapse = (
+//   <TableRow>
+//     <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+//       <Collapse in={open} timeout="auto" unmountOnExit>
+//         <Table size="small">
+//           <TableHead>
+//             <TableRow>
+//               <TableCell>Prerequisites</TableCell>
+//               <TableCell>Corequisites</TableCell>
+//             </TableRow>
+//           </TableHead>
+//           <TableBody>
+//             <TableCell>{course.prereqs}</TableCell>
+//             <TableCell>{course.coreqs}</TableCell>
+//           </TableBody>
+//         </Table>
+//       </Collapse>
+//     </TableCell>
+//   </TableRow>
+// );
+
 const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
   const emptyCellGenerator = (count) => {
     let cells = [];
@@ -140,6 +166,19 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
     variables: { scheduleID: scheduleID, sessionID: session._id },
   });
 
+  const { data: instructorsList, loading, error } = useQuery(
+    FETCH_INSTRUCTORS,
+    {
+      variables: { termcode: "202110" },
+    }
+  );
+
+  console.log("longTitle: ", course.longTitle);
+  console.log("coereqs: ", course.coreqs);
+  console.log("rereqs:", course.prereqs);
+
+  const [open, setOpen] = useState(false);
+
   return (
     <TableRow key={session.crn}>
       <TableCell padding="checkbox">
@@ -167,6 +206,13 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
             </IconButton>
           </ReactGA.OutboundLink>
         </Tooltip>
+        <IconButton
+          aria-label="expand row"
+          size="small"
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+        </IconButton>
       </TableCell>
       <TableCell align="right">{session.crn}</TableCell>
       <TableCell align="right">
@@ -176,7 +222,19 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
       {createSectionTimeCells(session.class)}
       {createSectionTimeCells(session.lab)}
       <TableCell align="right">
-        {instructorsToNames(session.instructors).join(", ")}
+        {instructorsToNames(session.instructors).map((instructor) => (
+          <Tooltip title="View Instructor Evaluation">
+            <ReactGA.OutboundLink
+              style={{ color: "#272D2D", textDecoration: "none" }}
+              eventLabel="instructor_evaluation"
+              to={createURL("202110", session.crn, URLTypes.DETAIL)}
+              target="_blank"
+            >
+              <span style={{ color: "272D2D" }}>{instructor}</span>
+            </ReactGA.OutboundLink>
+          </Tooltip>
+        ))}
+        {/* {instructorsToNames(session.instructors).join(", ")} */}
       </TableCell>
       <TableCell align="right">
         <Tooltip title="Delete">

@@ -42,6 +42,8 @@ export const GET_USER_SCHEDULE = gql`
             subject
             courseNum
             distribution
+            coreqs
+            prereqs
           }
         }
       }

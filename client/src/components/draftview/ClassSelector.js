@@ -10,6 +10,7 @@ import Paper from "@material-ui/core/Paper";
 import SwipeableViews from "react-swipeable-views";
 
 import DraftCourseItem from "./DraftCourseItem";
+import Prereq from "./Prereq";
 
 const useStyles = makeStyles({
   table: {

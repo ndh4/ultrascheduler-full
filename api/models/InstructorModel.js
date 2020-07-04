@@ -1,13 +1,14 @@
-import { composeWithMongoose } from 'graphql-compose-mongoose';
+import { composeWithMongoose } from "graphql-compose-mongoose";
 
-var mongoose = require('mongoose')
-    , Schema = mongoose.Schema
+var mongoose = require("mongoose"),
+  Schema = mongoose.Schema;
 
-require('../db')
+require("../db");
 
 var InstructorSchema = new Schema({
-    firstName: String,
-    lastName: String
+  WEBID: String,
+  firstName: String,
+  lastName: String,
 });
 
 export const Instructor = mongoose.model("instructors", InstructorSchema);

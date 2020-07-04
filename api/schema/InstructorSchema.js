@@ -6,11 +6,10 @@ const xml2js = require("xml2js");
 
 InstructorTC.addResolver({
   name: "fetchInstructors",
-  type: InstructorTC,
+  type: [InstructorTC],
   args: { termcode: "String!" },
-  resolve: ({ source, args, context, info }) => {
-    console.log("args.termcode", args.termcode);
-    return axios
+  resolve: async ({ source, args, context, info }) => {
+    return await axios
       .get(
         "https://esther.rice.edu/selfserve/!swkscmp.ajax?p_data=INSTRUCTORS&p_term=" +
           args.termcode,
@@ -22,16 +21,34 @@ InstructorTC.addResolver({
           },
         }
       )
-      .then((response) => {
-        console.log("response: ", response.data);
-        return xml2js.parseString(response.data, (err, result) => {
-          if (err) {
-            console.log("Cannot parse xml to json because ", err);
-          }
-          const json = JSON.stringify(result);
-          console.log(json);
-          return json;
-        });
+      .then(async (response) => {
+        // console.log("response: ", response.data);
+        const test = await xml2js
+          .parseStringPromise(response.data)
+          .then((result) => {
+            const mapped = result["INSTRUCTORS"]["INSTRUCTOR"].map(
+              (instructor) => {
+                const flattened = instructor["$"];
+                const { INI, NAME, WEBID } = flattened;
+                const split = NAME.split(",");
+                const corrected = split.map((val, index) => {
+                  if (!index) return val;
+                  return val.substring(1);
+                });
+                return {
+                  INI,
+                  WEBID,
+                  firstName: corrected[0],
+                  lastName: corrected[1],
+                };
+              }
+            );
+            // const json = JSON.stringify(result);
+            // // console.log(mapped);
+            return mapped;
+          });
+        // console.log(test);
+        return test;
       })
       .catch((error) => {
         console.log("error fetching data", error);
@@ -58,15 +75,7 @@ InstructorTC.addFields({
   },
 
   webIDs: {
-    type: GraphQLJSONObject,
-    args: InstructorTC.getResolver("fetchInstructors").getArgs(),
-    resolve: (source, args, context, info) =>
-      InstructorTC.getResolver("fetchInstructors").resolve({
-        source,
-        args,
-        context,
-        info,
-      }),
+    type: GraphQLString,
   },
 });
 
