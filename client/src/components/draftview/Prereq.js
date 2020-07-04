@@ -4,8 +4,6 @@ import Collapse from "@material-ui/core/Collapse";
 
 /* Component for collapsible displaying prereqs and coreqs of a course*/
 const collapse = ({ course, open }) => {
-    console.log("prereqssssss: ", course.prereqs);
-    console.log("coreqefwfe:", course.coreqs);
     return (
         <TableRow>
             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>

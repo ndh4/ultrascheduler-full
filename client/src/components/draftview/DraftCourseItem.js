@@ -153,6 +153,8 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
         }
     );
 
+    // console.log("instructor list: ", instructorsList);
+
     /**
      * Toggle function for toggling the collapsible display of prerequisites and corequisites
      */
