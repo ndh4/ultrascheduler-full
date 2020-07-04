@@ -13,84 +13,88 @@ import DraftCourseItem from "./DraftCourseItem";
 import Prereq from "./Prereq";
 
 const useStyles = makeStyles({
-  table: {
-    width: "100%",
-  },
+    table: {
+        width: "100%",
+    },
 });
 
 const styles = {
-  slideContainer: {
-    maxHeight: "50vh",
-    maxWidth: "100vw",
-    WebkitOverflowScrolling: "touch", // iOS momentum scrolling
-  },
+    slideContainer: {
+        maxHeight: "50vh",
+        maxWidth: "100vw",
+        WebkitOverflowScrolling: "touch", // iOS momentum scrolling
+    },
 };
 
 const ClassSelector = ({ draftSessions, scheduleID }) => {
-  const classes = useStyles();
-  // Get headers
-  let headers = [
-    "Visible",
-    "Course Code",
-    "CRN",
-    "Credits",
-    "Distribution",
-    "Class Days",
-    "Class Time",
-    "Lab Days",
-    "Lab Times",
-    "Instructor(s)",
-    "Remove",
-  ];
+    const classes = useStyles();
+    // Get headers
+    let headers = [
+        "Visible",
+        "Course Code",
+        "CRN",
+        "Credits",
+        "Distribution",
+        "Class Times",
+        "Lab Times",
+        "Instructor(s)",
+        "Remove",
+    ];
 
-  // Calculate total credit hours
-  let creditTotal = draftSessions.reduce((totalCredits, draftSession) => {
-    if (draftSession.visible) {
-      return totalCredits + draftSession.session.course.creditsMin;
-    } else {
-      return totalCredits;
-    }
-  }, 0);
+    // Calculate total credit hours
+    let creditTotal = draftSessions.reduce((totalCredits, draftSession) => {
+        if (draftSession.visible) {
+            return totalCredits + draftSession.session.course.creditsMin;
+        } else {
+            return totalCredits;
+        }
+    }, 0);
 
-  return (
-    <TableContainer component={Paper}>
-      <SwipeableViews containerStyle={styles.slideContainer}>
-        <Table
-          stickyHeader={true}
-          stickyFooter={true}
-          className={classes.table}
-          aria-label="simple table"
-        >
-          <TableHead>
-            <TableRow>
-              {headers.map((heading, idx) => {
-                if (idx == 0) {
-                  return <TableCell>{heading}</TableCell>;
-                } else {
-                  return <TableCell align="right">{heading}</TableCell>;
-                }
-              })}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {draftSessions.map((draftSession) => (
-              <DraftCourseItem
-                visible={draftSession.visible}
-                session={draftSession.session}
-                course={draftSession.session.course}
-                scheduleID={scheduleID}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      </SwipeableViews>
-      <Table>
-        <TableRow>
-          <TableCell align="left">Total Visible Hours: {creditTotal}</TableCell>
-        </TableRow>
-      </Table>
-    </TableContainer>
-  );
+    return (
+        <TableContainer component={Paper}>
+            <SwipeableViews containerStyle={styles.slideContainer}>
+                <Table
+                    stickyHeader={true}
+                    stickyFooter={true}
+                    className={classes.table}
+                    aria-label="simple table"
+                >
+                    <TableHead>
+                        <TableRow>
+                            {headers.map((heading, idx) => {
+                                if (idx == 0) {
+                                    return <TableCell>{heading}</TableCell>;
+                                } else {
+                                    return (
+                                        <TableCell align="right">
+                                            {heading}
+                                        </TableCell>
+                                    );
+                                }
+                            })}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {draftSessions.map((draftSession) => (
+                            <DraftCourseItem
+                                visible={draftSession.visible}
+                                session={draftSession.session}
+                                course={draftSession.session.course}
+                                scheduleID={scheduleID}
+                            />
+                        ))}
+                    </TableBody>
+                </Table>
+            </SwipeableViews>
+            <Table>
+                <TableRow>
+                    <TableCell align="left">
+                        Total Visible Hours: {creditTotal}
+                    </TableCell>
+                </TableRow>
+            </Table>
+        </TableContainer>
+    );
 };
 
 export default ClassSelector;

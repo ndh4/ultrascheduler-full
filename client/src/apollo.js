@@ -1,10 +1,10 @@
 // Apollo Client Setup
 import {
-  ApolloClient,
-  HttpLink,
-  InMemoryCache,
-  split,
-  gql,
+    ApolloClient,
+    HttpLink,
+    InMemoryCache,
+    split,
+    gql,
 } from "@apollo/client";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { setContext } from "@apollo/link-context";
@@ -15,21 +15,21 @@ import { WebSocketLink } from "@apollo/link-ws";
 // Wraps our requests with a token if one exists
 // Copied from: https://www.apollographql.com/docs/react/v3.0-beta/networking/authentication/
 const authLink = setContext((_, { headers }) => {
-  // get the authentication token from local storage if it exists
-  const token = localStorage.getItem("token");
-  // return the headers to the context so httpLink can read them
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : "",
-    },
-  };
+    // get the authentication token from local storage if it exists
+    const token = localStorage.getItem("token");
+    // return the headers to the context so httpLink can read them
+    return {
+        headers: {
+            ...headers,
+            authorization: token ? `Bearer ${token}` : "",
+        },
+    };
 });
 
 // HTTP Backend Link
 const httpLink = new HttpLink({
-  uri: "http://localhost:3000/graphql",
-  // uri: "/graphql"
+    uri: "http://localhost:3000/graphql",
+    // uri: "/graphql"
 });
 
 // WebSocket Backend Link
@@ -59,25 +59,25 @@ const cache = new InMemoryCache();
 
 // Initialize Client
 export const client = new ApolloClient({
-  cache: new InMemoryCache(),
-  link: authLink.concat(httpLink),
+    cache: new InMemoryCache(),
+    link: authLink.concat(httpLink),
 });
 
 // Initial local state
 const initialState = {
-  service: process.env.REACT_APP_SERVICE_URL,
-  recentUpdate: false,
-  term: 202110,
+    service: process.env.REACT_APP_SERVICE_URL,
+    recentUpdate: false,
+    term: 202110,
 };
 
 // Initialize cache with a state
 client.writeQuery({
-  query: gql`
-    query InitialState {
-      service
-      recentUpdate
-      term
-    }
-  `,
-  data: initialState,
+    query: gql`
+        query InitialState {
+            service
+            recentUpdate
+            term
+        }
+    `,
+    data: initialState,
 });

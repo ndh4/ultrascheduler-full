@@ -19,35 +19,35 @@ import URLTypes from "../../constants/URLTypes";
 import { gql, useMutation, useQuery } from "@apollo/client";
 
 const createURL = (termcode, crn, type = URLTypes.DETAIL) => {
-  switch (type) {
-    case URLTypes.DETAIL:
-      return `https://courses.rice.edu/courses/!SWKSCAT.cat?p_action=COURSE&p_term=${termcode}&p_crn=${crn}`;
-    case URLTypes.EVAL:
-      return `https://esther.rice.edu/selfserve/swkscmt.main?p_term=${termcode}&p_crn=${crn}&p_commentid=&p_confirm=1&p_type=Course`;
-    default:
-      console.log(`Uknown URL type: ${type}`);
-      return "https://rice.edu/";
-  }
+    switch (type) {
+        case URLTypes.DETAIL:
+            return `https://courses.rice.edu/courses/!SWKSCAT.cat?p_action=COURSE&p_term=${termcode}&p_crn=${crn}`;
+        case URLTypes.EVAL:
+            return `https://esther.rice.edu/selfserve/swkscmt.main?p_term=${termcode}&p_crn=${crn}&p_commentid=&p_confirm=1&p_type=Course`;
+        default:
+            console.log(`Uknown URL type: ${type}`);
+            return "https://rice.edu/";
+    }
 };
 
 const createInstructorURL = (termcode, webID) => {
-  return `https://esther.rice.edu/selfserve/swkscmt.main?p_term=${termcode}&p_instr=${webID}&p_commentid=&p_confirm=1&p_type=Instructor`;
+    return `https://esther.rice.edu/selfserve/swkscmt.main?p_term=${termcode}&p_instr=${webID}&p_commentid=&p_confirm=1&p_type=Instructor`;
 };
 
 /**
  * If creditsMax is present (i.e. there is a range of possible credits) then display the range. Otherwise, just display the minimum number of credits.
  */
 const creditsDisplay = (creditsMin, creditsMax) => {
-  if (creditsMax == null) {
-    // Only display credit min
-    return <p>{creditsMin}</p>;
-  } else {
-    return (
-      <p>
-        {creditsMin} - {creditsMax}
-      </p>
-    );
-  }
+    if (creditsMax == null) {
+        // Only display credit min
+        return <p>{creditsMin}</p>;
+    } else {
+        return (
+            <p>
+                {creditsMin} - {creditsMax}
+            </p>
+        );
+    }
 };
 
 /**
@@ -56,12 +56,12 @@ const creditsDisplay = (creditsMin, creditsMax) => {
  * {id: xxx, firstName: xxx, lastName: xxx}
  */
 const instructorsToNames = (instructors) => {
-  let instructorNames = [];
-  for (let instructor of instructors) {
-    let instructorName = instructor.firstName + " " + instructor.lastName;
-    instructorNames.push(instructorName);
-  }
-  return instructorNames;
+    let instructorNames = [];
+    for (let instructor of instructors) {
+        let instructorName = instructor.firstName + " " + instructor.lastName;
+        instructorNames.push(instructorName);
+    }
+    return instructorNames;
 };
 
 /**
@@ -72,44 +72,44 @@ const instructorsToNames = (instructors) => {
  * Toggles the visibility setting for this draft session
  */
 const TOGGLE_DRAFT_SESSION_VISIBILITY = gql`
-  mutation ToggleCourse($scheduleID: ID!, $sessionID: ID!) {
-    scheduleToggleSession(scheduleID: $scheduleID, sessionID: $sessionID) {
-      _id
-      term
-      draftSessions {
-        _id
-        session {
-          _id
+    mutation ToggleCourse($scheduleID: ID!, $sessionID: ID!) {
+        scheduleToggleSession(scheduleID: $scheduleID, sessionID: $sessionID) {
+            _id
+            term
+            draftSessions {
+                _id
+                session {
+                    _id
+                }
+                visible
+            }
         }
-        visible
-      }
     }
-  }
 `;
 
 /**
  * Removes the draft session from the schedule
  */
 const REMOVE_DRAFT_SESSION = gql`
-  mutation RemoveDraftSession($scheduleID: ID!, $sessionID: ID!) {
-    scheduleRemoveSession(scheduleID: $scheduleID, sessionID: $sessionID) {
-      _id
-      term
-      draftSessions {
-        _id
-        session {
-          _id
+    mutation RemoveDraftSession($scheduleID: ID!, $sessionID: ID!) {
+        scheduleRemoveSession(scheduleID: $scheduleID, sessionID: $sessionID) {
+            _id
+            term
+            draftSessions {
+                _id
+                session {
+                    _id
+                }
+                visible
+            }
         }
-        visible
-      }
     }
-  }
 `;
 
 const FETCH_INSTRUCTORS = gql`
-  query instructorList($termcode: String!) {
-    WEBID
-  }
+    query instructorList($termcode: String!) {
+        WEBID
+    }
 `;
 
 // /* Component for collapsible displaying prereqs and coreqs of a course*/
@@ -135,116 +135,130 @@ const FETCH_INSTRUCTORS = gql`
 // );
 
 const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
-  const emptyCellGenerator = (count) => {
-    let cells = [];
-    for (let i = 0; i < count; i++) {
-      cells.push(<TableCell align="right"></TableCell>);
-    }
-    return cells;
-  };
+    const emptyCellGenerator = (count) => {
+        let cells = [];
+        for (let i = 0; i < count; i++) {
+            cells.push(<TableCell align="right"></TableCell>);
+        }
+        return cells;
+    };
 
-  const createSectionTimeCells = (section) => {
-    if (!section.startTime || !section.endTime) {
-      return <Fragment>{emptyCellGenerator(2)}</Fragment>;
-    } else {
-      return (
-        <Fragment>
-          <TableCell align="right">{section.days}</TableCell>
-          <TableCell align="right">
-            {classTimeString(section.startTime, section.endTime)}
-          </TableCell>
-        </Fragment>
-      );
-    }
-  };
+    const createSectionTimeCells = (section) => {
+        if (!section.startTime || !section.endTime) {
+            return <Fragment>{emptyCellGenerator(2)}</Fragment>;
+        } else {
+            return (
+                <Fragment>
+                    <TableCell align="right">{section.days}</TableCell>
+                    <TableCell align="right">
+                        {classTimeString(section.startTime, section.endTime)}
+                    </TableCell>
+                </Fragment>
+            );
+        }
+    };
 
-  let [toggleVisibility] = useMutation(TOGGLE_DRAFT_SESSION_VISIBILITY, {
-    variables: { scheduleID: scheduleID, sessionID: session._id },
-  });
+    let [toggleVisibility] = useMutation(TOGGLE_DRAFT_SESSION_VISIBILITY, {
+        variables: { scheduleID: scheduleID, sessionID: session._id },
+    });
 
-  let [removeDraftSession] = useMutation(REMOVE_DRAFT_SESSION, {
-    variables: { scheduleID: scheduleID, sessionID: session._id },
-  });
+    let [removeDraftSession] = useMutation(REMOVE_DRAFT_SESSION, {
+        variables: { scheduleID: scheduleID, sessionID: session._id },
+    });
 
-  const { data: instructorsList, loading, error } = useQuery(
-    FETCH_INSTRUCTORS,
-    {
-      variables: { termcode: "202110" },
-    }
-  );
+    const { data: instructorsList, loading, error } = useQuery(
+        FETCH_INSTRUCTORS,
+        {
+            variables: { termcode: "202110" },
+        }
+    );
 
-  console.log("longTitle: ", course.longTitle);
-  console.log("coereqs: ", course.coreqs);
-  console.log("rereqs:", course.prereqs);
+    console.log("longTitle: ", course.longTitle);
+    console.log("coereqs: ", course.coreqs);
+    console.log("rereqs:", course.prereqs);
 
-  const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false);
 
-  return (
-    <TableRow key={session.crn}>
-      <TableCell padding="checkbox">
-        <Checkbox checked={visible} onClick={() => toggleVisibility()} />
-      </TableCell>
-      <TableCell align="right" component="th" scope="row">
-        <Tooltip title="View Course Details">
-          <ReactGA.OutboundLink
-            style={{ color: "#272D2D", textDecoration: "none" }}
-            eventLabel="course_description"
-            to={createURL("202110", session.crn, URLTypes.DETAIL)}
-            target="_blank"
-          >
-            <span style={{ color: "272D2D" }}>{course.longTitle}</span>
-          </ReactGA.OutboundLink>
-        </Tooltip>
-        <Tooltip title="View Evaluations">
-          <ReactGA.OutboundLink
-            eventLabel="course_evaluation"
-            to={createURL("202110", session.crn, URLTypes.EVAL)}
-            target="_blank"
-          >
-            <IconButton aria-label="evaluations">
-              <QuestionAnswerIcon />
-            </IconButton>
-          </ReactGA.OutboundLink>
-        </Tooltip>
-        <IconButton
-          aria-label="expand row"
-          size="small"
-          onClick={() => setOpen(!open)}
-        >
-          {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-        </IconButton>
-      </TableCell>
-      <TableCell align="right">{session.crn}</TableCell>
-      <TableCell align="right">
-        {creditsDisplay(course.creditsMin, course.creditsMax)}
-      </TableCell>
-      <TableCell align="right">{course.distribution}</TableCell>
-      {createSectionTimeCells(session.class)}
-      {createSectionTimeCells(session.lab)}
-      <TableCell align="right">
-        {instructorsToNames(session.instructors).map((instructor) => (
-          <Tooltip title="View Instructor Evaluation">
-            <ReactGA.OutboundLink
-              style={{ color: "#272D2D", textDecoration: "none" }}
-              eventLabel="instructor_evaluation"
-              to={createURL("202110", session.crn, URLTypes.DETAIL)}
-              target="_blank"
-            >
-              <span style={{ color: "272D2D" }}>{instructor}</span>
-            </ReactGA.OutboundLink>
-          </Tooltip>
-        ))}
-        {/* {instructorsToNames(session.instructors).join(", ")} */}
-      </TableCell>
-      <TableCell align="right">
-        <Tooltip title="Delete">
-          <IconButton aria-label="delete" onClick={() => removeDraftSession()}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </TableCell>
-    </TableRow>
-  );
+    return (
+        <TableRow key={session.crn}>
+            <TableCell padding="checkbox">
+                <Checkbox
+                    checked={visible}
+                    onClick={() => toggleVisibility()}
+                />
+            </TableCell>
+            <TableCell align="right" component="th" scope="row">
+                <Tooltip title="View Course Details">
+                    <ReactGA.OutboundLink
+                        style={{ color: "#272D2D", textDecoration: "none" }}
+                        eventLabel="course_description"
+                        to={createURL("202110", session.crn, URLTypes.DETAIL)}
+                        target="_blank"
+                    >
+                        <span style={{ color: "272D2D" }}>
+                            {course.longTitle}
+                        </span>
+                    </ReactGA.OutboundLink>
+                </Tooltip>
+                <Tooltip title="View Evaluations">
+                    <ReactGA.OutboundLink
+                        eventLabel="course_evaluation"
+                        to={createURL("202110", session.crn, URLTypes.EVAL)}
+                        target="_blank"
+                    >
+                        <IconButton aria-label="evaluations">
+                            <QuestionAnswerIcon />
+                        </IconButton>
+                    </ReactGA.OutboundLink>
+                </Tooltip>
+                <IconButton
+                    aria-label="expand row"
+                    size="small"
+                    onClick={() => setOpen(!open)}
+                >
+                    {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                </IconButton>
+            </TableCell>
+            <TableCell align="right">{session.crn}</TableCell>
+            <TableCell align="right">
+                {creditsDisplay(course.creditsMin, course.creditsMax)}
+            </TableCell>
+            <TableCell align="right">{course.distribution}</TableCell>
+            {createSectionTimeCells(session.class)}
+            {createSectionTimeCells(session.lab)}
+            <TableCell align="right">
+                {instructorsToNames(session.instructors).map((instructor) => (
+                    <Tooltip title="View Instructor Evaluation">
+                        <ReactGA.OutboundLink
+                            style={{ color: "#272D2D", textDecoration: "none" }}
+                            eventLabel="instructor_evaluation"
+                            to={createURL(
+                                "202110",
+                                session.crn,
+                                URLTypes.DETAIL
+                            )}
+                            target="_blank"
+                        >
+                            <span style={{ color: "272D2D" }}>
+                                {instructor}
+                            </span>
+                        </ReactGA.OutboundLink>
+                    </Tooltip>
+                ))}
+                {/* {instructorsToNames(session.instructors).join(", ")} */}
+            </TableCell>
+            <TableCell align="right">
+                <Tooltip title="Delete">
+                    <IconButton
+                        aria-label="delete"
+                        onClick={() => removeDraftSession()}
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
+            </TableCell>
+        </TableRow>
+    );
 };
 
 export default DraftCourseItem;
