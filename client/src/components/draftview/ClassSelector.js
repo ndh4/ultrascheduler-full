@@ -60,6 +60,19 @@ const ClassSelector = ({ draftSessions, scheduleID }) => {
                     className={classes.table}
                     aria-label="simple table"
                 >
+                    <colgroup>
+                        <col style={{ width: "3%" }}></col>
+                        <col style={{ width: "20%" }}></col>
+                        <col style={{ width: "3%" }}></col>
+                        <col style={{ width: "3%" }}></col>
+                        <col style={{ width: "3%" }}></col>
+                        <col style={{ width: "17.5%" }}></col>
+                        <col style={{ width: "17.5%" }}></col>
+                        <col style={{ width: "10%" }}></col>
+                        <col style={{ width: "10%" }}></col>
+                        <col style={{ width: "10%" }}></col>
+                        <col style={{ width: "3%" }}></col>
+                    </colgroup>
                     <TableHead>
                         <TableRow>
                             {headers.map((heading, idx) => {

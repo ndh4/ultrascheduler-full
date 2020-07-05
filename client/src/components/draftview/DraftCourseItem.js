@@ -33,10 +33,14 @@ const createURL = (termcode, crn, type = URLTypes.DETAIL) => {
 const creditsDisplay = (creditsMin, creditsMax) => {
     if (creditsMax == null) {
         // Only display credit min
-        return <p>{creditsMin}</p>;
+        return (
+            <p style={{ display: "flex", justifyContent: "center" }}>
+                {creditsMin}
+            </p>
+        );
     } else {
         return (
-            <p>
+            <p style={{ display: "flex", justifyContent: "center" }}>
                 {creditsMin} - {creditsMax}
             </p>
         );
@@ -115,8 +119,20 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
             return (
                 <Fragment>
                     <TableCell align="right">
-                        {section.days}{" "}
-                        {classTimeString(section.startTime, section.endTime)}
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <div>{section.days}</div>
+                            <div>
+                                {classTimeString(
+                                    section.startTime,
+                                    section.endTime
+                                )}
+                            </div>
+                        </div>
                     </TableCell>
                     {/*<TableCell>{section.enrollment}</TableCell>*/}
                 </Fragment>
