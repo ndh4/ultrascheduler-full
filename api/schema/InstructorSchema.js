@@ -1,8 +1,8 @@
-import { Instructor, InstructorTC, SessionTC } from "../models";
+import { InstructorTC, SessionTC } from "../models";
 import axios from "axios";
 import { GraphQLString } from "graphql";
-import { GraphQLJSONObject } from "graphql-compose";
 const xml2js = require("xml2js");
+const parser = new xml2js.Parser();
 
 InstructorTC.addResolver({
   name: "fetchInstructors",
@@ -16,38 +16,32 @@ InstructorTC.addResolver({
         {
           headers: {
             "Access-Control-Allow-Origin": "http://localhost:3001",
-            "Access-Control-Allow-Headers":
-              "Origin, X-Requested-With, Content-Type, Accept",
+            "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
           },
         }
       )
       .then(async (response) => {
         // console.log("response: ", response.data);
-        const test = await xml2js
-          .parseStringPromise(response.data)
-          .then((result) => {
-            const mapped = result["INSTRUCTORS"]["INSTRUCTOR"].map(
-              (instructor) => {
-                const flattened = instructor["$"];
-                const { INI, NAME, WEBID } = flattened;
-                const split = NAME.split(",");
-                const corrected = split.map((val, index) => {
-                  if (!index) return val;
-                  return val.substring(1);
-                });
-                return {
-                  INI,
-                  WEBID,
-                  firstName: corrected[0],
-                  lastName: corrected[1],
-                };
-              }
-            );
-            // const json = JSON.stringify(result);
-            // // console.log(mapped);
-            return mapped;
+        const test = await parser.parseStringPromise(response.data).then((result) => {
+          const mapped = result["INSTRUCTORS"]["INSTRUCTOR"].map((instructor) => {
+            const flattened = instructor["$"];
+            const { INI, NAME, WEBID } = flattened;
+            const split = NAME.split(",");
+            const corrected = split.map((val, index) => {
+              if (!index) return val;
+              return val.substring(1);
+            });
+            return {
+              INI,
+              WEBID,
+              firstName: corrected[0],
+              lastName: corrected[1],
+            };
           });
-        // console.log(test);
+          // const json = JSON.stringify(result);
+          // // console.log(mapped);
+          return mapped;
+        });
         return test;
       })
       .catch((error) => {
@@ -58,6 +52,9 @@ InstructorTC.addResolver({
 
 // Create a field NOT on the mongoose model; easy way to fetch sessions that an instructor teaches
 InstructorTC.addFields({
+  WEBID: {
+    type: GraphQLString,
+  },
   sessions: {
     type: [SessionTC],
     args: SessionTC.getResolver("findMany").getArgs(),
@@ -72,10 +69,6 @@ InstructorTC.addFields({
     projection: {
       _id: true,
     },
-  },
-
-  webIDs: {
-    type: GraphQLString,
   },
 });
 

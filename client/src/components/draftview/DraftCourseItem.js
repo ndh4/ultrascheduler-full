@@ -109,8 +109,12 @@ const REMOVE_DRAFT_SESSION = gql`
 `;
 
 const FETCH_INSTRUCTORS = gql`
-    query instructorList($termcode: String!) {
-        WEBID
+    query WebIDs($termcode: String!) {
+        instructorList(termcode: $termcode) {
+            firstName
+            lastName
+            WEBID
+        }
     }
 `;
 
@@ -152,8 +156,10 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
             variables: { termcode: "202110" },
         }
     );
-
-    // console.log("instructor list: ", instructorsList);
+    console.log("INSTRUCTORS:");
+    if (instructorsList) {
+        console.log("instructor list: ", instructorsList);
+    }
 
     /**
      * Toggle function for toggling the collapsible display of prerequisites and corequisites
