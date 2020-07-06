@@ -66,6 +66,10 @@ const instructorsToNames = (instructors) => {
     return instructorNames;
 };
 
+const instructorToName = (instructor) => {
+    return instructor.firstName + " " + instructor.lastName;
+};
+
 /**
  * GraphQL Mutations
  */
@@ -108,12 +112,19 @@ const REMOVE_DRAFT_SESSION = gql`
     }
 `;
 
+/**
+ * GraphQL Queries
+ */
+
+/**
+ * Fetch the instructors along with their webIds
+ */
 const FETCH_INSTRUCTORS = gql`
     query WebIDs($termcode: String!) {
         instructorList(termcode: $termcode) {
             firstName
             lastName
-            WEBID
+            webId
         }
     }
 `;
@@ -156,10 +167,24 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
             variables: { termcode: "202110" },
         }
     );
-    console.log("INSTRUCTORS:");
-    if (instructorsList) {
-        console.log("instructor list: ", instructorsList);
-    }
+
+    /**
+     * Get the webId of the instructor
+     */
+    const webIds = (instructor) => {
+        if (instructorsList) {
+            let filteredInstructor = instructorsList.instructorList.filter(
+                (inst) =>
+                    inst.firstName === instructor.firstName &&
+                    inst.lastName === instructor.lastName
+            );
+            if (filteredInstructor.length !== 0) {
+                return filteredInstructor[0].webId;
+            }
+        }
+        // If instructor not in current instructor list, return a random webId
+        return "126";
+    };
 
     /**
      * Toggle function for toggling the collapsible display of prerequisites and corequisites
@@ -225,8 +250,9 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
                 {createSectionTimeCells(session.class)}
                 {createSectionTimeCells(session.lab)}
                 <TableCell align="right">
-                    {instructorsToNames(session.instructors).map(
-                        (instructor) => (
+                    {session.instructors.map((instructor) => {
+                        let webId = webIds(instructor);
+                        return (
                             <Tooltip title="View Instructor Evaluation">
                                 <ReactGA.OutboundLink
                                     style={{
@@ -234,20 +260,16 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
                                         textDecoration: "none",
                                     }}
                                     eventLabel="instructor_evaluation"
-                                    to={createURL(
-                                        "202110",
-                                        session.crn,
-                                        URLTypes.DETAIL
-                                    )}
+                                    to={createInstructorURL("202110", webId)}
                                     target="_blank"
                                 >
                                     <span style={{ color: "272D2D" }}>
-                                        {instructor}
+                                        {instructorToName(instructor)}
                                     </span>
                                 </ReactGA.OutboundLink>
                             </Tooltip>
-                        )
-                    )}
+                        );
+                    })}
                     {/* {instructorsToNames(session.instructors).join(", ")} */}
                 </TableCell>
                 <TableCell align="right">

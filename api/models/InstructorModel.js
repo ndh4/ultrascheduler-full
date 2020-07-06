@@ -6,7 +6,7 @@ var mongoose = require("mongoose"),
 require("../db");
 
 var InstructorSchema = new Schema({
-  WEBID: String,
+  webId: String,
   firstName: String,
   lastName: String,
 });

@@ -16,36 +16,42 @@ InstructorTC.addResolver({
         {
           headers: {
             "Access-Control-Allow-Origin": "http://localhost:3001",
-            "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+            "Access-Control-Allow-Headers":
+              "Origin, X-Requested-With, Content-Type, Accept",
           },
         }
       )
       .then(async (response) => {
         // console.log("response: ", response.data);
-        const test = await parser.parseStringPromise(response.data).then((result) => {
-          const mapped = result["INSTRUCTORS"]["INSTRUCTOR"].map((instructor) => {
-            const flattened = instructor["$"];
-            const { INI, NAME, WEBID } = flattened;
-            const split = NAME.split(",");
-            const corrected = split.map((val, index) => {
-              if (!index) return val;
-              return val.substring(1);
-            });
-            return {
-              INI,
-              WEBID,
-              firstName: corrected[0],
-              lastName: corrected[1],
-            };
+        const test = await parser
+          .parseStringPromise(response.data)
+          .then((result) => {
+            const mapped = result["INSTRUCTORS"]["INSTRUCTOR"].map(
+              (instructor) => {
+                const flattened = instructor["$"];
+                const { INI, NAME, WEBID } = flattened;
+                const split = NAME.split(",");
+                const corrected = split.map((val, index) => {
+                  if (!index) return val;
+                  return val.substring(1);
+                });
+                return {
+                  INI,
+                  webId: WEBID,
+                  firstName: corrected[0],
+                  lastName: corrected[1],
+                };
+              }
+            );
+            // const json = JSON.stringify(result);
+            // // console.log(mapped);
+            return mapped;
           });
-          // const json = JSON.stringify(result);
-          // // console.log(mapped);
-          return mapped;
-        });
         return test;
       })
       .catch((error) => {
         console.log("error fetching data", error);
+        return [];
       });
   },
 });
