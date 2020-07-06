@@ -4,6 +4,7 @@ import { GraphQLString } from "graphql";
 const xml2js = require("xml2js");
 const parser = new xml2js.Parser();
 
+// API GET request to fetch the instructors with their webIds
 InstructorTC.addResolver({
   name: "fetchInstructors",
   type: [InstructorTC],
@@ -12,17 +13,10 @@ InstructorTC.addResolver({
     return await axios
       .get(
         "https://esther.rice.edu/selfserve/!swkscmp.ajax?p_data=INSTRUCTORS&p_term=" +
-          args.termcode,
-        {
-          headers: {
-            "Access-Control-Allow-Origin": "http://localhost:3001",
-            "Access-Control-Allow-Headers":
-              "Origin, X-Requested-With, Content-Type, Accept",
-          },
-        }
+          args.termcode
       )
       .then(async (response) => {
-        // console.log("response: ", response.data);
+        // Parse xml to json
         const test = await parser
           .parseStringPromise(response.data)
           .then((result) => {
@@ -30,8 +24,10 @@ InstructorTC.addResolver({
               (instructor) => {
                 const flattened = instructor["$"];
                 const { INI, NAME, WEBID } = flattened;
+                // Get the instructors firstname and lastname
                 const split = NAME.split(",");
                 const corrected = split.map((val, index) => {
+                  // Remove the extra " " in front of firstname
                   if (!index) return val;
                   return val.substring(1);
                 });
@@ -43,8 +39,6 @@ InstructorTC.addResolver({
                 };
               }
             );
-            // const json = JSON.stringify(result);
-            // // console.log(mapped);
             return mapped;
           });
         return test;
