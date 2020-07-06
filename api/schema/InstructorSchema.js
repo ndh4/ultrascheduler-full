@@ -38,8 +38,8 @@ InstructorTC.addResolver({
                 return {
                   INI,
                   webId: WEBID,
-                  firstName: corrected[0],
-                  lastName: corrected[1],
+                  firstName: corrected[1],
+                  lastName: corrected[0],
                 };
               }
             );

@@ -164,7 +164,7 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
     const { data: instructorsList, loading, error } = useQuery(
         FETCH_INSTRUCTORS,
         {
-            variables: { termcode: "202110" },
+            variables: { termcode: "202020" },
         }
     );
 
@@ -183,7 +183,7 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
             }
         }
         // If instructor not in current instructor list, return a random webId
-        return "126";
+        return "281";
     };
 
     /**
