@@ -47,6 +47,29 @@ const creditsDisplay = (creditsMin, creditsMax) => {
     }
 };
 
+const distDisplay = (dist) => {
+    return (
+        <p style={{ display: "flex", justifyContent: "center" }}>
+            {dist.substr(
+                dist.indexOf(" ") + 1
+            )}
+        </p>
+    );
+};
+
+const enrollDisplay = (actual, max) => {
+    return (
+        <div>
+            <div>
+                {"Actual: "}{actual}
+            </div>
+            <div>
+                {"Max: "}{max}
+            </div>
+        </div>
+    );
+};
+
 /**
  * TODO: MOVE THIS TO utils.js
  * @param {instructor} instructors
@@ -186,25 +209,15 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
                 {creditsDisplay(course.creditsMin, course.creditsMax)}
             </TableCell>
             <TableCell align="right">
-                {course.distribution.substr(
-                    course.distribution.indexOf(" ") + 1
-                )}
+                {distDisplay(course.distribution)}
             </TableCell>
             {createSectionTimeCells(session.class)}
             {createSectionTimeCells(session.lab)}
             <TableCell align="right">
-                {"Actual: "}
-                {session.enrollment}
-                <br></br>
-                {"Max: "}
-                {session.maxEnrollment}
+                {enrollDisplay(session.enrollment, session.maxEnrollment)}
             </TableCell>
             <TableCell align="right">
-                {"Actual: "}
-                {session.waitlisted}
-                <br></br>
-                {"Max: "}
-                {session.maxWaitlisted}
+                {enrollDisplay(session.waitlisted, session.maxWaitlisted)}
             </TableCell>
             <TableCell align="right">
                 {instructorsToNames(session.instructors).join(", ")}
