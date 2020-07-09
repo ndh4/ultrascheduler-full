@@ -18,7 +18,7 @@ import { classTimeString } from "../../utils/CourseTimeTransforms";
 import URLTypes from "../../constants/URLTypes";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { TableBody } from "@material-ui/core";
-import Prereq from "./Prereq";
+import Prereq from "./CourseDetail";
 
 const createURL = (termcode, crn, type = URLTypes.DETAIL) => {
     switch (type) {
