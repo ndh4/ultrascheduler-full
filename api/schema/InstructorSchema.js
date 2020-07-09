@@ -52,7 +52,7 @@ InstructorTC.addResolver({
 
 // Create a field NOT on the mongoose model; easy way to fetch sessions that an instructor teaches
 InstructorTC.addFields({
-  WEBID: {
+  webId: {
     type: GraphQLString,
   },
   sessions: {
