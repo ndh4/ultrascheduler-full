@@ -273,7 +273,7 @@ const CourseList = ({ scheduleID, /*department,*/ distribution, searchcourseResu
   //   variables: { subject: department, term: term },
   // });
   const { data: distCourseData, loading, error } = useQuery(GET_DIST_COURSES, {
-    variables: { distribution: distribution, term: term },
+    variables: { subject: department, term: term },
   });
 
   // We also want to fetch (from our cache, so this does NOT call the backend) the user's draftSessions

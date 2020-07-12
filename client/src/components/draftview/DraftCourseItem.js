@@ -238,8 +238,8 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
                         {open ? (
                             <KeyboardArrowUpIcon />
                         ) : (
-                            <KeyboardArrowDownIcon />
-                        )}
+                                <KeyboardArrowDownIcon />
+                            )}
                     </IconButton>
                 </TableCell>
                 <TableCell align="right">{session.crn}</TableCell>
