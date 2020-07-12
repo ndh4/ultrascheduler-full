@@ -132,8 +132,8 @@ const COURSES_BY_INSTRUCTORS = gql`
 `;
 
 const CourseSearch = ({ scheduleID }) => {
-    const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
-    const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
+	const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
+	const [getDept, setDept] = useState([]); // Used for selection of a particular department
 
     const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
 
@@ -287,14 +287,17 @@ const CourseSearch = ({ scheduleID }) => {
         const selected = allSelected[activeButtonIndex];
 
         return (
-            <Selection
-                className="filter"
-                title={searchType}
-                options={option}
-                selected={selected}
-                show={true}
-                handleChange={handleChange}
-            />
+            <div>
+                <Selection
+                    className="filter"
+                    title={searchType}
+                    options={option}
+                    selected={selected}
+                    show={true}
+                    handleChange={handleChange}
+                />
+                <CompiledLists scheduleID={scheduleID} selectedDepts={getDept} />
+            </div>
         );
     };
 
