@@ -319,9 +319,12 @@ const CourseList = ({ scheduleID, query, searchType }) => {
     };
 
     return (
-        <SwipeableViews containerStyle={styles.slideContainer}>
-            <List component="nav" aria-labelledby="nested-list-subheader">
-                {courseResults.map((course) => {
+        // <SwipeableViews containerStyle={styles.slideContainer}>
+            <List
+            component="nav"
+            aria-labelledby="nested-list-subheader"
+            >
+                {courseResults.map(course => {
                     let id = course._id;
                     return (
                         <div key={id}>
@@ -349,8 +352,9 @@ const CourseList = ({ scheduleID, query, searchType }) => {
                     );
                 })}
             </List>
-        </SwipeableViews>
-    );
-};
+        // </SwipeableViews>
+    )
+
+}
 
 export default CourseList;

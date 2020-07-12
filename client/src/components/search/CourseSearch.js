@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import "./CourseSearch.global.css";
+import CompiledLists from "./CompiledLists";
 
 const dummy = { label: "", value: "" };
 const dummy2 = { label: "", value: "", firstName: "", lastName: "" };
