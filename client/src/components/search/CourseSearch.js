@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import "./CourseSearch.global.css";
+import CompiledLists from "./CompiledLists";
 
 const dummy = { label: "", value: "" };
 
@@ -89,8 +90,8 @@ const GET_DIST_COURSES = gql`
 `;
 
 const CourseSearch = ({ scheduleID }) => {
-    const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
-    const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
+	const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
+	const [getDept, setDept] = useState([]); // Used for selection of a particular department
 
     const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
 
@@ -193,14 +194,17 @@ const CourseSearch = ({ scheduleID }) => {
         const selected = allSelected[activeButtonIndex];
 
         return (
-            <Selection
-                className="filter"
-                title={searchType}
-                options={option}
-                selected={selected}
-                show={true}
-                handleChange={handleChange}
-            />
+            <div>
+                <Selection
+                    className="filter"
+                    title={searchType}
+                    options={option}
+                    selected={selected}
+                    show={true}
+                    handleChange={handleChange}
+                />
+                <CompiledLists scheduleID={scheduleID} selectedDepts={getDept} />
+            </div>
         );
     };
 
