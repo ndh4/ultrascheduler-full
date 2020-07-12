@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, TableBody, TableRow, TableCell } from "@material-ui/core";
+import { Table, TableBody, TableRow, TableCell, Box } from "@material-ui/core";
 import Collapse from "@material-ui/core/Collapse";
 
 /* Component for collapsible displaying prereqs and coreqs of a course*/
@@ -44,7 +44,7 @@ const collapse = ({
                                 </div>
                                 <div>
                                     <b>Course Type: </b>
-                                    {}
+                                    Lecture / Laboratory
                                 </div>
                                 <div>
                                     <b>Distribution Group: </b>{" "}
@@ -65,10 +65,6 @@ const collapse = ({
                                 </div>
                                 <div>
                                     <b>Total Cross-list Max Enrollment: </b>{" "}
-                                    {console.log(
-                                        "maxenrollment",
-                                        session.maxCrossEnrollment
-                                    )}
                                     {session.maxCrossEnrollment}
                                 </div>
                                 <div>
@@ -77,11 +73,13 @@ const collapse = ({
                                 </div>
                                 <div>
                                     <b>Enrollment Restrictions:</b>{" "}
-                                    {console.log(
-                                        "restrictions",
-                                        course.restrictions
-                                    )}
                                     {course.restrictions}
+                                </div>
+                            </TableCell>
+                            <TableCell>
+                                <div>
+                                    <b>Long Title: </b>
+                                    {course.longTitle}
                                 </div>
                                 <div>
                                     <b>Prerequisites:</b>{" "}
@@ -95,24 +93,16 @@ const collapse = ({
                                         ? "None"
                                         : course.coreqs.join(", ")}
                                 </div>
-                            </TableCell>
-
-                            <TableCell>
                                 <div>
-                                    <b>Long Title: </b>
-                                    {course.longTitle}
-                                </div>
-
-                                <div>
-                                    <b>Department:</b> {}
+                                    <b>Department: </b> N/A
                                 </div>
                                 <div>
                                     <b>Session:</b>
-                                    {course.term}
+                                    {session.term}
                                 </div>
                                 <div>
                                     <b>Grade Mode: </b>
-                                    {}
+                                    Standard Letter
                                 </div>
                             </TableCell>
                         </TableBody>
