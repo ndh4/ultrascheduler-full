@@ -2,7 +2,7 @@ import React from "react";
 import Select from "react-select";
 
 const style = {
-  width:100,
+  width:170,
   display:"inline-block",
   float:"center",
   padding: 2,
@@ -19,7 +19,7 @@ function Selection({ options, selected, show, handleChange }) {
   if (show) {
     return (
       <div style={style}>
-        <Select value={selected} onChange={handleChange} options={options} />
+        <Select value={selected} onChange={handleChange} options={options} isMulti={true}/>
       </div>
     );
   } else {

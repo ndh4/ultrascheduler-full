@@ -3,6 +3,7 @@ import Selection from "./Selection";
 import CourseList from "./CourseList";
 import { initGA } from "../../utils/analytics";
 import { useQuery, gql } from "@apollo/client";
+import CompiledLists from "./CompiledLists";
 
 const dummy = { label: "", value: "" };
 
@@ -36,7 +37,7 @@ const GET_DEPARTMENTS = gql`
 
 const CourseSearch = ({ scheduleID }) => {
 	const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
-	const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
+	const [getDept, setDept] = useState([]); // Used for selection of a particular department
 
 	const {
 		data: { term },
@@ -75,7 +76,7 @@ const CourseSearch = ({ scheduleID }) => {
 					handleChange={handleChangeDept}
 				/>
 			</div>
-			<CourseList scheduleID={scheduleID} department={getDept.value} />
+			<CompiledLists scheduleID={scheduleID} selectedDepts={getDept} />
 		</div>
 	);
 };
