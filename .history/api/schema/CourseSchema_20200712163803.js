@@ -101,7 +101,7 @@ const CourseQuery = {
             query: (query, value) => {
                 // Split value into subject & code
                 let distribution = value;
-                console.log(distribution);
+                console.log(distribution)
                 query.distribution = distribution;
             }
         }),

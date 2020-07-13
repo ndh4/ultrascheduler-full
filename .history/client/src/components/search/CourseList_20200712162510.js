@@ -39,12 +39,11 @@ import { useQuery, gql, useMutation } from "@apollo/client";
 // new:
 const GET_DIST_COURSES = gql`
   query CourseQuery($distribution: String!, $term: Float!) {
-    courseMany(filter: { distribution: $distribution }, sort: COURSE_NUM_ASC) {
+    courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
       _id
       subject
       courseNum
       longTitle
-      distribution
       sessions(filter: { term: $term }) {
         _id
         crn

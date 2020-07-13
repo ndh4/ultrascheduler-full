@@ -71,9 +71,8 @@ const CourseSearch = ({ scheduleID }) => {
 		if (distributionsData) {
 			let { distributions } = distributionsData;
 			setDists(distributions.map((dist) => (dist)));
-			console.log("distData", distributionsData);
+			console.log(distributionsData)
 		}
-		console.log("hello");
 	}, [distributionsData]);
 
 	// const handleChangeDept = (selectedOption) => {

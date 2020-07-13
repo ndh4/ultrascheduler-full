@@ -8,43 +8,42 @@ import { Event } from "../../utils/analytics";
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
-// const GET_DEPT_COURSES = gql`
-//   query GetDeptCourses($subject: String!, $term: Float!) {
-//     courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
-//       _id
-//       subject
-//       courseNum
-//       longTitle
-//       sessions(filter: { term: $term }) {
-//         _id
-//         crn
-//         class {
-//           days
-//           startTime
-//           endTime
-//         }
-//         lab {
-//           days
-//           startTime
-//           endTime
-//         }
-//         instructors {
-//           firstName
-//           lastName
-//         }
-//       }
-//     }
-//   }
-// `;
+const GET_DEPT_COURSES = gql`
+  query GetDeptCourses($subject: String!, $term: Float!) {
+    courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
+      _id
+      subject
+      courseNum
+      longTitle
+      sessions(filter: { term: $term }) {
+        _id
+        crn
+        class {
+          days
+          startTime
+          endTime
+        }
+        lab {
+          days
+          startTime
+          endTime
+        }
+        instructors {
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+`;
 // new:
 const GET_DIST_COURSES = gql`
-  query CourseQuery($distribution: String!, $term: Float!) {
+  query GetDeptCourses($distribution: String!, $term: Float!) {
     courseMany(filter: { distribution: $distribution }, sort: COURSE_NUM_ASC) {
       _id
       subject
       courseNum
       longTitle
-      distribution
       sessions(filter: { term: $term }) {
         _id
         crn
@@ -262,7 +261,7 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
   );
 };
 
-const CourseList = ({ scheduleID, /*department,*/ distribution, searchcourseResults }) => {
+const CourseList = ({ scheduleID, department, searchcourseResults }) => {
   const [courseSelected, setCourseSelected] = useState([]);
 
   // Get term from local state management
@@ -273,8 +272,8 @@ const CourseList = ({ scheduleID, /*department,*/ distribution, searchcourseResu
   // const { data: deptCourseData, loading, error } = useQuery(GET_DEPT_COURSES, {
   //   variables: { subject: department, term: term },
   // });
-  const { data: distCourseData, loading, error } = useQuery(GET_DIST_COURSES, {
-    variables: { distribution: distribution, term: term },
+  const { data: deptCourseData, loading, error } = useQuery(GET_DEPT_COURSES, {
+    variables: { subject: department, term: term },
   });
 
   // We also want to fetch (from our cache, so this does NOT call the backend) the user's draftSessions
@@ -282,19 +281,16 @@ const CourseList = ({ scheduleID, /*department,*/ distribution, searchcourseResu
     variables: { term: term.toString() },
   });
 
-  // if (department == "") {
-  //   return <br />;
-  // }
-  if (distribution == "") {
+  if (department == "") {
     return <br />;
   }
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
-  if (!distCourseData) return <p>No Data...</p>;
+  if (!deptCourseData) return <p>No Data...</p>;
 
   // Once the data has loaded, we want to extract the course results for the department
-  let courseResults = distCourseData.courseMany;
+  let courseResults = deptCourseData.courseMany;
 
   // We need to filter out any courses which have 0 sessions
   courseResults = courseResults.filter((course) => course.sessions.length > 0);

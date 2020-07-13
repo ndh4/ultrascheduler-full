@@ -8,43 +8,42 @@ import { Event } from "../../utils/analytics";
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
-// const GET_DEPT_COURSES = gql`
-//   query GetDeptCourses($subject: String!, $term: Float!) {
-//     courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
-//       _id
-//       subject
-//       courseNum
-//       longTitle
-//       sessions(filter: { term: $term }) {
-//         _id
-//         crn
-//         class {
-//           days
-//           startTime
-//           endTime
-//         }
-//         lab {
-//           days
-//           startTime
-//           endTime
-//         }
-//         instructors {
-//           firstName
-//           lastName
-//         }
-//       }
-//     }
-//   }
-// `;
+const GET_DEPT_COURSES = gql`
+  query GetDeptCourses($subject: String!, $term: Float!) {
+    courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
+      _id
+      subject
+      courseNum
+      longTitle
+      sessions(filter: { term: $term }) {
+        _id
+        crn
+        class {
+          days
+          startTime
+          endTime
+        }
+        lab {
+          days
+          startTime
+          endTime
+        }
+        instructors {
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+`;
 // new:
 const GET_DIST_COURSES = gql`
-  query CourseQuery($distribution: String!, $term: Float!) {
+  query GetDistCourses($distribution: String!, $term: Float!) {
     courseMany(filter: { distribution: $distribution }, sort: COURSE_NUM_ASC) {
       _id
       subject
       courseNum
       longTitle
-      distribution
       sessions(filter: { term: $term }) {
         _id
         crn
@@ -274,7 +273,7 @@ const CourseList = ({ scheduleID, /*department,*/ distribution, searchcourseResu
   //   variables: { subject: department, term: term },
   // });
   const { data: distCourseData, loading, error } = useQuery(GET_DIST_COURSES, {
-    variables: { distribution: distribution, term: term },
+    variables: { subject: department, term: term },
   });
 
   // We also want to fetch (from our cache, so this does NOT call the backend) the user's draftSessions

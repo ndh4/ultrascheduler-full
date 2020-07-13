@@ -45,24 +45,24 @@ const GET_DIST_COURSES = gql`
       courseNum
       longTitle
       distribution
-      sessions(filter: { term: $term }) {
-        _id
-        crn
-        class {
-          days
-          startTime
-          endTime
-        }
-        lab {
-          days
-          startTime
-          endTime
-        }
-        instructors {
-          firstName
-          lastName
-        }
-      }
+      // sessions(filter: { term: $term }) {
+      //   _id
+      //   crn
+      //   class {
+      //     days
+      //     startTime
+      //     endTime
+      //   }
+      //   lab {
+      //     days
+      //     startTime
+      //     endTime
+      //   }
+      //   instructors {
+      //     firstName
+      //     lastName
+      //   }
+      // }
     }
   }
 `;

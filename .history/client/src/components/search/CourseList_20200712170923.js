@@ -65,6 +65,15 @@ const GET_DIST_COURSES = gql`
       }
     }
   }
+  // query CourseQuery {
+  //   courseMany(filter: { distribution: "Distribution I" }, sort: COURSE_NUM_ASC) {
+  //     _id
+  //     subject
+  //     courseNum
+  //     longTitle
+  //     distribution
+  //   }
+  // }
 `;
 
 /**

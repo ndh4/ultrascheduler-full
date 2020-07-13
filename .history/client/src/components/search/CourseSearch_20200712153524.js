@@ -3,7 +3,6 @@ import Selection from "./Selection";
 import CourseList from "./CourseList";
 import { initGA } from "../../utils/analytics";
 import { useQuery, gql } from "@apollo/client";
-import Search from './Search';
 
 const dummy = { label: "", value: "" };
 
@@ -45,7 +44,6 @@ const CourseSearch = ({ scheduleID }) => {
 	// const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
 	const [getDists, setDists] = useState([]); // Used for the entire list of departments
 	const [getDist, setDist] = useState(""); // Used for selection of a particular department
-	const [value, setValue] = useState("")
 
 	const {
 		data: { term },
@@ -71,9 +69,7 @@ const CourseSearch = ({ scheduleID }) => {
 		if (distributionsData) {
 			let { distributions } = distributionsData;
 			setDists(distributions.map((dist) => (dist)));
-			console.log("distData", distributionsData);
 		}
-		console.log("hello");
 	}, [distributionsData]);
 
 	// const handleChangeDept = (selectedOption) => {
@@ -83,7 +79,6 @@ const CourseSearch = ({ scheduleID }) => {
 		setDist(selectedOption);
 	};
 	const handleChange = (e) => {
-		setValue(e)
 		setDist(e);
 	};
 
@@ -110,12 +105,12 @@ const CourseSearch = ({ scheduleID }) => {
 				/>
 				<Search
 					value={value}
-					handleChange={e => handleChange(e.target.value)}
-				/>
+					handleChange={e => handleChange(e.target.value)
+						/>
 			</div>
 			{/* <CourseList scheduleID={scheduleID} department={getDept.value} /> */}
-			<CourseList scheduleID={scheduleID} distribution={getDist.value} />
-		</div>
+				<CourseList scheduleID={scheduleID} distribution={getDist.value} />
+			</div>
 	);
 };
 
