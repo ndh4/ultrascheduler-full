@@ -8,34 +8,34 @@ import { Event } from "../../utils/analytics";
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
-const GET_DEPT_COURSES = gql`
-  query GetDeptCourses($subject: String!, $term: Float!) {
-    courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
-      _id
-      subject
-      courseNum
-      longTitle
-      sessions(filter: { term: $term }) {
-        _id
-        crn
-        class {
-          days
-          startTime
-          endTime
-        }
-        lab {
-          days
-          startTime
-          endTime
-        }
-        instructors {
-          firstName
-          lastName
-        }
-      }
-    }
-  }
-`;
+// const GET_DEPT_COURSES = gql`
+//   query GetDeptCourses($subject: String!, $term: Float!) {
+//     courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
+//       _id
+//       subject
+//       courseNum
+//       longTitle
+//       sessions(filter: { term: $term }) {
+//         _id
+//         crn
+//         class {
+//           days
+//           startTime
+//           endTime
+//         }
+//         lab {
+//           days
+//           startTime
+//           endTime
+//         }
+//         instructors {
+//           firstName
+//           lastName
+//         }
+//       }
+//     }
+//   }
+// `;
 // new:
 const GET_DIST_COURSES = gql`
     query CourseQuery($distribution: String!, $term: Float!) {
@@ -278,157 +278,145 @@ const CourseList = ({
     const { data: termData } = useQuery(GET_TERM);
     let { term } = termData;
 
-    let courseResults;
-    let draftSessions;
+    const { data: distCourseData, loading, error } = useQuery(
+        GET_DIST_COURSES,
+        {
+            variables: { distribution: distribution, term: term },
+        }
+    );
 
-    // const getdist;
-    // const blankCourseData;
-    // const 
+    let { data: scheduleData } = useQuery(QUERY_DRAFT_SESSIONS, {
+        variables: { term: term.toString() },
+    });
+
+    if (distribution == "") {
+        return <br />;
+    }
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+    if (!distCourseData) return <p>No Data...</p>;
+
+    courseResults = distCourseData.courseMany;
+
+    courseResults = courseResults.filter(
+        (course) => course.sessions.length > 0
+    );
+
+    // We also want to extract the user's draftSessions, nested inside their schedule
+    draftSessions = scheduleData.scheduleOne.draftSessions;
+
+    const addToCoursesSelected = (courseLabel) => {
+        let copy = courseSelected.slice();
+
+        // Add course with this label
+        copy.push(courseLabel);
+        setCourseSelected(copy);
+    };
+
+    const removeFromCoursesSelected = (courseLabel) => {
+        let copy = courseSelected.slice();
+
+        // Filter out all courses with this label
+        copy = copy.filter((label) => label != courseLabel);
+        setCourseSelected(copy);
+    };
 
     // if (state == "distribution") {
-    //     getdist = {distCourseData};
-    // }
+    //     const { data: distCourseData, loading, error } = useQuery(
+    //         GET_DIST_COURSES,
+    //         {
+    //             variables: { distribution: distribution, term: term },
+    //         }
+    //     );
 
+    //     let { data: scheduleData } = useQuery(QUERY_DRAFT_SESSIONS, {
+    //         variables: { term: term.toString() },
+    //     });
 
-    // const { data: {getdist}, loading, error } = useQuery(
-    //     GET_DIST_COURSES,
-    //     {
-    //         variables: { distribution: distribution, term: term },
+    //     if (distribution == "") {
+    //         return <br />;
     //     }
-    // );
 
-    // let { data: scheduleData } = useQuery(QUERY_DRAFT_SESSIONS, {
-    //     variables: { term: term.toString() },
-    // });
+    //     if (loading) return <p>Loading...</p>;
+    //     if (error) return <p>Error :(</p>;
+    //     if (!distCourseData) return <p>No Data...</p>;
 
-    // if (distribution == "") {
-    //     return <br />;
+    //     courseResults = distCourseData.courseMany;
+
+    //     courseResults = courseResults.filter(
+    //         (course) => course.sessions.length > 0
+    //     );
+
+    //     // We also want to extract the user's draftSessions, nested inside their schedule
+    //     draftSessions = scheduleData.scheduleOne.draftSessions;
+
+    //     const addToCoursesSelected = (courseLabel) => {
+    //         let copy = courseSelected.slice();
+
+    //         // Add course with this label
+    //         copy.push(courseLabel);
+    //         setCourseSelected(copy);
+    //     };
+
+    //     const removeFromCoursesSelected = (courseLabel) => {
+    //         let copy = courseSelected.slice();
+
+    //         // Filter out all courses with this label
+    //         copy = copy.filter((label) => label != courseLabel);
+    //         setCourseSelected(copy);
+    //     };
+
+    // } else {
+    //     const { data: deptCourseData, loading, error } = useQuery(
+    //         GET_DIST_COURSES,
+    //         {
+    //             variables: { department: department, term: term },
+    //         }
+    //     );
+
+    //     let { data: scheduleData } = useQuery(QUERY_DRAFT_SESSIONS, {
+    //         variables: { term: term.toString() },
+    //     });
+
+    //     if (department == "") {
+    //         return <br />;
+    //     }
+
+    //     if (loading) return <p>Loading...</p>;
+    //     if (error) return <p>Error :(</p>;
+    //     if (!deptCourseData) return <p>No Data...</p>;
+
+    //     courseResults = deptCourseData.courseMany;
+
+    //     courseResults = courseResults.filter(
+    //         (course) => course.sessions.length > 0
+    //     );
+
+    //     // We also want to extract the user's draftSessions, nested inside their schedule
+    //     draftSessions = scheduleData.scheduleOne.draftSessions;
+
+    //     const addToCoursesSelected = (courseLabel) => {
+    //         let copy = courseSelected.slice();
+
+    //         // Add course with this label
+    //         copy.push(courseLabel);
+    //         setCourseSelected(copy);
+    //     };
+
+    //     const removeFromCoursesSelected = (courseLabel) => {
+    //         let copy = courseSelected.slice();
+
+    //         // Filter out all courses with this label
+    //         copy = copy.filter((label) => label != courseLabel);
+    //         setCourseSelected(copy);
+    //     };
+
     // }
-
-    // if (loading) return <p>Loading...</p>;
-    // if (error) return <p>Error :(</p>;
-    // if (!distCourseData) return <p>No Data...</p>;
-
-    // courseResults = distCourseData.courseMany;
-
-    // courseResults = courseResults.filter(
-    //     (course) => course.sessions.length > 0
-    // );
-
-    // // We also want to extract the user's draftSessions, nested inside their schedule
-    // draftSessions = scheduleData.scheduleOne.draftSessions;
-
-    // const addToCoursesSelected = (courseLabel) => {
-    //     let copy = courseSelected.slice();
-
-    //     // Add course with this label
-    //     copy.push(courseLabel);
-    //     setCourseSelected(copy);
-    // };
-
-    // const removeFromCoursesSelected = (courseLabel) => {
-    //     let copy = courseSelected.slice();
-
-    //     // Filter out all courses with this label
-    //     copy = copy.filter((label) => label != courseLabel);
-    //     setCourseSelected(copy);
-    // };
-
-    if (state == "distribution") {
-        const { data: distCourseData, loading, error } = useQuery(
-            GET_DIST_COURSES,
-            {
-                variables: { distribution: distribution, term: term },
-            }
-        );
-
-        let { data: scheduleData } = useQuery(QUERY_DRAFT_SESSIONS, {
-            variables: { term: term.toString() },
-        });
-
-        if (distribution == "") {
-            return <br />;
-        }
-
-        if (loading) return <p>Loading...</p>;
-        if (error) return <p>Error :(</p>;
-        if (!distCourseData) return <p>No Data...</p>;
-
-        courseResults = distCourseData.courseMany;
-
-        courseResults = courseResults.filter(
-            (course) => course.sessions.length > 0
-        );
-
-        // We also want to extract the user's draftSessions, nested inside their schedule
-        draftSessions = scheduleData.scheduleOne.draftSessions;
-
-        const addToCoursesSelected = (courseLabel) => {
-            let copy = courseSelected.slice();
-
-            // Add course with this label
-            copy.push(courseLabel);
-            setCourseSelected(copy);
-        };
-
-        const removeFromCoursesSelected = (courseLabel) => {
-            let copy = courseSelected.slice();
-
-            // Filter out all courses with this label
-            copy = copy.filter((label) => label != courseLabel);
-            setCourseSelected(copy);
-        };
-
-    } else {
-        const { data: deptCourseData, loading, error } = useQuery(
-            GET_DEPT_COURSES,
-            {
-                variables: { subject: department, term: term },
-            }
-        );
-
-        let { data: scheduleData } = useQuery(QUERY_DRAFT_SESSIONS, {
-            variables: { term: term.toString() },
-        });
-
-        if (department == "") {
-            return <br />;
-        }
-
-        if (loading) return <p>Loading...</p>;
-        if (error) return <p>Error :(</p>;
-        if (!deptCourseData) return <p>No Data...</p>;
-
-        courseResults = deptCourseData.courseMany;
-
-        courseResults = courseResults.filter(
-            (course) => course.sessions.length > 0
-        );
-
-        // We also want to extract the user's draftSessions, nested inside their schedule
-        draftSessions = scheduleData.scheduleOne.draftSessions;
-
-        const addToCoursesSelected = (courseLabel) => {
-            let copy = courseSelected.slice();
-
-            // Add course with this label
-            copy.push(courseLabel);
-            setCourseSelected(copy);
-        };
-
-        const removeFromCoursesSelected = (courseLabel) => {
-            let copy = courseSelected.slice();
-
-            // Filter out all courses with this label
-            copy = copy.filter((label) => label != courseLabel);
-            setCourseSelected(copy);
-        };
-
-    }
 
     // Department isn't empty, so we need to fetch the courses for the department
     // const { data: deptCourseData, loading, error } = useQuery(GET_DEPT_COURSES, {
-    //     variables: { subject: department, term: term },
+    //   variables: { subject: department, term: term },
     // });
     // const { data: distCourseData, loading, error } = useQuery(
     //     GET_DIST_COURSES,
@@ -437,13 +425,13 @@ const CourseList = ({
     //     }
     // );
 
-    // We also want to fetch(from our cache, so this does NOT call the backend) the user's draftSessions
+    // We also want to fetch (from our cache, so this does NOT call the backend) the user's draftSessions
     // let { data: scheduleData } = useQuery(QUERY_DRAFT_SESSIONS, {
     //     variables: { term: term.toString() },
     // });
 
     // if (department == "") {
-    //     return <br />;
+    //   return <br />;
     // }
     // if (distribution == "") {
     //     return <br />;
@@ -461,13 +449,13 @@ const CourseList = ({
     //     (course) => course.sessions.length > 0
     // );
 
-    // We also want to extract the user's draftSessions, nested inside their schedule
+    // // We also want to extract the user's draftSessions, nested inside their schedule
     // let draftSessions = scheduleData.scheduleOne.draftSessions;
 
-    /**
-     * Adds course to list of courses with their collapsibles open in the search menu,
-     * effectively opening its collapsible
-     */
+    // /**
+    //  * Adds course to list of courses with their collapsibles open in the search menu,
+    //  * effectively opening its collapsible
+    //  */
     // const addToCoursesSelected = (courseLabel) => {
     //     let copy = courseSelected.slice();
 
@@ -476,10 +464,10 @@ const CourseList = ({
     //     setCourseSelected(copy);
     // };
 
-    /**
-     * Removes course from list of courses with their collapsibles open in the search menu,
-     * effectively closing its collapsible
-     */
+    // /**
+    //  * Removes course from list of courses with their collapsibles open in the search menu,
+    //  * effectively closing its collapsible
+    //  */
     // const removeFromCoursesSelected = (courseLabel) => {
     //     let copy = courseSelected.slice();
 

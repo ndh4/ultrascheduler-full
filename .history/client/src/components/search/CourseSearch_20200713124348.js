@@ -111,10 +111,10 @@ const CourseSearch = ({ scheduleID }) => {
 
 	const displayCourseList = () => {
 		if (searchType == "Distribution") {
-			return <CourseList scheduleID={scheduleID} state="distribution" distribution={getDist.value} />
+			return <CourseList scheduleID={scheduleID} department="" distribution={getDist.value} />
 		}
 		else {
-			return <CourseList scheduleID={scheduleID} state="department" department={getDept.value} />
+			return <CourseList scheduleID={scheduleID} department={getDept.value} distribution="" />
 		}
 	};
 

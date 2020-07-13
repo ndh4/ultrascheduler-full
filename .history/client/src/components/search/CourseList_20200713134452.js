@@ -279,7 +279,6 @@ const CourseList = ({
     let { term } = termData;
 
     let courseResults;
-    let draftSessions;
 
     // const getdist;
     // const blankCourseData;
@@ -381,9 +380,9 @@ const CourseList = ({
 
     } else {
         const { data: deptCourseData, loading, error } = useQuery(
-            GET_DEPT_COURSES,
+            GET_DIST_COURSES,
             {
-                variables: { subject: department, term: term },
+                variables: { department: department, term: term },
             }
         );
 

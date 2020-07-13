@@ -279,7 +279,6 @@ const CourseList = ({
     let { term } = termData;
 
     let courseResults;
-    let draftSessions;
 
     // const getdist;
     // const blankCourseData;
@@ -381,9 +380,9 @@ const CourseList = ({
 
     } else {
         const { data: deptCourseData, loading, error } = useQuery(
-            GET_DEPT_COURSES,
+            GET_DIST_COURSES,
             {
-                variables: { subject: department, term: term },
+                variables: { department: department, term: term },
             }
         );
 
@@ -426,67 +425,67 @@ const CourseList = ({
 
     }
 
-    // Department isn't empty, so we need to fetch the courses for the department
-    // const { data: deptCourseData, loading, error } = useQuery(GET_DEPT_COURSES, {
-    //     variables: { subject: department, term: term },
-    // });
-    // const { data: distCourseData, loading, error } = useQuery(
-    //     GET_DIST_COURSES,
-    //     {
-    //         variables: { distribution: distribution, term: term },
-    //     }
-    // );
+    Department isn't empty, so we need to fetch the courses for the department
+    const { data: deptCourseData, loading, error } = useQuery(GET_DEPT_COURSES, {
+        variables: { subject: department, term: term },
+    });
+    const { data: distCourseData, loading, error } = useQuery(
+        GET_DIST_COURSES,
+        {
+            variables: { distribution: distribution, term: term },
+        }
+    );
 
-    // We also want to fetch(from our cache, so this does NOT call the backend) the user's draftSessions
-    // let { data: scheduleData } = useQuery(QUERY_DRAFT_SESSIONS, {
-    //     variables: { term: term.toString() },
-    // });
+    We also want to fetch(from our cache, so this does NOT call the backend) the user's draftSessions
+    let { data: scheduleData } = useQuery(QUERY_DRAFT_SESSIONS, {
+        variables: { term: term.toString() },
+    });
 
-    // if (department == "") {
-    //     return <br />;
-    // }
-    // if (distribution == "") {
-    //     return <br />;
-    // }
+    if (department == "") {
+        return <br />;
+    }
+    if (distribution == "") {
+        return <br />;
+    }
 
-    // if (loading) return <p>Loading...</p>;
-    // if (error) return <p>Error :(</p>;
-    // if (!distCourseData) return <p>No Data...</p>;
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+    if (!distCourseData) return <p>No Data...</p>;
 
-    // Once the data has loaded, we want to extract the course results for the department
-    // let courseResults = distCourseData.courseMany;
+    Once the data has loaded, we want to extract the course results for the department
+    let courseResults = distCourseData.courseMany;
 
-    // We need to filter out any courses which have 0 sessions
-    // courseResults = courseResults.filter(
-    //     (course) => course.sessions.length > 0
-    // );
+    We need to filter out any courses which have 0 sessions
+    courseResults = courseResults.filter(
+        (course) => course.sessions.length > 0
+    );
 
     // We also want to extract the user's draftSessions, nested inside their schedule
-    // let draftSessions = scheduleData.scheduleOne.draftSessions;
+    let draftSessions = scheduleData.scheduleOne.draftSessions;
 
     /**
      * Adds course to list of courses with their collapsibles open in the search menu,
      * effectively opening its collapsible
      */
-    // const addToCoursesSelected = (courseLabel) => {
-    //     let copy = courseSelected.slice();
+    const addToCoursesSelected = (courseLabel) => {
+        let copy = courseSelected.slice();
 
-    //     // Add course with this label
-    //     copy.push(courseLabel);
-    //     setCourseSelected(copy);
-    // };
+        // Add course with this label
+        copy.push(courseLabel);
+        setCourseSelected(copy);
+    };
 
     /**
      * Removes course from list of courses with their collapsibles open in the search menu,
      * effectively closing its collapsible
      */
-    // const removeFromCoursesSelected = (courseLabel) => {
-    //     let copy = courseSelected.slice();
+    const removeFromCoursesSelected = (courseLabel) => {
+        let copy = courseSelected.slice();
 
-    //     // Filter out all courses with this label
-    //     copy = copy.filter((label) => label != courseLabel);
-    //     setCourseSelected(copy);
-    // };
+        // Filter out all courses with this label
+        copy = copy.filter((label) => label != courseLabel);
+        setCourseSelected(copy);
+    };
 
     return (
         <SwipeableViews containerStyle={styles.slideContainer}>

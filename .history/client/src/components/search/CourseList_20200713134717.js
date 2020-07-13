@@ -383,7 +383,7 @@ const CourseList = ({
         const { data: deptCourseData, loading, error } = useQuery(
             GET_DEPT_COURSES,
             {
-                variables: { subject: department, term: term },
+                variables: { department: department, term: term },
             }
         );
 
