@@ -1,7 +1,6 @@
 import { Course, CourseTC, Session, SessionTC } from '../models';
 import { toInputObjectType } from 'graphql-compose';
 import { getSubjects } from '../utils/courseUtils';
-import { valueFromAST } from 'graphql';
 
 /**
  * THIS IS THE MOST IMPORTANT LINE HERE - IT TOOK ALMOST 2 WEEKS TO GET THIS RIGHT
@@ -92,17 +91,6 @@ const CourseQuery = {
                 let [subject, code] = value.split(" ");
                 query.subject = new RegExp("^.*" + subject + ".*", 'i'); // case insensitive regex search
                 query.courseNum = code;
-            }
-        })
-        .addFilterArg({
-            name: 'courseDistributionRegExp', // From here: https://github.com/graphql-compose/graphql-compose-examples/blob/master/examples/northwind/models/product.js#L38,L49
-            type: 'String',
-            description: "Search for a course by a RegExp of its course code (subject & courseNum)",
-            query: (query, value) => {
-                // Split value into subject & code
-                let distribution = value;
-                console.log(distribution);
-                query.distribution = distribution;
             }
         }),
     // courseManyInSubject: CourseTC.getResolver('findManyInSubject'),

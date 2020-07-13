@@ -8,43 +8,13 @@ import { Event } from "../../utils/analytics";
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
-// const GET_DEPT_COURSES = gql`
-//   query GetDeptCourses($subject: String!, $term: Float!) {
-//     courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
-//       _id
-//       subject
-//       courseNum
-//       longTitle
-//       sessions(filter: { term: $term }) {
-//         _id
-//         crn
-//         class {
-//           days
-//           startTime
-//           endTime
-//         }
-//         lab {
-//           days
-//           startTime
-//           endTime
-//         }
-//         instructors {
-//           firstName
-//           lastName
-//         }
-//       }
-//     }
-//   }
-// `;
-// new:
-const GET_DIST_COURSES = gql`
-  query CourseQuery($distribution: String!, $term: Float!) {
-    courseMany(filter: { distribution: $distribution }, sort: COURSE_NUM_ASC) {
+const GET_DEPT_COURSES = gql`
+  query GetDeptCourses($subject: String!, $term: Float!) {
+    courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
       _id
       subject
       courseNum
       longTitle
-      distribution
       sessions(filter: { term: $term }) {
         _id
         crn
@@ -63,6 +33,14 @@ const GET_DIST_COURSES = gql`
           lastName
         }
       }
+    }
+  }
+`;
+// new:
+const GET_DIST_COURSES = gql`
+  query CourseQuery($distribution: String!, $term: Float!) {
+    courseMany() {
+      distribution
     }
   }
 `;

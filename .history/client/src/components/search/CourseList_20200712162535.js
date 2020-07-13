@@ -44,7 +44,6 @@ const GET_DIST_COURSES = gql`
       subject
       courseNum
       longTitle
-      distribution
       sessions(filter: { term: $term }) {
         _id
         crn
