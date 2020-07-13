@@ -27,7 +27,6 @@ const createURL = (termcode, crn, type = URLTypes.DETAIL) => {
             return "https://rice.edu/";
     }
 };
-console.log("hi");
 /**
  * If creditsMax is present (i.e. there is a range of possible credits) then display the range. Otherwise, just display the minimum number of credits.
  */
