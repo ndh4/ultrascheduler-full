@@ -75,6 +75,7 @@ const CourseSearch = ({ scheduleID }) => {
 		}
 	}, [departmentsData]);
 
+
 	const handleChange = (selectedOption) => {
 		if (searchType == "Distribution") setDist(selectedOption);
 		if (searchType == "Department") setDept(selectedOption);
@@ -84,10 +85,6 @@ const CourseSearch = ({ scheduleID }) => {
 		setSearchType(searchOption);
 	};
 
-	/**
-	 * Displays the search component based on whether user is searching
-	 * by distribution or by department
-	 */
 	const displaySearch = () => {
 		if (searchType == "Distribution") {
 			return <Selection
@@ -109,10 +106,6 @@ const CourseSearch = ({ scheduleID }) => {
 		}
 	};
 
-	/**
-	 * Displays the course list component based on whether user is searching
-	 * by distribution or by department
-	 */
 	const displayCourseList = () => {
 		if (searchType == "Distribution") {
 			return <CourseList scheduleID={scheduleID} type="distribution" distribution={getDist.value} />

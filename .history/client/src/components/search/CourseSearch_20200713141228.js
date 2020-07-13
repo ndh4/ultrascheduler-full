@@ -75,19 +75,20 @@ const CourseSearch = ({ scheduleID }) => {
 		}
 	}, [departmentsData]);
 
-	const handleChange = (selectedOption) => {
+
+	const handleChangeDept = (selectedOption) => {
 		if (searchType == "Distribution") setDist(selectedOption);
-		if (searchType == "Department") setDept(selectedOption);
+		else setDept(selectedOption);
 	};
+
+	// const handleChangeDist = (selectedOption) => {
+	// 	setDist(selectedOption);
+	// };
 
 	const handleChangeSearch = (searchOption) => {
 		setSearchType(searchOption);
 	};
 
-	/**
-	 * Displays the search component based on whether user is searching
-	 * by distribution or by department
-	 */
 	const displaySearch = () => {
 		if (searchType == "Distribution") {
 			return <Selection
@@ -95,7 +96,7 @@ const CourseSearch = ({ scheduleID }) => {
 				options={allDistributions}
 				selected={getDist}
 				show={true}
-				handleChange={handleChange}
+				handleChange={handleChangeDept}
 			/>
 		}
 		else {
@@ -104,15 +105,11 @@ const CourseSearch = ({ scheduleID }) => {
 				options={getDepts}
 				selected={getDept}
 				show={true}
-				handleChange={handleChange}
+				handleChange={handleChangeDept}
 			/>
 		}
 	};
 
-	/**
-	 * Displays the course list component based on whether user is searching
-	 * by distribution or by department
-	 */
 	const displayCourseList = () => {
 		if (searchType == "Distribution") {
 			return <CourseList scheduleID={scheduleID} type="distribution" distribution={getDist.value} />

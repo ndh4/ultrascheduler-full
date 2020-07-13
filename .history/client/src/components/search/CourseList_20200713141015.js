@@ -286,7 +286,6 @@ const CourseList = ({
         variables: { term: term.toString() },
     });
 
-    // If we are searching by department:
     if (type == "distribution") {
         // Distribution isn't empty, so we need to fetch the courses for the distribution
         const { data: distCourseData, loading, error } = useQuery(

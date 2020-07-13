@@ -281,14 +281,11 @@ const CourseList = ({
     let courseResults;
     let draftSessions;
 
-    // We also want to fetch(from our cache, so this does NOT call the backend) the user's draftSessions
     let { data: scheduleData } = useQuery(QUERY_DRAFT_SESSIONS, {
         variables: { term: term.toString() },
     });
 
-    // If we are searching by department:
     if (type == "distribution") {
-        // Distribution isn't empty, so we need to fetch the courses for the distribution
         const { data: distCourseData, loading, error } = useQuery(
             GET_DIST_COURSES,
             {
@@ -302,11 +299,9 @@ const CourseList = ({
         if (error) return <p>Error :(</p>;
         if (!distCourseData) return <p>No Data...</p>;
 
-        // Once the data has loaded, we want to extract the course results for the distribution
         courseResults = distCourseData.courseMany;
 
     } else {
-        // Department isn't empty, so we need to fetch the courses for the department
         const { data: deptCourseData, loading, error } = useQuery(
             GET_DEPT_COURSES,
             {
@@ -320,22 +315,15 @@ const CourseList = ({
         if (error) return <p>Error :(</p>;
         if (!deptCourseData) return <p>No Data...</p>;
 
-        // Once the data has loaded, we want to extract the course results for the department
         courseResults = deptCourseData.courseMany;
     }
 
-    // We need to filter out any courses which have 0 sessions
     courseResults = courseResults.filter(
         (course) => course.sessions.length > 0
     );
 
-    // We also want to extract the user's draftSessions, nested inside their schedule
     draftSessions = scheduleData.scheduleOne.draftSessions;
 
-    /**
-     * Adds course to list of courses with their collapsibles open in the search menu,
-     * effectively opening its collapsible
-     */
     const addToCoursesSelected = (courseLabel) => {
         let copy = courseSelected.slice();
 
@@ -344,10 +332,6 @@ const CourseList = ({
         setCourseSelected(copy);
     };
 
-    /**
-     * Removes course from list of courses with their collapsibles open in the search menu,
-     * effectively closing its collapsible
-     */
     const removeFromCoursesSelected = (courseLabel) => {
         let copy = courseSelected.slice();
 
@@ -355,6 +339,68 @@ const CourseList = ({
         copy = copy.filter((label) => label != courseLabel);
         setCourseSelected(copy);
     };
+
+    // Department isn't empty, so we need to fetch the courses for the department
+    // const { data: deptCourseData, loading, error } = useQuery(GET_DEPT_COURSES, {
+    //     variables: { subject: department, term: term },
+    // });
+    // const { data: distCourseData, loading, error } = useQuery(
+    //     GET_DIST_COURSES,
+    //     {
+    //         variables: { distribution: distribution, term: term },
+    //     }
+    // );
+
+    // We also want to fetch(from our cache, so this does NOT call the backend) the user's draftSessions
+    // let { data: scheduleData } = useQuery(QUERY_DRAFT_SESSIONS, {
+    //     variables: { term: term.toString() },
+    // });
+
+    // if (department == "") {
+    //     return <br />;
+    // }
+    // if (distribution == "") {
+    //     return <br />;
+    // }
+
+    // if (loading) return <p>Loading...</p>;
+    // if (error) return <p>Error :(</p>;
+    // if (!distCourseData) return <p>No Data...</p>;
+
+    // Once the data has loaded, we want to extract the course results for the department
+    // let courseResults = distCourseData.courseMany;
+
+    // We need to filter out any courses which have 0 sessions
+    // courseResults = courseResults.filter(
+    //     (course) => course.sessions.length > 0
+    // );
+
+    // We also want to extract the user's draftSessions, nested inside their schedule
+    // let draftSessions = scheduleData.scheduleOne.draftSessions;
+
+    /**
+     * Adds course to list of courses with their collapsibles open in the search menu,
+     * effectively opening its collapsible
+     */
+    // const addToCoursesSelected = (courseLabel) => {
+    //     let copy = courseSelected.slice();
+
+    //     // Add course with this label
+    //     copy.push(courseLabel);
+    //     setCourseSelected(copy);
+    // };
+
+    /**
+     * Removes course from list of courses with their collapsibles open in the search menu,
+     * effectively closing its collapsible
+     */
+    // const removeFromCoursesSelected = (courseLabel) => {
+    //     let copy = courseSelected.slice();
+
+    //     // Filter out all courses with this label
+    //     copy = copy.filter((label) => label != courseLabel);
+    //     setCourseSelected(copy);
+    // };
 
     return (
         <SwipeableViews containerStyle={styles.slideContainer}>

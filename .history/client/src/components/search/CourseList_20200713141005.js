@@ -286,7 +286,6 @@ const CourseList = ({
         variables: { term: term.toString() },
     });
 
-    // If we are searching by department:
     if (type == "distribution") {
         // Distribution isn't empty, so we need to fetch the courses for the distribution
         const { data: distCourseData, loading, error } = useQuery(
@@ -355,6 +354,19 @@ const CourseList = ({
         copy = copy.filter((label) => label != courseLabel);
         setCourseSelected(copy);
     };
+
+
+    /**
+     * Removes course from list of courses with their collapsibles open in the search menu,
+     * effectively closing its collapsible
+     */
+    // const removeFromCoursesSelected = (courseLabel) => {
+    //     let copy = courseSelected.slice();
+
+    //     // Filter out all courses with this label
+    //     copy = copy.filter((label) => label != courseLabel);
+    //     setCourseSelected(copy);
+    // };
 
     return (
         <SwipeableViews containerStyle={styles.slideContainer}>
