@@ -3,20 +3,20 @@ import Selection from "./Selection";
 import CourseList from "./CourseList";
 import { initGA } from "../../utils/analytics";
 import { useQuery, gql } from "@apollo/client";
-import Search from './Search';
+import Search from "./Search";
 
 const dummy = { label: "", value: "" };
 
 const styles = {
-	filter: {
-		width: "100%",
-	},
-	button: {
-		display: "inline-block",
-		float: "center",
-		margin: 8,
-		padding: 2,
-	},
+    filter: {
+        width: "100%",
+    },
+    button: {
+        display: "inline-block",
+        float: "center",
+        margin: 8,
+        padding: 2,
+    },
 };
 
 /**
@@ -24,9 +24,9 @@ const styles = {
  * Gets the term from local state management
  */
 const GET_TERM = gql`
-	query {
-		term @client
-	}
+    query {
+        term @client
+    }
 `;
 
 // const GET_DEPARTMENTS = gql`
@@ -35,88 +35,93 @@ const GET_TERM = gql`
 // 	}
 // `;
 const GET_DISTRIBUTIONS = gql`
-	query GetDistributions($term: Int!) {
-		distributions(term: $term)
-	}
+    query GetDistributions($term: Int!) {
+        distributions(term: $term)
+    }
 `;
 
 const CourseSearch = ({ scheduleID }) => {
-	// const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
-	// const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
-	const [getDists, setDists] = useState([]); // Used for the entire list of departments
-	const [getDist, setDist] = useState(""); // Used for selection of a particular department
-	const [value, setValue] = useState("")
+    // const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
+    // const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
+    const [getDists, setDists] = useState([]); // Used for the entire list of departments
+    const [getDist, setDist] = useState(dummy); // Used for selection of a particular department
+    const [value, setValue] = useState("");
+    const allDistributions = [
+        { label: "Distribution I", value: "Distribution I" },
+        { label: "Distribution II", value: "Distribution II" },
+        { label: "Distribution III", value: "Distribution III" },
+    ]; // All distributions
+    const {
+        data: { term },
+    } = useQuery(GET_TERM); // Gets the term which we need to request subjects from
 
-	const {
-		data: { term },
-	} = useQuery(GET_TERM); // Gets the term which we need to request subjects from
-
-	// const { data: departmentsData } = useQuery(GET_DEPARTMENTS, {
-	// 	variables: { term },
-	// });
-	const { data: distributionsData } = useQuery(GET_DISTRIBUTIONS, {
-		variables: { term },
-	});
+    // const { data: departmentsData } = useQuery(GET_DEPARTMENTS, {
+    // 	variables: { term },
+    // });
+    // const { data: distributionsData, error } = useQuery(GET_DISTRIBUTIONS, {
+    //     variables: { term },
+    // });
 
     /**
      * We only want this to run when the subjects list data loads
      */
-	// useEffect(() => {
-	// 	if (departmentsData) {
-	// 		let { departments } = departmentsData;
-	// 		setDepts(departments.map((dept) => ({ label: dept, value: dept })));
-	// 	}
-	// }, [departmentsData]);
-	useEffect(() => {
-		if (distributionsData) {
-			let { distributions } = distributionsData;
-			setDists(distributions.map((dist) => (dist)));
-			console.log("distData", distributionsData);
-		}
-		console.log("hello");
-	}, [distributionsData]);
+    // useEffect(() => {
+    // 	if (departmentsData) {
+    // 		let { departments } = departmentsData;
+    // 		setDepts(departments.map((dept) => ({ label: dept, value: dept })));
+    // 	}
+    // }, [departmentsData]);
 
-	// const handleChangeDept = (selectedOption) => {
-	// 	setDept(selectedOption);
-	// };
-	const handleChangeDist = (selectedOption) => {
-		setDist(selectedOption);
-	};
-	const handleChange = (e) => {
-		setValue(e)
-		setDist(e);
-	};
+    // useEffect(() => {
+    //     if (distributionsData) {
+    //         let { distributions } = distributionsData;
+    //         setDists(distributions.map((dist) => dist));
+    //         console.log("distData", distributionsData);
+    //     }
+    //     console.log("hello");
+    // }, [distributionsData]);
 
-	// Initialize Google Analytics
-	initGA();
+    // const handleChangeDept = (selectedOption) => {
+    // 	setDept(selectedOption);
+    // };
+    const handleChangeDist = (selectedOption) => {
+        setDist(selectedOption);
+    };
+    const handleChange = (e) => {
+        setValue(e);
+        setDist(e);
+    };
 
-	return (
-		<div className="Search">
-			<div style={styles.filter}>
-				<p style={styles.button}>Department</p>
-				{/* <Selection
+    // Initialize Google Analytics
+    initGA();
+
+    return (
+        <div className="Search">
+            <div style={styles.filter}>
+                <p style={styles.button}>Department</p>
+                {/* <Selection
 						title="Department"
 						options={getDepts}
 						selected={getDept}
 						show={true}
 						handleChange={handleChangeDept}
 					/> */}
-				<Selection
-					title="Distribution"
-					options={getDists}
-					selected={getDist}
-					show={true}
-					handleChange={handleChangeDist}
-				/>
-				<Search
-					value={value}
-					handleChange={e => handleChange(e.target.value)}
-				/>
-			</div>
-			{/* <CourseList scheduleID={scheduleID} department={getDept.value} /> */}
-			<CourseList scheduleID={scheduleID} distribution={getDist.value} />
-		</div>
-	);
+                <Selection
+                    title="Distribution"
+                    options={allDistributions}
+                    selected={getDist}
+                    show={true}
+                    handleChange={handleChangeDist}
+                />
+                <Search
+                    value={value}
+                    handleChange={(e) => handleChange(e.target.value)}
+                />
+            </div>
+            {/* <CourseList scheduleID={scheduleID} department={getDept.value} /> */}
+            <CourseList scheduleID={scheduleID} distribution={getDist.value} />
+        </div>
+    );
 };
 
 export default CourseSearch;
