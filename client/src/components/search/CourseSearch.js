@@ -8,15 +8,15 @@ import Search from "./Search";
 const dummy = { label: "", value: "" };
 
 const styles = {
-    filter: {
-        width: "100%",
-    },
-    button: {
-        display: "inline-block",
-        float: "center",
-        margin: 8,
-        padding: 2,
-    },
+	filter: {
+		width: "100%",
+	},
+	button: {
+		display: "inline-block",
+		float: "center",
+		margin: 8,
+		padding: 2,
+	},
 };
 
 /**
@@ -29,11 +29,11 @@ const GET_TERM = gql`
     }
 `;
 
-// const GET_DEPARTMENTS = gql`
-// 	query GetDepartments($term: Int!) {
-// 		departments(term: $term)
-// 	}
-// `;
+const GET_DEPARTMENTS = gql`
+	query GetDepartments($term: Int!) {
+		departments(term: $term)
+	}
+`;
 const GET_DISTRIBUTIONS = gql`
     query GetDistributions($term: Int!) {
         distributions(term: $term)
@@ -41,87 +41,102 @@ const GET_DISTRIBUTIONS = gql`
 `;
 
 const CourseSearch = ({ scheduleID }) => {
-    // const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
-    // const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
-    const [getDists, setDists] = useState([]); // Used for the entire list of departments
-    const [getDist, setDist] = useState(dummy); // Used for selection of a particular department
-    const [value, setValue] = useState("");
-    const allDistributions = [
-        { label: "Distribution I", value: "Distribution I" },
-        { label: "Distribution II", value: "Distribution II" },
-        { label: "Distribution III", value: "Distribution III" },
-    ]; // All distributions
-    const {
-        data: { term },
-    } = useQuery(GET_TERM); // Gets the term which we need to request subjects from
+	const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
+	const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
 
-    // const { data: departmentsData } = useQuery(GET_DEPARTMENTS, {
-    // 	variables: { term },
-    // });
-    // const { data: distributionsData, error } = useQuery(GET_DISTRIBUTIONS, {
-    //     variables: { term },
-    // });
+	const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
+
+	const [searchType, setSearchType] = useState("Department");
+
+	const allDistributions = [
+		{ label: "Distribution I", value: "Distribution I" },
+		{ label: "Distribution II", value: "Distribution II" },
+		{ label: "Distribution III", value: "Distribution III" },
+	]; // All distributions
+
+	const {
+		data: { term },
+	} = useQuery(GET_TERM); // Gets the term which we need to request subjects from
+
+	const { data: departmentsData } = useQuery(GET_DEPARTMENTS, {
+		variables: { term },
+	});
+	const { data: distributionsData, error } = useQuery(GET_DISTRIBUTIONS, {
+		variables: { term },
+	});
 
     /**
      * We only want this to run when the subjects list data loads
      */
-    // useEffect(() => {
-    // 	if (departmentsData) {
-    // 		let { departments } = departmentsData;
-    // 		setDepts(departments.map((dept) => ({ label: dept, value: dept })));
-    // 	}
-    // }, [departmentsData]);
+	useEffect(() => {
+		if (departmentsData) {
+			let { departments } = departmentsData;
+			setDepts(departments.map((dept) => ({ label: dept, value: dept })));
+		}
+	}, [departmentsData]);
 
-    // useEffect(() => {
-    //     if (distributionsData) {
-    //         let { distributions } = distributionsData;
-    //         setDists(distributions.map((dist) => dist));
-    //         console.log("distData", distributionsData);
-    //     }
-    //     console.log("hello");
-    // }, [distributionsData]);
 
-    // const handleChangeDept = (selectedOption) => {
-    // 	setDept(selectedOption);
-    // };
-    const handleChangeDist = (selectedOption) => {
-        setDist(selectedOption);
-    };
-    const handleChange = (e) => {
-        setValue(e);
-        setDist(e);
-    };
+	const handleChangeDept = (selectedOption) => {
+		setDept(selectedOption);
+	};
 
-    // Initialize Google Analytics
-    initGA();
+	const handleChangeDist = (selectedOption) => {
+		setDist(selectedOption);
+	};
 
-    return (
-        <div className="Search">
-            <div style={styles.filter}>
-                <p style={styles.button}>Department</p>
-                {/* <Selection
-						title="Department"
-						options={getDepts}
-						selected={getDept}
-						show={true}
-						handleChange={handleChangeDept}
-					/> */}
-                <Selection
-                    title="Distribution"
-                    options={allDistributions}
-                    selected={getDist}
-                    show={true}
-                    handleChange={handleChangeDist}
-                />
-                <Search
-                    value={value}
-                    handleChange={(e) => handleChange(e.target.value)}
-                />
-            </div>
-            {/* <CourseList scheduleID={scheduleID} department={getDept.value} /> */}
-            <CourseList scheduleID={scheduleID} distribution={getDist.value} />
-        </div>
-    );
+	const handleChangeSearch = (searchOption) => {
+		setSearchType(searchOption);
+	};
+
+	const displaySearch = () => {
+		if (searchType == "Distribution") {
+			return <Selection
+				title="Distribution"
+				options={allDistributions}
+				selected={getDist}
+				show={true}
+				handleChange={handleChangeDist}
+			/>
+		}
+		else {
+			return <Selection
+				title="Department"
+				options={getDepts}
+				selected={getDept}
+				show={true}
+				handleChange={handleChangeDept}
+			/>
+		}
+	};
+
+	const displayCourseList = () => {
+		if (searchType == "Distribution") {
+			return <CourseList scheduleID={scheduleID} distribution={getDist.value} />
+		}
+		else {
+			return <CourseList scheduleID={scheduleID} department={getDept.value} />
+		}
+	};
+
+	// Initialize Google Analytics
+	initGA();
+
+	return (
+		<div className="Search">
+			<div>
+				<p>Search By:</p>
+				<button onClick={() => handleChangeSearch("Department")}>Department</button>
+				<button onClick={() => handleChangeSearch("Distribution")}>Distribution</button>
+			</div>
+			<div style={styles.filter}>
+				<p style={styles.button}>{searchType}</p>
+				{displaySearch()}
+			</div>
+			{/* <CourseList scheduleID={scheduleID} department={getDept.value} /> */}
+			{/* <CourseList scheduleID={scheduleID} distribution={getDist.value} /> */}
+			{displayCourseList()}
+		</div>
+	);
 };
 
 export default CourseSearch;
