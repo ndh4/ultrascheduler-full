@@ -53,6 +53,8 @@ const CourseSearch = ({ scheduleID }) => {
 
 	const [searchType, setSearchType] = useState("Department");
 
+	const searchTypes = ["Department", "Distribution"];
+
 	const allDistributions = [
 		{ label: "Distribution I", value: "Distribution I" },
 		{ label: "Distribution II", value: "Distribution II" },
@@ -157,30 +159,17 @@ const CourseSearch = ({ scheduleID }) => {
 					<b style={{ fontSize: '12px', margin: 8 }}>Search By:</b>
 				</div>
 				<div style={styles.buttons}>
-					<Button
-						style={styles.button}
-						size="small"
-						variant="contained"
-						onClick={() => handleChangeSearch("Department")}
-					>
-						Department
-                    </Button>
-					<Button
-						style={styles.button}
-						size="small"
-						variant="contained"
-						onClick={() => handleChangeSearch("Distribution")}
-					>
-						Distribution
-                    </Button>
-					<Button
-						style={styles.button}
-						size="small"
-						variant="contained"
-						onClick={() => handleChangeSearch("Distribution")}
-					>
-						Instructor
-                    </Button>
+					{searchTypes.map(type => {
+						return <Button
+							style={styles.button}
+							size="small"
+							variant="contained"
+							onClick={() => handleChangeSearch(`${type}`)}
+						>
+							{type}
+						</Button>
+					}
+					)}
 				</div>
 			</div>
 			{displayCourseList()}
