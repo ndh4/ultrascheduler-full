@@ -18,7 +18,7 @@ import { classTimeString } from "../../utils/CourseTimeTransforms";
 import URLTypes from "../../constants/URLTypes";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { TableBody } from "@material-ui/core";
-import Prereq from "./Prereq";
+import CourseDetail from "./CourseDetail";
 
 const createURL = (termcode, crn, type = URLTypes.DETAIL) => {
     switch (type) {
@@ -283,7 +283,13 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
                     </Tooltip>
                 </TableCell>
             </TableRow>
-            <Prereq course={course} open={open} />
+            <CourseDetail
+                course={course}
+                session={session}
+                instructorsToNames={instructorsToNames}
+                open={open}
+                classTimeString={classTimeString}
+            />
         </TableBody>
     );
 };
