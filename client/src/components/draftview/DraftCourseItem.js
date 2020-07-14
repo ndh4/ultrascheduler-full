@@ -130,7 +130,6 @@ const FETCH_INSTRUCTORS = gql`
 `;
 
 const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
-    console.log("course in draftcourseitem", course.restrictions);
     const emptyCellGenerator = (count) => {
         let cells = [];
         for (let i = 0; i < count; i++) {
@@ -239,8 +238,8 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
                         {open ? (
                             <KeyboardArrowUpIcon />
                         ) : (
-                                <KeyboardArrowDownIcon />
-                            )}
+                            <KeyboardArrowDownIcon />
+                        )}
                     </IconButton>
                 </TableCell>
                 <TableCell align="right">{session.crn}</TableCell>
