@@ -9,6 +9,7 @@ const formatDiv = (bold, normalTxt) => {
     if (normalTxt === undefined) {
         console.log("undefined!!!!!!!!!");
     }
+    //console.log(normalTxt.children[0]);
     return (
         <div>
             <b>{bold}</b> {normalTxt}
@@ -41,10 +42,10 @@ const collapse = ({
             return "None";
         } else {
             return (
-                <div>
+                <span>
                     {section.days}{" "}
                     {classTimeString(section.startTime, section.endTime)}
-                </div>
+                </span>
             );
         }
     };
@@ -67,7 +68,7 @@ const collapse = ({
                                 )}
                                 {formatDiv(
                                     "Course Type:",
-                                    "Lecture / Laboratory"
+                                    "Lecture/Laboratory"
                                 )}
                                 {formatDiv(
                                     "Distribution Group:",
