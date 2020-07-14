@@ -4,12 +4,6 @@ import Collapse from "@material-ui/core/Collapse";
 
 /* Return a div for each row */
 const formatDiv = (bold, normalTxt) => {
-    console.log("bold", bold);
-    console.log("normaltxt", normalTxt);
-    if (normalTxt === undefined) {
-        console.log("undefined!!!!!!!!!");
-    }
-    //console.log(normalTxt.children[0]);
     return (
         <div>
             <b>{bold}</b> {normalTxt}
@@ -30,7 +24,7 @@ const replaceNull = (text) => {
 };
 
 /* Component for collapsible displaying prereqs and coreqs of a course */
-const collapse = ({
+const CourseDetail = ({
     course,
     session,
     instructorsToNames,
@@ -126,4 +120,4 @@ const collapse = ({
         </TableRow>
     );
 };
-export default collapse;
+export default CourseDetail;
