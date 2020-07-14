@@ -10,6 +10,7 @@ const dummy = { label: "", value: "" };
 const styles = {
 	filter: {
 		width: "100%",
+		margin: 0
 	},
 	button: {
 		display: "inline-block",
@@ -96,13 +97,15 @@ const CourseSearch = ({ scheduleID }) => {
 	const displaySearch = () => {
 		if (searchType == "Distribution") {
 			return (
-				<Selection
-					title="Distribution"
-					options={allDistributions}
-					selected={getDist}
-					show={true}
-					handleChange={handleChange}
-				/>
+				<div style={{ width: '200px' }}>
+					<Selection
+						title="Distribution"
+						options={allDistributions}
+						selected={getDist}
+						show={true}
+						handleChange={handleChange}
+					/>
+				</div>
 			);
 		} else {
 			return (

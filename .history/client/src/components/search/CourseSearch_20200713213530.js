@@ -102,6 +102,7 @@ const CourseSearch = ({ scheduleID }) => {
 					selected={getDist}
 					show={true}
 					handleChange={handleChange}
+					style={{ width: '100%' }}
 				/>
 			);
 		} else {

@@ -16,7 +16,7 @@ const styles = {
 		float: "center",
 		margin: 8,
 		padding: 2,
-		fontSize: '12px'
+		fontSize: '10px'
 	},
 	buttons: {
 		display: "flex",
@@ -148,7 +148,7 @@ const CourseSearch = ({ scheduleID }) => {
 		<div className="Search">
 			<div>
 				<div style={styles.filter}>
-					<p size="small" style={styles.button}>
+					<p size="big" style={styles.button}>
 						{searchType}
 					</p>
 					{displaySearch()}

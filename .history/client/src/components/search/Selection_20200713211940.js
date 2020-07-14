@@ -2,10 +2,10 @@ import React from "react";
 import Select from "react-select";
 
 const style = {
-  width: 150,
-  display: "inline-block",
-  float: "center",
-  padding: 2,
+    width: 150,
+    display: "inline-block",
+    float: "center",
+    padding: 2,
 };
 
 /**
@@ -16,19 +16,19 @@ const style = {
  * @param handleChange: The function to execute when the selection changes.
  */
 function Selection({ options, selected, show, handleChange }) {
-  if (show) {
-    return (
-      <div style={style}>
-        <Select
-          value={selected}
-          onChange={handleChange}
-          options={options}
-        />
-      </div>
-    );
-  } else {
-    return <div></div>;
-  }
+    if (show) {
+        return (
+            <div style={style}>
+                <Select
+                    value={selected}
+                    onChange={handleChange}
+                    options={options}
+                />
+            </div>
+        );
+    } else {
+        return <div></div>;
+    }
 }
 
 export default Selection;

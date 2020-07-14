@@ -9,7 +9,7 @@ const dummy = { label: "", value: "" };
 
 const styles = {
 	filter: {
-		width: "100%",
+		width: '10000px',
 	},
 	button: {
 		display: "inline-block",

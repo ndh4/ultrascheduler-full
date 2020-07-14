@@ -16,7 +16,7 @@ const styles = {
 		float: "center",
 		margin: 8,
 		padding: 2,
-		fontSize: '12px'
+		fontSize: '10px'
 	},
 	buttons: {
 		display: "flex",

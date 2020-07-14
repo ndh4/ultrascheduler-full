@@ -14,7 +14,7 @@ const styles = {
 	button: {
 		display: "inline-block",
 		float: "center",
-		margin: 8,
+		margin: 7,
 		padding: 2,
 		fontSize: '12px'
 	},
@@ -96,13 +96,15 @@ const CourseSearch = ({ scheduleID }) => {
 	const displaySearch = () => {
 		if (searchType == "Distribution") {
 			return (
-				<Selection
-					title="Distribution"
-					options={allDistributions}
-					selected={getDist}
-					show={true}
-					handleChange={handleChange}
-				/>
+				<div style={{ width: '200px' }}>
+					<Selection
+						title="Distribution"
+						options={allDistributions}
+						selected={getDist}
+						show={true}
+						handleChange={handleChange}
+					/>
+				</div>
 			);
 		} else {
 			return (

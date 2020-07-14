@@ -16,11 +16,11 @@ const styles = {
 		float: "center",
 		margin: 8,
 		padding: 2,
-		fontSize: '12px'
 	},
 	buttons: {
 		display: "flex",
 		"flex-wrap": "wrap",
+		fontSize: '63px'
 	},
 };
 
@@ -147,15 +147,9 @@ const CourseSearch = ({ scheduleID }) => {
 	return (
 		<div className="Search">
 			<div>
-				<div style={styles.filter}>
-					<p size="small" style={styles.button}>
-						{searchType}
-					</p>
-					{displaySearch()}
-				</div>
-				<div>
-					<b style={{ fontSize: '12px', margin: 8 }}>Search By:</b>
-				</div>
+				<p>
+					<b>Search By:</b>
+				</p>
 				<div style={styles.buttons}>
 					<Button
 						style={styles.button}
@@ -182,6 +176,12 @@ const CourseSearch = ({ scheduleID }) => {
 						Instructor
                     </Button>
 				</div>
+			</div>
+			<div style={styles.filter}>
+				<p size="small" style={styles.button}>
+					{searchType}
+				</p>
+				{displaySearch()}
 			</div>
 			{displayCourseList()}
 		</div>

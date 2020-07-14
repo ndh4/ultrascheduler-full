@@ -16,7 +16,7 @@ const styles = {
 		float: "center",
 		margin: 8,
 		padding: 2,
-		fontSize: '12px'
+		fontSize: '10px'
 	},
 	buttons: {
 		display: "flex",
@@ -154,7 +154,7 @@ const CourseSearch = ({ scheduleID }) => {
 					{displaySearch()}
 				</div>
 				<div>
-					<b style={{ fontSize: '12px', margin: 8 }}>Search By:</b>
+					<b style={{ fontSize: '10px' }}>Search By:</b>
 				</div>
 				<div style={styles.buttons}>
 					<Button

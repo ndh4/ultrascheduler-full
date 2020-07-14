@@ -96,13 +96,15 @@ const CourseSearch = ({ scheduleID }) => {
 	const displaySearch = () => {
 		if (searchType == "Distribution") {
 			return (
-				<Selection
-					title="Distribution"
-					options={allDistributions}
-					selected={getDist}
-					show={true}
-					handleChange={handleChange}
-				/>
+				<div>
+					<Selection
+						title="Distribution"
+						options={allDistributions}
+						selected={getDist}
+						show={true}
+						handleChange={handleChange}
+					/>
+				</div>
 			);
 		} else {
 			return (

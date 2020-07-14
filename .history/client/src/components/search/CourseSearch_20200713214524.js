@@ -151,7 +151,9 @@ const CourseSearch = ({ scheduleID }) => {
 					<p size="small" style={styles.button}>
 						{searchType}
 					</p>
-					{displaySearch()}
+					<div style={{ width: '200px' }}>
+						{displaySearch()}
+					</div>
 				</div>
 				<div>
 					<b style={{ fontSize: '12px', margin: 8 }}>Search By:</b>

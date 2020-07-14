@@ -9,14 +9,14 @@ const dummy = { label: "", value: "" };
 
 const styles = {
 	filter: {
-		width: "100%",
+		width: "110%",
 	},
 	button: {
 		display: "inline-block",
 		float: "center",
 		margin: 8,
 		padding: 2,
-		fontSize: '12px'
+		fontSize: '10px'
 	},
 	buttons: {
 		display: "flex",
