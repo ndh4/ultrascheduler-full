@@ -96,7 +96,10 @@ const CourseSearch = ({ scheduleID }) => {
     };
 
     const muiTheme = createMuiTheme({
-        palette: { primary: red, secondary: blue },
+        palette: {
+            primary: { main: "#818282" },
+            secondary: { main: "#e6e6e6" },
+        },
     });
 
     const searchTypes = ["Department", "Distribution", "Instructors"];
