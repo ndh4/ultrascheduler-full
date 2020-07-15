@@ -4,6 +4,10 @@ import CourseList from "./CourseList";
 import { initGA } from "../../utils/analytics";
 import { useQuery, gql } from "@apollo/client";
 import Button from "@material-ui/core/Button";
+import { useTheme, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import red from '@material-ui/core/colors/red';
+import blue from '@material-ui/core/colors/blue';
+import { ThemeProvider } from "@material-ui/styles";
 
 const dummy = { label: "", value: "" };
 
@@ -89,13 +93,14 @@ const CourseSearch = ({ scheduleID }) => {
 		if (searchType == "Instructor") setDept(selectedOption); // This is a temperary holder for instructors which currently display search by distribution
 	};
 
+	const muiTheme = createMuiTheme({ palette: { primary: red, secondary: blue, }, });
+	const [buttonColor, setColor] = useState("primary");
+
 	const handleChangeSearch = (searchOption) => {
 		setSearchType(searchOption);
+		setColor("secondary");
+		console.log(buttonColor);
 	};
-
-	// const handleClick = () => {
-
-	// }
 
     /**
      * Displays the search component based on whether user is searching
@@ -165,14 +170,17 @@ const CourseSearch = ({ scheduleID }) => {
 				<div style={styles.buttons}>
 					{searchTypes.map((type) => {
 						return (
-							<Button
-								style={styles.button}
-								size="small"
-								variant="contained"
-								onClick={() => handleChangeSearch(`${type}`)}
-							>
-								{type}
-							</Button>
+							<ThemeProvider theme={muiTheme}>
+								<Button
+									color={buttonColor}
+									style={styles.button}
+									size="small"
+									variant="contained"
+									onClick={() => handleChangeSearch(`${type}`)}
+								>
+									{type}
+								</Button>
+							</ThemeProvider>
 						);
 					})}
 				</div>
