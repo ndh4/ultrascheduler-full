@@ -234,7 +234,6 @@ const CourseSearch = ({ scheduleID }) => {
                     }}
                 >
                     Search By:
-                    {/* <p style={{ fontSize: "12px", marginLeft: "4px" }}>Search By:</p> */}
                 </div>
                 <div style={styles.buttons}>{renderSearchOptions()}</div>
             </div>
