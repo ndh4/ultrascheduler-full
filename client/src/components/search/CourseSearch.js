@@ -10,44 +10,44 @@ import { ThemeProvider } from "@material-ui/styles";
 const dummy = { label: "", value: "" };
 
 const styles = {
-    filter: {
-        width: "400px",
-        display: "inline-block",
-        marginTop: 20,
-        marginLeft: 20,
-    },
-    button: {
-        display: "flex",
-        float: "center",
-        marginRight: 8,
-        marginTop: 8,
-        padding: "1px 8px 1px 8px",
-        fontSize: "11px",
-        boxShadow: "none",
-        borderRadius: "25px",
-        textTransform: "none",
-        width: "30%",
-        justifyContent: "space-around",
-    },
-    buttons: {
-        display: "flex",
-        marginLeft: 20,
-    },
-    searchBar: {
-        background: "#E4E8EE",
-        border: "2px solid #E4E8EE",
-        borderRadius: "15px 0px 0px 15px",
-        opacity: 1,
-        top: "100vw",
-        left: "20vw",
-        width: "28vw",
-        height: "43vw",
-    },
-    searchTxt: {
-        fontSize: "12px",
-        marginLeft: 20,
-        marginTop: 8,
-    },
+	filter: {
+		width: "400px",
+		display: "inline-block",
+		marginTop: 20,
+		marginLeft: 20,
+	},
+	button: {
+		display: "flex",
+		float: "center",
+		marginRight: 8,
+		marginTop: 8,
+		padding: "1px 8px 1px 8px",
+		fontSize: "11px",
+		boxShadow: "none",
+		borderRadius: "25px",
+		textTransform: "none",
+		width: "30%",
+		justifyContent: "space-around",
+	},
+	buttons: {
+		display: "flex",
+		marginLeft: 20,
+	},
+	searchBar: {
+		background: "#E4E8EE",
+		border: "2px solid #E4E8EE",
+		borderRadius: "15px 0px 0px 15px",
+		opacity: 1,
+		top: "100vw",
+		left: "20vw",
+		width: "28vw",
+		height: "43vw",
+	},
+	searchTxt: {
+		fontSize: "12px",
+		marginLeft: 20,
+		marginTop: 8,
+	},
 };
 
 /**
@@ -67,180 +67,150 @@ const GET_DEPARTMENTS = gql`
 `;
 
 const CourseSearch = ({ scheduleID }) => {
-    const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
-    const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
+	const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
+	const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
 
-    const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
+	const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
 
-    const [searchType, setSearchType] = useState("Department");
+	const [searchType, setSearchType] = useState("Department");
 
-    const allDistributions = [
-        { label: "Distribution I", value: "Distribution I" },
-        { label: "Distribution II", value: "Distribution II" },
-        { label: "Distribution III", value: "Distribution III" },
-    ]; // All distributions
+	const allDistributions = [
+		{ label: "Distribution I", value: "Distribution I" },
+		{ label: "Distribution II", value: "Distribution II" },
+		{ label: "Distribution III", value: "Distribution III" },
+	]; // All distributions
 
-    const {
-        data: { term },
-    } = useQuery(GET_TERM); // Gets the term which we need to request subjects from
+	const {
+		data: { term },
+	} = useQuery(GET_TERM); // Gets the term which we need to request subjects from
 
-    const { data: departmentsData } = useQuery(GET_DEPARTMENTS, {
-        variables: { term },
-    });
+	const { data: departmentsData } = useQuery(GET_DEPARTMENTS, {
+		variables: { term },
+	});
 
     /**
      * We only want this to run when the subjects list data loads
      */
-    useEffect(() => {
-        if (departmentsData) {
-            let { departments } = departmentsData;
-            setDepts(departments.map((dept) => ({ label: dept, value: dept })));
-        }
-    }, [departmentsData]);
+	useEffect(() => {
+		if (departmentsData) {
+			let { departments } = departmentsData;
+			setDepts(departments.map((dept) => ({ label: dept, value: dept })));
+		}
+	}, [departmentsData]);
 
-    const handleChange = (selectedOption) => {
-        if (searchType == "Distribution") setDist(selectedOption);
-        if (searchType == "Department") setDept(selectedOption);
-        if (searchType == "Instructor") setDept(selectedOption); // This is a temperary holder for instructors which currently display search by distribution
-    };
+	const handleChange = (selectedOption) => {
+		if (searchType == "Distribution") setDist(selectedOption);
+		if (searchType == "Department") setDept(selectedOption);
+		if (searchType == "Instructor") setDept(selectedOption); // This is a temperary holder for instructors which currently display search by distribution
+	};
 
-    const muiTheme = createMuiTheme({
-        palette: {
-            primary: { main: "#697E99" },
-            secondary: { main: "#FFFFFF" },
-        },
-    });
+	const muiTheme = createMuiTheme({
+		palette: {
+			primary: { main: "#697E99" },
+			secondary: { main: "#FFFFFF" },
+		},
+	});
 
-    const searchTypes = ["Department", "Distribution", "Instructors"];
-
-    /**
-     * This state variable represents which button is currently clicked.
-     * The reason we need this is such that we can pass different styling
-     * to the button that is clicked. The reason I'm using index is because
-     * we already have the above array.
-     */
-    const [activeButtonIndex, setButtonIndex] = useState(0);
+	const searchTypes = ["Department", "Distribution", "Instructors"];
 
     /**
-     * Generally you do not want code that creates HTML (JSX) inside of the
-     * return section of a component. This is because it's harder to update
-     * and harder to find what code represents what
-     *
-     * Therefore its usually better to create a function named "renderWhateverYouAreRendering"
+     * This state variable represents which button is currently clicked so we can pass different styling
      */
+	const [activeButtonIndex, setButtonIndex] = useState(0);
 
-    const renderSearchOptions = () => {
-        /**
-         * Same map as before, but a cool trick with .map, is that the second
-         * argument is always the index of the array. I remember using the index
-         * of a map very very frequently.
-         */
-        return searchTypes.map((type, index) => {
+	const renderSearchOptions = () => {
+
+		return searchTypes.map((type, index) => {
             /**
              * If the current index of the element is the same as the
-             * active button index, then I make the button color primary.
+             * active button index, then the button color is primary.
              * Otherwise, the button color is secondary.
              *
-             * Note how I only change the value of a variable and only have one
-             * return value. It's "nicer" sometimes to write
-             * code like this instead of having multiple returns because you have
-             * to write less code
-             *
-             * An example of multiple returns that I would personally change is
-             * the code in the displaySearch function. You see how you are always
-             * returning a <Selection/> component? This means that instead of
-             * having two returns with differrent props in the component.
-             * You can have variables that change based on the same if statement
-             * and always pass it down to one <Selection/> component. If, you
-             * don't get it, don't worry, I'll talk about some good coding practices
-             * this Thursday
-             *
-             *
-             */
-            const buttonColor =
-                index === activeButtonIndex ? "primary" : "secondary";
+			 */
+			const buttonColor =
+				index === activeButtonIndex ? "primary" : "secondary";
 
-            return (
-                <ThemeProvider theme={muiTheme}>
-                    <Button
-                        style={styles.button}
-                        color={buttonColor}
-                        size="small"
-                        variant="contained"
-                        onClick={() => setButtonIndex(index)}
-                    >
-                        {type}
-                    </Button>
-                </ThemeProvider>
-            );
-        });
-    };
+			return (
+				<ThemeProvider theme={muiTheme}>
+					<Button
+						style={styles.button}
+						color={buttonColor}
+						size="small"
+						variant="contained"
+						onClick={() => { setButtonIndex(index); setSearchType(`${type}`) }}
+					>
+						{type}
+					</Button>
+				</ThemeProvider>
+			);
+		});
+	};
 
     /**
      * Displays the search component based on whether user is searching
      * by distribution or by department
      */
-    const displaySearch = () => {
-        if (searchType == "Distribution") {
-            return (
-                <Selection
-                    title="Distribution"
-                    options={allDistributions}
-                    selected={getDist}
-                    show={true}
-                    handleChange={handleChange}
-                />
-            );
-        } else {
-            return (
-                <Selection
-                    title="Department"
-                    options={getDepts}
-                    selected={getDept}
-                    show={true}
-                    handleChange={handleChange}
-                />
-            );
-        }
-    };
+	const displaySearch = () => {
+		if (searchType == "Distribution") {
+			return (
+				<Selection
+					title="Distribution"
+					options={allDistributions}
+					selected={getDist}
+					show={true}
+					handleChange={handleChange}
+				/>
+			);
+		} else {
+			return (
+				<Selection
+					title="Department"
+					options={getDepts}
+					selected={getDept}
+					show={true}
+					handleChange={handleChange}
+				/>
+			);
+		}
+	};
 
     /**
      * Displays the course list component based on whether user is searching
      * by distribution or by department
      */
-    const displayCourseList = () => {
-        if (searchType == "Distribution") {
-            return (
-                <CourseList
-                    scheduleID={scheduleID}
-                    type="distribution"
-                    distribution={getDist.value}
-                />
-            );
-        } else {
-            return (
-                <CourseList
-                    scheduleID={scheduleID}
-                    type="department"
-                    department={getDept.value}
-                />
-            );
-        }
-    };
+	const displayCourseList = () => {
+		if (searchType == "Distribution") {
+			return (
+				<CourseList
+					scheduleID={scheduleID}
+					type="distribution"
+					distribution={getDist.value}
+				/>
+			);
+		} else {
+			return (
+				<CourseList
+					scheduleID={scheduleID}
+					type="department"
+					department={getDept.value}
+				/>
+			);
+		}
+	};
 
-    // Initialize Google Analytics
-    initGA();
+	// Initialize Google Analytics
+	initGA();
 
-    return (
-        <div style={styles.searchBar}>
-            <div>
-                <div style={styles.filter}>{displaySearch()}</div>
-                <div style={styles.searchTxt}>Search By:</div>
-                <div style={styles.buttons}>{renderSearchOptions()}</div>
-            </div>
-            {displayCourseList()}
-        </div>
-    );
+	return (
+		<div style={styles.searchBar}>
+			<div>
+				<div style={styles.filter}>{displaySearch()}</div>
+				<div style={styles.searchTxt}>Search By:</div>
+				<div style={styles.buttons}>{renderSearchOptions()}</div>
+			</div>
+			{displayCourseList()}
+		</div>
+	);
 };
 
 export default CourseSearch;
