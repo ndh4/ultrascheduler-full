@@ -4,13 +4,7 @@ import CourseList from "./CourseList";
 import { initGA } from "../../utils/analytics";
 import { useQuery, gql } from "@apollo/client";
 import Button from "@material-ui/core/Button";
-import {
-    useTheme,
-    MuiThemeProvider,
-    createMuiTheme,
-} from "@material-ui/core/styles";
-import red from "@material-ui/core/colors/red";
-import blue from "@material-ui/core/colors/blue";
+import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 
 const dummy = { label: "", value: "" };
@@ -19,25 +13,40 @@ const styles = {
     filter: {
         width: "400px",
         display: "inline-block",
+        marginTop: 20,
+        marginLeft: 20,
     },
     button: {
-        display: "inline-block",
+        display: "flex",
         float: "center",
         marginRight: 8,
         marginTop: 8,
         padding: "1px 8px 1px 8px",
         fontSize: "11px",
-        // backgroundColor: "#e6e6e6",
         boxShadow: "none",
-        "border-radius": "25px",
+        borderRadius: "25px",
         textTransform: "none",
-    },
-    searchBar: {
-        fontSize: "11px",
-        display: "inline-block",
+        width: "30%",
+        justifyContent: "space-around",
     },
     buttons: {
         display: "flex",
+        marginLeft: 20,
+    },
+    searchBar: {
+        background: "#E4E8EE",
+        border: "2px solid #E4E8EE",
+        borderRadius: "15px 0px 0px 15px",
+        opacity: 1,
+        top: "100vw",
+        left: "20vw",
+        width: "28vw",
+        height: "43vw",
+    },
+    searchTxt: {
+        fontSize: "12px",
+        marginLeft: 20,
+        marginTop: 8,
     },
 };
 
@@ -97,8 +106,8 @@ const CourseSearch = ({ scheduleID }) => {
 
     const muiTheme = createMuiTheme({
         palette: {
-            primary: { main: "#818282" },
-            secondary: { main: "#e6e6e6" },
+            primary: { main: "#697E99" },
+            secondary: { main: "#FFFFFF" },
         },
     });
 
@@ -223,18 +232,10 @@ const CourseSearch = ({ scheduleID }) => {
     initGA();
 
     return (
-        <div className="Search">
+        <div style={styles.searchBar}>
             <div>
                 <div style={styles.filter}>{displaySearch()}</div>
-                <div
-                    style={{
-                        fontSize: "12px",
-                        marginLeft: "4px",
-                        marginTop: "3px",
-                    }}
-                >
-                    Search By:
-                </div>
+                <div style={styles.searchTxt}>Search By:</div>
                 <div style={styles.buttons}>{renderSearchOptions()}</div>
             </div>
             {displayCourseList()}

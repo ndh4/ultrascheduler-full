@@ -2,7 +2,7 @@ import React from "react";
 import Select from "react-select";
 
 const style = {
-    width: 238,
+    width: "25vw",
     display: "inline-block",
     float: "center",
     padding: 2,
