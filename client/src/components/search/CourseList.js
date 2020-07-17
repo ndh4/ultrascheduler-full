@@ -8,68 +8,6 @@ import { Event } from "../../utils/analytics";
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
-const GET_DEPT_COURSES = gql`
-    query GetDeptCourses($subject: String!, $term: Float!) {
-        courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
-            _id
-            subject
-            courseNum
-            longTitle
-            sessions(filter: { term: $term }) {
-                _id
-                crn
-                class {
-                    days
-                    startTime
-                    endTime
-                }
-                lab {
-                    days
-                    startTime
-                    endTime
-                }
-                instructors {
-                    firstName
-                    lastName
-                }
-            }
-        }
-    }
-`;
-// new:
-const GET_DIST_COURSES = gql`
-    query CourseQuery($distribution: String!, $term: Float!) {
-        courseMany(
-            filter: { distribution: $distribution }
-            sort: SUBJECT_AND_COURSE_NUM_ASC
-        ) {
-            _id
-            subject
-            courseNum
-            longTitle
-            distribution
-            sessions(filter: { term: $term }) {
-                _id
-                crn
-                class {
-                    days
-                    startTime
-                    endTime
-                }
-                lab {
-                    days
-                    startTime
-                    endTime
-                }
-                instructors {
-                    firstName
-                    lastName
-                }
-            }
-        }
-    }
-`;
-
 /**
  * Gets the term from local state management
  */
@@ -265,7 +203,7 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
     );
 };
 
-const CourseList = ({ scheduleID, type, searchType }) => {
+const CourseList = ({ scheduleID, query, searchType }) => {
     const [courseSelected, setCourseSelected] = useState([]);
 
     // Get term from local state management
@@ -280,42 +218,21 @@ const CourseList = ({ scheduleID, type, searchType }) => {
         variables: { term: term.toString() },
     });
 
-    // If we are searching by distribution:
-    if (type === "Distribution") {
-        // Distribution isn't empty, so we need to fetch the courses for the distribution
-        const { data: distCourseData, loading, error } = useQuery(
-            GET_DIST_COURSES,
-            {
-                variables: { distribution: searchType, term: term },
-            }
-        );
+    // Fetch data required
+    const { data: courseData, loading, error } = useQuery(query, {
+        variables: { ...searchType, term: term },
+    });
 
-        if (searchType == "") return <br />;
+    // Since searchType is passed in as an object with the value as the query returned value,
+    // we need to check the object's value instead of directly checking searchType === ""
+    if (Object.values(searchType)[0] === "") return <br />;
 
-        if (loading) return <p>Loading...</p>;
-        if (error) return <p>Error :(</p>;
-        if (!distCourseData) return <p>No Data...</p>;
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+    if (!courseData) return <p>No Data...</p>;
 
-        // Once the data has loaded, we want to extract the course results for the distribution
-        courseResults = distCourseData.courseMany;
-    } else {
-        // Department isn't empty, so we need to fetch the courses for the department
-        const { data: deptCourseData, loading, error } = useQuery(
-            GET_DEPT_COURSES,
-            {
-                variables: { subject: searchType, term: term },
-            }
-        );
-
-        if (searchType == "") return <br />;
-
-        if (loading) return <p>Loading...</p>;
-        if (error) return <p>Error :(</p>;
-        if (!deptCourseData) return <p>No Data...</p>;
-
-        // Once the data has loaded, we want to extract the course results for the department
-        courseResults = deptCourseData.courseMany;
-    }
+    // Once the data has loaded, we want to extract the course results for the distribution
+    courseResults = courseData.courseMany;
 
     // We need to filter out any courses which have 0 sessions
     courseResults = courseResults.filter(
