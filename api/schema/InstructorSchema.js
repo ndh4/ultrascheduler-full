@@ -73,7 +73,7 @@ InstructorTC.addFields({
 });
 
 InstructorTC.addResolver({
-  name: "findManyInInstructor",
+  name: "findOneInInstructor",
   type: [InstructorTC],
   args: { firstName: "String!", lastName: "String!", ascending: "Boolean!" },
   resolve: async ({ source, args, context, info }) => {
@@ -87,9 +87,9 @@ InstructorTC.addResolver({
 });
 
 const InstructorQuery = {
-  instructorOne: InstructorTC.getResolver("findOne"),
   instructorList: InstructorTC.getResolver("fetchInstructors"),
-  instructorMany: InstructorTC.getResolver("findMany")
+  instructorMany: InstructorTC.getResolver("findMany"),
+  instructorOne: InstructorTC.getResolver("findOne")
     .addFilterArg({
       name: "coursefirstNameRegExp", // From here: https://github.com/graphql-compose/graphql-compose-examples/blob/master/examples/northwind/models/product.js#L38,L49
       type: "String",
@@ -110,15 +110,15 @@ const InstructorQuery = {
         query.lastName = lastName;
       },
     }),
-  instructorManyInInstructor: InstructorTC.getResolver("findManyInInstructor"),
-  departments: {
-    name: "departments",
-    type: "[String]",
-    args: { term: "Int!" },
-    resolve: async (_, args) => {
-      return await getSubjects(args.term);
-    },
-  },
+  // instructorOneInInstructor: InstructorTC.getResolver("findOneInInstructor"),
+  // departments: {
+  //   name: "departments",
+  //   type: "[String]",
+  //   args: { term: "Int!" },
+  //   resolve: async (_, args) => {
+  //     return await getSubjects(args.term);
+  //   },
+  // },
 };
 
 const InstructorMutation = {

@@ -8,44 +8,19 @@ import { Event } from "../../utils/analytics";
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
-// const COURSES_BY_INSTRUCTORS = gql`
-//     query CoursesByInstructor {
-//         instructorOne(
-//             filter: { AND: { firstName: "Scott", lastName: "Rixner" } }
-//         ) {
-//             sessions(filter: { term: 202110 }) {
-//                 _id
-//                 term
-//                 course {
-//                     longTitle
-//                 }
-//                 class {
-//                     days
-//                     startTime
-//                     endTime
-//                 }
-//                 lab {
-//                     days
-//                     startTime
-//                     endTime
-//                 }
-//                 crn
-//             }
-//         }
-//     }
-// `;
-
 const COURSES_BY_INSTRUCTORS = gql`
     query InstructorQuery(
         $firstName: String!
         $lastName: String!
         $term: Float!
     ) {
-        instructorMany(filter: { firstName: $firstName, lastName: $lastName }) {
+        instructorOne(filter: { firstName: $firstName, lastName: $lastName }) {
             sessions(filter: { term: $term }) {
                 _id
                 term
                 course {
+                    subject
+                    courseNum
                     longTitle
                 }
                 class {
@@ -76,7 +51,13 @@ const GET_TERM = gql`
 const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
 
 const courseToLabel = (course) => {
-    return course.course.longTitle;
+    return (
+        course.course.subject +
+        " " +
+        course.course.courseNum +
+        " || " +
+        course.course.longTitle
+    );
 };
 
 /**
@@ -84,14 +65,16 @@ const courseToLabel = (course) => {
  * @param {instructor} instructors
  * {id: xxx, firstName: xxx, lastName: xxx}
  */
-const instructorsToNames = (instructors) => {
-    let instructorNames = [];
-    for (let instructor of instructors) {
-        let instructorName = instructor.firstName + " " + instructor.lastName;
-        instructorNames.push(instructorName);
-    }
-    return instructorNames;
-};
+
+//was not used
+// const instructorsToNames = (instructors) => {
+//     let instructorNames = [];
+//     for (let instructor of instructors) {
+//         let instructorName = instructor.firstName + " " + instructor.lastName;
+//         instructorNames.push(instructorName);
+//     }
+//     return instructorNames;
+// };
 
 const sessionToString = (session) => {
     let courseResult = [];
@@ -193,29 +176,29 @@ const SessionItem = ({ scheduleID, course, draftSessions }) => {
     let sessionSelected = false;
 
     // Check if this course is in draftSessions
-    // for (let draftSession of draftSessions) {
-    //     if (draftSession.course._id == course._id) {
-    //         sessionSelected = true;
-    //     }
-    // }
+    for (let draftSession of draftSessions) {
+        if (draftSession.session._id == course._id) {
+            sessionSelected = true;
+        }
+    }
 
-    // let [addDraftSession, { data, loading, error }] = useMutation(
-    //     ADD_DRAFT_SESSION,
-    //     {
-    //         variables: { scheduleID: scheduleID },
-    //     }
-    // );
+    let [addDraftSession, { data, loading, error }] = useMutation(
+        ADD_DRAFT_SESSION,
+        {
+            variables: { scheduleID: scheduleID, sessionID: course._id },
+        }
+    );
 
-    // let [
-    //     removeDraftSession,
-    //     { dataOnRemove, loadingOnRemove, errorOnRemove },
-    // ] = useMutation(REMOVE_DRAFT_SESSION, {
-    //     variables: { scheduleID: scheduleID },
-    // });
+    let [
+        removeDraftSession,
+        { dataOnRemove, loadingOnRemove, errorOnRemove },
+    ] = useMutation(REMOVE_DRAFT_SESSION, {
+        variables: { scheduleID: scheduleID, sessionID: course._id },
+    });
 
     return (
         <div
-            //key={session.crn}
+            key={course.crn}
             style={{ borderStyle: "solid", display: "inline-block" }}
         >
             <input
@@ -261,6 +244,17 @@ const SessionItem = ({ scheduleID, course, draftSessions }) => {
 const InstructorList = ({ scheduleID, instructor, searchcourseResults }) => {
     const [courseSelected, setCourseSelected] = useState([]);
 
+    //deal with middle name that is part of firstName (ex. Benjamin C.)
+    let firstName, lastName;
+
+    if (instructor.includes(".")) {
+        firstName = instructor.substr(0, instructor.indexOf(".") + 1);
+        lastName = instructor.substr(instructor.indexOf(".") + 2);
+    } else {
+        firstName = instructor.substr(0, instructor.indexOf(" "));
+        lastName = instructor.substr(instructor.indexOf(" ") + 1);
+    }
+
     // Get term from local state management
     const { data: termData } = useQuery(GET_TERM);
     let { term } = termData;
@@ -269,10 +263,9 @@ const InstructorList = ({ scheduleID, instructor, searchcourseResults }) => {
     const { data: instCourseData, loading, error } = useQuery(
         COURSES_BY_INSTRUCTORS,
         {
-            variables: { instructor: instructor, term: term },
+            variables: { firstName: firstName, lastName: lastName, term: term },
         }
     );
-    console.log(instCourseData);
 
     // We also want to fetch (from our cache, so this does NOT call the backend) the user's draftSessions
     let { data: scheduleData } = useQuery(QUERY_DRAFT_SESSIONS, {
@@ -287,6 +280,7 @@ const InstructorList = ({ scheduleID, instructor, searchcourseResults }) => {
     if (!instCourseData) return <p>No Data...</p>;
 
     // Once the data has loaded, we want to extract the course results for the department
+    //let courseResults = instCourseData.instructorOne.sessions;
     let courseResults = instCourseData.instructorOne.sessions;
 
     // We need to filter out any courses which have 0 sessions

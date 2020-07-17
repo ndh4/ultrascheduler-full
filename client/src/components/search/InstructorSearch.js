@@ -51,6 +51,7 @@ const InstructorSearch = ({ scheduleID }) => {
         for (let instructor of instructors) {
             let instructorName =
                 instructor.firstName + " " + instructor.lastName;
+            //console.log(instructor.firstName);
             instructorNames.push(instructorName);
         }
         return instructorNames;

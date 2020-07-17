@@ -50,6 +50,7 @@ const GET_TERM = gql`
 const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
 
 const courseToLabel = (course) => {
+    console.log("course", course);
     return course.subject + " " + course.courseNum + " || " + course.longTitle;
 };
 
