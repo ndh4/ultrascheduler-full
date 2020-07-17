@@ -67,18 +67,21 @@ const GET_DEPARTMENTS = gql`
 `;
 
 const CourseSearch = ({ scheduleID }) => {
+
 	const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
 	const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
 
 	const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
-
-	const [searchType, setSearchType] = useState("Department");
 
 	const allDistributions = [
 		{ label: "Distribution I", value: "Distribution I" },
 		{ label: "Distribution II", value: "Distribution II" },
 		{ label: "Distribution III", value: "Distribution III" },
 	]; // All distributions
+
+
+	// Represents which button is currently clicked for styling and returning data
+	const [activeButtonIndex, setButtonIndex] = useState(0);
 
 	const {
 		data: { term },
@@ -87,6 +90,12 @@ const CourseSearch = ({ scheduleID }) => {
 	const { data: departmentsData } = useQuery(GET_DEPARTMENTS, {
 		variables: { term },
 	});
+
+	// These variables are used in displaySearch function:
+	// Department is used as a placeholder for Instructors for now
+	const searchTypes = ["Department", "Distribution", "Instructors"];
+	const allOptions = [getDepts, allDistributions, getDepts];
+	const allSelected = [getDept, getDist, getDept];
 
     /**
      * We only want this to run when the subjects list data loads
@@ -99,9 +108,10 @@ const CourseSearch = ({ scheduleID }) => {
 	}, [departmentsData]);
 
 	const handleChange = (selectedOption) => {
-		if (searchType == "Distribution") setDist(selectedOption);
-		if (searchType == "Department") setDept(selectedOption);
-		if (searchType == "Instructor") setDept(selectedOption); // This is a temperary holder for instructors which currently display search by distribution
+		if (activeButtonIndex == 0) setDept(selectedOption);
+		if (activeButtonIndex == 1) setDist(selectedOption);
+		// This is a temperary holder for instructors which currently display search by distribution
+		if (activeButtonIndex == 2) setDept(selectedOption);
 	};
 
 	const muiTheme = createMuiTheme({
@@ -110,13 +120,6 @@ const CourseSearch = ({ scheduleID }) => {
 			secondary: { main: "#FFFFFF" },
 		},
 	});
-
-	const searchTypes = ["Department", "Distribution", "Instructors"];
-
-    /**
-     * This state variable represents which button is currently clicked so we can pass different styling
-     */
-	const [activeButtonIndex, setButtonIndex] = useState(0);
 
 	const renderSearchOptions = () => {
 
@@ -137,7 +140,7 @@ const CourseSearch = ({ scheduleID }) => {
 						color={buttonColor}
 						size="small"
 						variant="contained"
-						onClick={() => { setButtonIndex(index); setSearchType(`${type}`) }}
+						onClick={() => { setButtonIndex(index) }}
 					>
 						{type}
 					</Button>
@@ -151,27 +154,20 @@ const CourseSearch = ({ scheduleID }) => {
      * by distribution or by department
      */
 	const displaySearch = () => {
-		if (searchType == "Distribution") {
-			return (
-				<Selection
-					title="Distribution"
-					options={allDistributions}
-					selected={getDist}
-					show={true}
-					handleChange={handleChange}
-				/>
-			);
-		} else {
-			return (
-				<Selection
-					title="Department"
-					options={getDepts}
-					selected={getDept}
-					show={true}
-					handleChange={handleChange}
-				/>
-			);
-		}
+
+		const searchType = searchTypes[activeButtonIndex]
+		const option = allOptions[activeButtonIndex]
+		const selected = allSelected[activeButtonIndex]
+
+		return (
+			<Selection
+				title={searchType}
+				options={option}
+				selected={selected}
+				show={true}
+				handleChange={handleChange}
+			/>
+		);
 	};
 
     /**
@@ -179,7 +175,7 @@ const CourseSearch = ({ scheduleID }) => {
      * by distribution or by department
      */
 	const displayCourseList = () => {
-		if (searchType == "Distribution") {
+		if (activeButtonIndex == 1) {
 			return (
 				<CourseList
 					scheduleID={scheduleID}
