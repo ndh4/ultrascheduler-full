@@ -9,32 +9,32 @@ import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
 const GET_DEPT_COURSES = gql`
-  query GetDeptCourses($subject: String!, $term: Float!) {
-    courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
-      _id
-      subject
-      courseNum
-      longTitle
-      sessions(filter: { term: $term }) {
-        _id
-        crn
-        class {
-          days
-          startTime
-          endTime
+    query GetDeptCourses($subject: String!, $term: Float!) {
+        courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
+            _id
+            subject
+            courseNum
+            longTitle
+            sessions(filter: { term: $term }) {
+                _id
+                crn
+                class {
+                    days
+                    startTime
+                    endTime
+                }
+                lab {
+                    days
+                    startTime
+                    endTime
+                }
+                instructors {
+                    firstName
+                    lastName
+                }
+            }
         }
-        lab {
-          days
-          startTime
-          endTime
-        }
-        instructors {
-          firstName
-          lastName
-        }
-      }
     }
-  }
 `;
 // new:
 const GET_DIST_COURSES = gql`
@@ -265,13 +265,7 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
     );
 };
 
-const CourseList = ({
-    scheduleID,
-    department, distribution,
-    type,
-    searchcourseResults,
-}) => {
-
+const CourseList = ({ scheduleID, type, searchType }) => {
     const [courseSelected, setCourseSelected] = useState([]);
 
     // Get term from local state management
@@ -286,17 +280,17 @@ const CourseList = ({
         variables: { term: term.toString() },
     });
 
-    // If we are searching by department:
-    if (type == "distribution") {
+    // If we are searching by distribution:
+    if (type === "Distribution") {
         // Distribution isn't empty, so we need to fetch the courses for the distribution
         const { data: distCourseData, loading, error } = useQuery(
             GET_DIST_COURSES,
             {
-                variables: { distribution: distribution, term: term },
+                variables: { distribution: searchType, term: term },
             }
         );
 
-        if (distribution == "") return <br />;
+        if (searchType == "") return <br />;
 
         if (loading) return <p>Loading...</p>;
         if (error) return <p>Error :(</p>;
@@ -304,17 +298,16 @@ const CourseList = ({
 
         // Once the data has loaded, we want to extract the course results for the distribution
         courseResults = distCourseData.courseMany;
-
     } else {
         // Department isn't empty, so we need to fetch the courses for the department
         const { data: deptCourseData, loading, error } = useQuery(
             GET_DEPT_COURSES,
             {
-                variables: { subject: department, term: term },
+                variables: { subject: searchType, term: term },
             }
         );
 
-        if (department == "") return <br />;
+        if (searchType == "") return <br />;
 
         if (loading) return <p>Loading...</p>;
         if (error) return <p>Error :(</p>;
