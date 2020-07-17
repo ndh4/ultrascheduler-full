@@ -8,16 +8,46 @@ import { Event } from "../../utils/analytics";
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
-const GET_DEPT_COURSES = gql`
-    query GetDeptCourses($subject: String!, $term: Float!) {
-        courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
-            _id
-            subject
-            courseNum
-            longTitle
+// const COURSES_BY_INSTRUCTORS = gql`
+//     query CoursesByInstructor {
+//         instructorOne(
+//             filter: { AND: { firstName: "Scott", lastName: "Rixner" } }
+//         ) {
+//             sessions(filter: { term: 202110 }) {
+//                 _id
+//                 term
+//                 course {
+//                     longTitle
+//                 }
+//                 class {
+//                     days
+//                     startTime
+//                     endTime
+//                 }
+//                 lab {
+//                     days
+//                     startTime
+//                     endTime
+//                 }
+//                 crn
+//             }
+//         }
+//     }
+// `;
+
+const COURSES_BY_INSTRUCTORS = gql`
+    query InstructorQuery(
+        $firstName: String!
+        $lastName: String!
+        $term: Float!
+    ) {
+        instructorMany(filter: { firstName: $firstName, lastName: $lastName }) {
             sessions(filter: { term: $term }) {
                 _id
-                crn
+                term
+                course {
+                    longTitle
+                }
                 class {
                     days
                     startTime
@@ -28,15 +58,11 @@ const GET_DEPT_COURSES = gql`
                     startTime
                     endTime
                 }
-                instructors {
-                    firstName
-                    lastName
-                }
+                crn
             }
         }
     }
 `;
-
 /**
  * Gets the term from local state management
  */
@@ -50,7 +76,7 @@ const GET_TERM = gql`
 const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
 
 const courseToLabel = (course) => {
-    return course.subject + " " + course.courseNum + " || " + course.longTitle;
+    return course.course.longTitle;
 };
 
 /**
@@ -91,12 +117,12 @@ const sessionToString = (session) => {
         courseResult.push(<p style={{ padding: "5px" }}>{labTime}</p>);
     }
     // Finally find instructors
-    if (session.instructors.length > 0) {
-        let instructorNames = instructorsToNames(session.instructors);
-        courseResult.push(
-            <p style={{ padding: "5px" }}>{instructorNames.join(", ")}</p>
-        );
-    }
+    // if (session.instructors.length > 0) {
+    //     let instructorNames = instructorsToNames(session.instructors);
+    //     courseResult.push(
+    //         <p style={{ padding: "5px" }}>{instructorNames.join(", ")}</p>
+    //     );
+    // }
     return courseResult.length > 0
         ? courseResult
         : ["No information found for this session."];
@@ -163,33 +189,33 @@ const REMOVE_DRAFT_SESSION = gql`
     }
 `;
 
-const SessionItem = ({ scheduleID, session, draftSessions }) => {
+const SessionItem = ({ scheduleID, course, draftSessions }) => {
     let sessionSelected = false;
 
     // Check if this course is in draftSessions
-    for (let draftSession of draftSessions) {
-        if (draftSession.session._id == session._id) {
-            sessionSelected = true;
-        }
-    }
+    // for (let draftSession of draftSessions) {
+    //     if (draftSession.course._id == course._id) {
+    //         sessionSelected = true;
+    //     }
+    // }
 
-    let [addDraftSession, { data, loading, error }] = useMutation(
-        ADD_DRAFT_SESSION,
-        {
-            variables: { scheduleID: scheduleID, sessionID: session._id },
-        }
-    );
+    // let [addDraftSession, { data, loading, error }] = useMutation(
+    //     ADD_DRAFT_SESSION,
+    //     {
+    //         variables: { scheduleID: scheduleID },
+    //     }
+    // );
 
-    let [
-        removeDraftSession,
-        { dataOnRemove, loadingOnRemove, errorOnRemove },
-    ] = useMutation(REMOVE_DRAFT_SESSION, {
-        variables: { scheduleID: scheduleID, sessionID: session._id },
-    });
+    // let [
+    //     removeDraftSession,
+    //     { dataOnRemove, loadingOnRemove, errorOnRemove },
+    // ] = useMutation(REMOVE_DRAFT_SESSION, {
+    //     variables: { scheduleID: scheduleID },
+    // });
 
     return (
         <div
-            key={session.crn}
+            //key={session.crn}
             style={{ borderStyle: "solid", display: "inline-block" }}
         >
             <input
@@ -197,7 +223,7 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
                 checked={sessionSelected}
                 onChange={() => {
                     // Simple transformation of CRN to a string
-                    let crnString = String.toString(session.crn);
+                    let crnString = String.toString(course.crn);
 
                     if (sessionSelected) {
                         // Track remove with GA
@@ -227,12 +253,12 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
                 }}
                 style={{ alignItems: "left" }}
             />
-            <div style={{ alignItems: "left" }}>{sessionToString(session)}</div>
+            <div style={{ alignItems: "left" }}>{sessionToString(course)}</div>
         </div>
     );
 };
 
-const CourseList = ({ scheduleID, department, searchcourseResults }) => {
+const InstructorList = ({ scheduleID, instructor, searchcourseResults }) => {
     const [courseSelected, setCourseSelected] = useState([]);
 
     // Get term from local state management
@@ -240,33 +266,33 @@ const CourseList = ({ scheduleID, department, searchcourseResults }) => {
     let { term } = termData;
 
     // Department isn't empty, so we need to fetch the courses for the department
-    const { data: deptCourseData, loading, error } = useQuery(
-        GET_DEPT_COURSES,
+    const { data: instCourseData, loading, error } = useQuery(
+        COURSES_BY_INSTRUCTORS,
         {
-            variables: { subject: department, term: term },
+            variables: { instructor: instructor, term: term },
         }
     );
+    console.log(instCourseData);
 
     // We also want to fetch (from our cache, so this does NOT call the backend) the user's draftSessions
     let { data: scheduleData } = useQuery(QUERY_DRAFT_SESSIONS, {
         variables: { term: term.toString() },
     });
-
-    if (department == "") {
+    if (instructor == "") {
         return <br />;
     }
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
-    if (!deptCourseData) return <p>No Data...</p>;
+    if (!instCourseData) return <p>No Data...</p>;
 
     // Once the data has loaded, we want to extract the course results for the department
-    let courseResults = deptCourseData.courseMany;
+    let courseResults = instCourseData.instructorOne.sessions;
 
     // We need to filter out any courses which have 0 sessions
-    courseResults = courseResults.filter(
-        (course) => course.sessions.length > 0
-    );
+    // courseResults = courseResults.filter(
+    //     (course) => course.sessions.length > 0
+    // );
 
     // We also want to extract the user's draftSessions, nested inside their schedule
     let draftSessions = scheduleData.scheduleOne.draftSessions;
@@ -319,14 +345,12 @@ const CourseList = ({ scheduleID, department, searchcourseResults }) => {
                                 unmountOnExit
                             >
                                 <List component="div" disablePadding>
-                                    {course.sessions.map((session) => (
-                                        <SessionItem
-                                            course={course}
-                                            session={session}
-                                            draftSessions={draftSessions}
-                                            scheduleID={scheduleID}
-                                        />
-                                    ))}
+                                    <SessionItem
+                                        course={course}
+                                        session={course}
+                                        draftSessions={draftSessions}
+                                        scheduleID={scheduleID}
+                                    />
                                 </List>
                             </Collapse>
                         </div>
@@ -337,4 +361,4 @@ const CourseList = ({ scheduleID, department, searchcourseResults }) => {
     );
 };
 
-export default CourseList;
+export default InstructorList;
