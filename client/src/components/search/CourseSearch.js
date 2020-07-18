@@ -111,7 +111,7 @@ const CourseSearch = ({ scheduleID }) => {
         variables: { term },
     });
 
-    // These variables are used in displaySearch function:
+    // These variables are used in displaySearch function and displayCourseList function:
     // Department is used as a placeholder for Instructors for now
     const searchTypes = ["Department", "Distribution", "Instructors"];
     const allOptions = [getDepts, allDistributions, getDepts];

@@ -1,19 +1,19 @@
 .filter {
-        display: inline-block;
+    display: inline-block;
 }
-    /* button class does not work for styling material ui button: */
-    /* .button {
-        display: flex;
-        float: center;
-        margin-right: 12px;
-        padding: 1px 24px 1px 24px;
-        font-size: 11px;
-        box-shadow: none;
-        border-radius: 25px;
-        text-transform: none;
-        width: 30%;
-        justify-content: space-around;
-    } */
+/* button class does not work for styling material ui button:
+.button.selected {
+    display: flex;
+    float: center;
+    margin-right: 12px;
+    padding: 1px 24px 1px 24px;
+    font-size: 11px;
+    box-shadow: none;
+    border-radius: 25px;
+    text-transform: none;
+    width: 30%;
+    justify-content: space-around;
+} */
 
 .buttons {
     display: flex;
@@ -21,8 +21,8 @@
 }
 
 .searchBar {
-    background: #E4E8EE;
-    border: 2px solid #E4E8EE;
+    background: #e4e8ee;
+    border: 2px solid #e4e8ee;
     border-radius: 15px 0px 0px 15px;
     opacity: 1;
     top: 100vw;
@@ -37,4 +37,3 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
-
