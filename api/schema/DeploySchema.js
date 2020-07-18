@@ -1,4 +1,4 @@
-import { SERVICE_URL } from '../config';
+import { SERVICE_URL } from "../config";
 
 const DeployQuery = {
     service: {
@@ -7,7 +7,7 @@ const DeployQuery = {
         args: {},
         resolve: () => {
             return SERVICE_URL;
-        }
+        },
     },
 };
 
