@@ -72,20 +72,6 @@ InstructorTC.addFields({
   },
 });
 
-InstructorTC.addResolver({
-  name: "findOneInInstructor",
-  type: [InstructorTC],
-  args: { firstName: "String!", lastName: "String!", ascending: "Boolean!" },
-  resolve: async ({ source, args, context, info }) => {
-    // -(field) puts into descending order
-    let sortParam = args.ascending ? "courseNum" : "-courseNum";
-    return await Instructor.find({
-      firstName: args.firstName,
-      lastName: args.lastName,
-    }).sort(sortParam);
-  },
-});
-
 const InstructorQuery = {
   instructorList: InstructorTC.getResolver("fetchInstructors"),
   instructorMany: InstructorTC.getResolver("findMany"),
@@ -93,9 +79,8 @@ const InstructorQuery = {
     .addFilterArg({
       name: "coursefirstNameRegExp", // From here: https://github.com/graphql-compose/graphql-compose-examples/blob/master/examples/northwind/models/product.js#L38,L49
       type: "String",
-      description: "Search for a course by its instructor's first name",
+      description: "Search for courses by instructor's first name",
       query: (query, value) => {
-        // Split value into subject & code
         let firstName = value;
         query.firstName = firstName;
       },
@@ -103,22 +88,12 @@ const InstructorQuery = {
     .addFilterArg({
       name: "courselastNameRegExp", // From here: https://github.com/graphql-compose/graphql-compose-examples/blob/master/examples/northwind/models/product.js#L38,L49
       type: "String",
-      description: "Search for a course by its instructor's last name",
+      description: "Search for a course by instructor's last name",
       query: (query, value) => {
-        // Split value into subject & code
         let lastName = value;
         query.lastName = lastName;
       },
     }),
-  // instructorOneInInstructor: InstructorTC.getResolver("findOneInInstructor"),
-  // departments: {
-  //   name: "departments",
-  //   type: "[String]",
-  //   args: { term: "Int!" },
-  //   resolve: async (_, args) => {
-  //     return await getSubjects(args.term);
-  //   },
-  // },
 };
 
 const InstructorMutation = {

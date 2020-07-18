@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import SwipeableViews from "react-swipeable-views";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -66,16 +66,6 @@ const courseToLabel = (course) => {
  * {id: xxx, firstName: xxx, lastName: xxx}
  */
 
-//was not used
-// const instructorsToNames = (instructors) => {
-//     let instructorNames = [];
-//     for (let instructor of instructors) {
-//         let instructorName = instructor.firstName + " " + instructor.lastName;
-//         instructorNames.push(instructorName);
-//     }
-//     return instructorNames;
-// };
-
 const sessionToString = (session) => {
     let courseResult = [];
     // Find class times
@@ -99,13 +89,6 @@ const sessionToString = (session) => {
         labTime += " " + startTime + " - " + endTime;
         courseResult.push(<p style={{ padding: "5px" }}>{labTime}</p>);
     }
-    // Finally find instructors
-    // if (session.instructors.length > 0) {
-    //     let instructorNames = instructorsToNames(session.instructors);
-    //     courseResult.push(
-    //         <p style={{ padding: "5px" }}>{instructorNames.join(", ")}</p>
-    //     );
-    // }
     return courseResult.length > 0
         ? courseResult
         : ["No information found for this session."];
@@ -241,19 +224,8 @@ const SessionItem = ({ scheduleID, course, draftSessions }) => {
     );
 };
 
-const InstructorList = ({ scheduleID, instructor, searchcourseResults }) => {
+const InstructorList = ({ scheduleID, instructor, firstName, lastName }) => {
     const [courseSelected, setCourseSelected] = useState([]);
-
-    //deal with middle name that is part of firstName (ex. Benjamin C.)
-    let firstName, lastName;
-
-    if (instructor.includes(".")) {
-        firstName = instructor.substr(0, instructor.indexOf(".") + 1);
-        lastName = instructor.substr(instructor.indexOf(".") + 2);
-    } else {
-        firstName = instructor.substr(0, instructor.indexOf(" "));
-        lastName = instructor.substr(instructor.indexOf(" ") + 1);
-    }
 
     // Get term from local state management
     const { data: termData } = useQuery(GET_TERM);
@@ -280,7 +252,6 @@ const InstructorList = ({ scheduleID, instructor, searchcourseResults }) => {
     if (!instCourseData) return <p>No Data...</p>;
 
     // Once the data has loaded, we want to extract the course results for the department
-    //let courseResults = instCourseData.instructorOne.sessions;
     let courseResults = instCourseData.instructorOne.sessions;
 
     // We need to filter out any courses which have 0 sessions

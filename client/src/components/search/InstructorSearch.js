@@ -3,7 +3,7 @@ import InstructorList from "./InstructorList";
 import { useQuery, gql } from "@apollo/client";
 import Selection from "./Selection";
 
-const dummy = { label: "", value: "" };
+const dummy = { label: "", value: "", firstName: "", lastName: "" };
 
 const styles = {
     filter: {
@@ -33,9 +33,8 @@ const GET_INSTRUCTORS = gql`
 `;
 
 const InstructorSearch = ({ scheduleID }) => {
-    const [getInstruct, setInstruct] = useState([]); // Used for the entire list of instructor
+    const [getInstruct, setInstruct] = useState([]); // Used for the entire list of instructors
     const [getInst, setInst] = useState(dummy); // Used for selection of a particular instructor
-    // const allInstructors = [{ label: "Scott Rixner", value: "Scott Rixner" }];
 
     const {
         data: { term },
@@ -45,14 +44,18 @@ const InstructorSearch = ({ scheduleID }) => {
         variables: { term },
     });
 
-    //PASS IN THE FUNCTION?
+    //deal with instructor names with different structures (ex. Benjamin C. Kerswell, Maria Fabiola Lopez Duran, Benjamin Fregly)
+    //easier to split into first and last names for query in InstructorList
     const instructorsToNames = (instructors) => {
         let instructorNames = [];
         for (let instructor of instructors) {
             let instructorName =
                 instructor.firstName + " " + instructor.lastName;
-            //console.log(instructor.firstName);
-            instructorNames.push(instructorName);
+            instructorNames.push({
+                fullName: instructorName,
+                firstName: instructor.firstName,
+                lastName: instructor.lastName,
+            });
         }
         return instructorNames;
     };
@@ -63,8 +66,10 @@ const InstructorSearch = ({ scheduleID }) => {
             let instructorList = instructorsToNames(instructors);
             setInstruct(
                 instructorList.map((inst) => ({
-                    label: inst,
-                    value: inst,
+                    label: inst.fullName,
+                    value: inst.fullName,
+                    firstName: inst.firstName,
+                    lastName: inst.lastName,
                 }))
             );
         }
@@ -89,6 +94,8 @@ const InstructorSearch = ({ scheduleID }) => {
             <InstructorList
                 scheduleID={scheduleID}
                 instructor={getInst.value}
+                firstName={getInst.firstName}
+                lastName={getInst.lastName}
             />
         </div>
     );
