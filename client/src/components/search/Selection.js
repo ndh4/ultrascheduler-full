@@ -7,7 +7,7 @@ const style = {
     float: "center",
     padding: 2,
     marginLeft: 16,
-    marginTop: 16
+    marginTop: 16,
 };
 
 /**

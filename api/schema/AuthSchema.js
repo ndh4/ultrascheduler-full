@@ -1,12 +1,10 @@
-import { User, UserTC, ScheduleTC } from '../models';
+import { User, UserTC, ScheduleTC } from "../models";
 
 const AuthQuery = {
     authenticateUser: UserTC.getResolver("authenticate"),
-    verifyUser: UserTC.getResolver("verify")
+    verifyUser: UserTC.getResolver("verify"),
 };
 
-const AuthMutation = {
-    
-};
+const AuthMutation = {};
 
 export { AuthQuery, AuthMutation };
