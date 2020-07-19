@@ -9,6 +9,7 @@ import Paper from "@material-ui/core/Paper";
 import SwipeableViews from "react-swipeable-views";
 
 import DraftCourseItem from "./DraftCourseItem";
+import { TableBody } from "@material-ui/core";
 
 const useStyles = makeStyles({
     table: {
@@ -83,11 +84,13 @@ const ClassSelector = ({ draftSessions, scheduleID }) => {
                 </Table>
             </SwipeableViews>
             <Table>
-                <TableRow>
-                    <TableCell align="left">
-                        Total Visible Hours: {creditTotal}
-                    </TableCell>
-                </TableRow>
+                <TableBody>
+                    <TableRow>
+                        <TableCell align="left">
+                            Total Visible Hours: {creditTotal}
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
             </Table>
         </TableContainer>
     );
