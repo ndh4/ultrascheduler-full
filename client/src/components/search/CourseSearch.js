@@ -188,12 +188,8 @@ const CourseSearch = ({ scheduleID }) => {
         { subject: getDept.value },
         { distribution: getDist.value },
         {
-            instructor: getInst.value,
-            // instructor: {
-            //     fullName: getInst.value,
-            //     firstName: getInst.firstName,
-            //     lastName: getInst.lastName,
-            // },
+            firstName: getInst.firstName,
+            lastName: getInst.lastName,
         },
     ];
     const getQuery = [
@@ -201,7 +197,6 @@ const CourseSearch = ({ scheduleID }) => {
         GET_DIST_COURSES,
         COURSES_BY_INSTRUCTORS,
     ];
-
     /**
      * We only want this to run when the subjects list data loads
      */
@@ -254,7 +249,11 @@ const CourseSearch = ({ scheduleID }) => {
                 index === activeButtonIndex ? "primary" : "secondary";
 
             return (
-                <ThemeProvider theme={muiTheme}>
+                <ThemeProvider
+                    theme={muiTheme}
+                    //replace key with uuid
+                    key={index}
+                >
                     <Button
                         style={{
                             textTransform: "none",
@@ -309,6 +308,7 @@ const CourseSearch = ({ scheduleID }) => {
                 query={getQuery[activeButtonIndex]}
                 searchType={variables4Query[activeButtonIndex]}
             />
+            //<div></div>
         );
     };
 

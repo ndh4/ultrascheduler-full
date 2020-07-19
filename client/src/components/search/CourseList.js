@@ -21,7 +21,21 @@ const GET_TERM = gql`
 const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
 
 const courseToLabel = (course) => {
-    return course.subject + " " + course.courseNum + " || " + course.longTitle;
+    //distribution and department
+    if (course.sessions) {
+        return (
+            course.subject + " " + course.courseNum + " || " + course.longTitle
+        );
+    } else {
+        //instructors
+        return (
+            course.course.subject +
+            " " +
+            course.course.courseNum +
+            " || " +
+            course.course.longTitle
+        );
+    }
 };
 
 /**
@@ -48,7 +62,12 @@ const sessionToString = (session) => {
         let endTime = formatTime(session.class.endTime);
 
         classTime += " " + startTime + " - " + endTime;
-        courseResult.push(<p style={{ padding: "5px" }}>{classTime}</p>);
+        courseResult.push(
+            //added key here
+            <p style={{ padding: "5px" }} key={session.crn}>
+                {classTime}
+            </p>
+        );
     }
     // Find lab times
     if (session.lab.days.length > 0) {
@@ -59,14 +78,24 @@ const sessionToString = (session) => {
         let endTime = formatTime(session.lab.endTime);
 
         labTime += " " + startTime + " - " + endTime;
-        courseResult.push(<p style={{ padding: "5px" }}>{labTime}</p>);
-    }
-    // Finally find instructors
-    if (session.instructors.length > 0) {
-        let instructorNames = instructorsToNames(session.instructors);
         courseResult.push(
-            <p style={{ padding: "5px" }}>{instructorNames.join(", ")}</p>
+            //added key here
+            <p style={{ padding: "5px" }} key={session._id}>
+                {labTime}
+            </p>
         );
+    }
+    // Finally find instructors - only for distribution and departments
+    if (session.instructors) {
+        if (session.instructors.length > 0) {
+            let instructorNames = instructorsToNames(session.instructors);
+            courseResult.push(
+                //added key here
+                <p style={{ padding: "5px" }} key={session._id}>
+                    {instructorNames.join(", ")}{" "}
+                </p>
+            );
+        }
     }
     return courseResult.length > 0
         ? courseResult
@@ -160,8 +189,8 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
 
     return (
         <div
-            key={session.crn}
             style={{ borderStyle: "solid", display: "inline-block" }}
+            key={session.crn}
         >
             <input
                 type="checkbox"
@@ -222,20 +251,6 @@ const CourseList = ({ scheduleID, query, searchType }) => {
     const { data: courseData, loading, error } = useQuery(query, {
         variables: { ...searchType, term: term },
     });
-
-    //fetch instructor data required
-    // if (searchType.instructor) {
-    //     console.log(searchType);
-    //     console.log(searchType.instructor.firstName);
-    // const { data: instCourseData } = useQuery(query, {
-    //     variables: {
-    //         firstName: searchType.instructor.firstName,
-    //         lastName: searchType.instructor.lastName,
-    //         term: term,
-    //     },
-    // });
-    //}
-
     // Since searchType is passed in as an object with the value as the query returned value,
     // we need to check the object's value instead of directly checking searchType === ""
     if (Object.values(searchType)[0] === "") return <br />;
@@ -245,14 +260,21 @@ const CourseList = ({ scheduleID, query, searchType }) => {
     if (!courseData) return <p>No Data...</p>;
 
     // Once the data has loaded, we want to extract the course results for the distribution
-    courseResults = courseData.courseMany;
-    //THERE IS NO COURSEMANY FOR INSTRUCTORS
-    console.log(courseData.courseMany);
+    //distribution and departments (1 key)
+    if (Object.keys(searchType).length === 1) {
+        courseResults = courseData.courseMany;
+    }
+    //instructor (2 keys)
+    if (Object.keys(searchType).length === 2) {
+        courseResults = courseData.instructorOne.sessions;
+    }
 
-    // We need to filter out any courses which have 0 sessions
-    courseResults = courseResults.filter(
-        (course) => course.sessions.length > 0
-    );
+    // We need to filter out any courses which have 0 sessions - only filter for distribution and departments
+    if (courseResults === courseData.courseMany) {
+        courseResults = courseResults.filter(
+            (course) => course.sessions.length > 0
+        );
+    }
 
     // We also want to extract the user's draftSessions, nested inside their schedule
     draftSessions = scheduleData.scheduleOne.draftSessions;
@@ -281,13 +303,39 @@ const CourseList = ({ scheduleID, query, searchType }) => {
         setCourseSelected(copy);
     };
 
+    const collapseItem = (course) => {
+        //distribution and department
+        if (course.sessions) {
+            return course.sessions.map((session, idx) => (
+                <SessionItem
+                    //replace key with uuid
+                    key={idx}
+                    course={course}
+                    session={session}
+                    draftSessions={draftSessions}
+                    scheduleID={scheduleID}
+                />
+            ));
+        } else {
+            //instructors
+            return (
+                <SessionItem
+                    course={course}
+                    session={course}
+                    draftSessions={draftSessions}
+                    scheduleID={scheduleID}
+                />
+            );
+        }
+    };
+
     return (
         <SwipeableViews containerStyle={styles.slideContainer}>
             <List component="nav" aria-labelledby="nested-list-subheader">
                 {courseResults.map((course) => {
                     let id = course._id;
                     return (
-                        <div>
+                        <div key={id}>
                             <ListItem
                                 key={id}
                                 onClick={() =>
@@ -305,14 +353,7 @@ const CourseList = ({ scheduleID, query, searchType }) => {
                                 unmountOnExit
                             >
                                 <List component="div" disablePadding>
-                                    {course.sessions.map((session) => (
-                                        <SessionItem
-                                            course={course}
-                                            session={session}
-                                            draftSessions={draftSessions}
-                                            scheduleID={scheduleID}
-                                        />
-                                    ))}
+                                    {collapseItem(course)}
                                 </List>
                             </Collapse>
                         </div>

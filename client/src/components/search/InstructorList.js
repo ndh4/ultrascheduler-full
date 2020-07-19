@@ -189,6 +189,7 @@ const SessionItem = ({ scheduleID, course, draftSessions }) => {
                 checked={sessionSelected}
                 onChange={() => {
                     // Simple transformation of CRN to a string
+
                     let crnString = String.toString(course.crn);
 
                     if (sessionSelected) {

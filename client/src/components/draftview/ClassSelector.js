@@ -54,7 +54,8 @@ const ClassSelector = ({ draftSessions, scheduleID }) => {
             <SwipeableViews containerStyle={styles.slideContainer}>
                 <Table
                     stickyHeader={true}
-                    stickyFooter={true}
+                    //commented out cause there was a warning?
+                    //stickyFooter={true}
                     className={classes.table}
                     aria-label="simple table"
                 >
@@ -62,10 +63,21 @@ const ClassSelector = ({ draftSessions, scheduleID }) => {
                         <TableRow>
                             {headers.map((heading, idx) => {
                                 if (idx == 0) {
-                                    return <TableCell>{heading}</TableCell>;
+                                    return (
+                                        <TableCell
+                                            //replace key with uuid
+                                            key={idx}
+                                        >
+                                            {heading}
+                                        </TableCell>
+                                    );
                                 } else {
                                     return (
-                                        <TableCell align="right">
+                                        <TableCell
+                                            align="right"
+                                            //replace key with uuid
+                                            key={idx}
+                                        >
                                             {heading}
                                         </TableCell>
                                     );
@@ -73,8 +85,10 @@ const ClassSelector = ({ draftSessions, scheduleID }) => {
                             })}
                         </TableRow>
                     </TableHead>
-                    {draftSessions.map((draftSession) => (
+                    {draftSessions.map((draftSession, idx) => (
                         <DraftCourseItem
+                            //replace key with uuid
+                            key={idx}
                             visible={draftSession.visible}
                             session={draftSession.session}
                             course={draftSession.session.course}
