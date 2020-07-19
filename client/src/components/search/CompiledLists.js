@@ -12,10 +12,12 @@ const styles = {
 // Create an array with all of the values of the selected departments
 const getDeptValues = (selectedDepts) => {
     let deptValues = [];
-    for (let i = 0; i < selectedDepts.length; i++) {
-        deptValues.push(selectedDepts[i].value);
+    if(selectedDepts) {
+        for (let i = 0; i < selectedDepts.length; i++) {
+            deptValues.push(selectedDepts[i].value);
+        }
     }
-    return deptValues;
+    return deptValues.sort();
 }
 
 const CompiledLists = ({ scheduleID, selectedDepts }) => {
