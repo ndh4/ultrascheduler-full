@@ -276,38 +276,36 @@ const CourseList = ({ scheduleID, department, searchcourseResults }) => {
     }
 
     return (
-        // <SwipeableViews containerStyle={styles.slideContainer}>
-            <List
-            component="nav"
-            aria-labelledby="nested-list-subheader"
-            >
-                {courseResults.map(course => {
-                    let id = course._id;
-                    return (
-                        <div>
-                            <ListItem 
-                            key={id} 
-                            onClick={() => (courseSelected.includes(id)) ? removeFromCoursesSelected(id) : addToCoursesSelected(id)}
-                            button>
-                                {courseToLabel(course)}
-                            </ListItem>
-                            <Collapse in={(courseSelected.includes(id)) ? true : false} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding>
-                                {course.sessions.map(session => (
-                                    <SessionItem 
-                                    course={course} 
-                                    session={session} 
-                                    draftSessions={draftSessions} 
-                                    scheduleID={scheduleID}
-                                    />
-                                ))}
-                                </List>
-                            </Collapse>
-                        </div>
-                    )
-                })}
-            </List>
-        // </SwipeableViews>
+        <List
+        component="nav"
+        aria-labelledby="nested-list-subheader"
+        >
+            {courseResults.map(course => {
+                let id = course._id;
+                return (
+                    <div>
+                        <ListItem 
+                        key={id} 
+                        onClick={() => (courseSelected.includes(id)) ? removeFromCoursesSelected(id) : addToCoursesSelected(id)}
+                        button>
+                            {courseToLabel(course)}
+                        </ListItem>
+                        <Collapse in={(courseSelected.includes(id)) ? true : false} timeout="auto" unmountOnExit>
+                            <List component="div" disablePadding>
+                            {course.sessions.map(session => (
+                                <SessionItem 
+                                course={course} 
+                                session={session} 
+                                draftSessions={draftSessions} 
+                                scheduleID={scheduleID}
+                                />
+                            ))}
+                            </List>
+                        </Collapse>
+                    </div>
+                )
+            })}
+        </List>
     )
 
 }

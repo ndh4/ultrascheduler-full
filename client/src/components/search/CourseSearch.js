@@ -5,8 +5,6 @@ import { initGA } from "../../utils/analytics";
 import { useQuery, gql } from "@apollo/client";
 import CompiledLists from "./CompiledLists";
 
-const dummy = { label: "", value: "" };
-
 const styles = {
 	filter: {
 		width: "100%",
