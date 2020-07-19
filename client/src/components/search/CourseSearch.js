@@ -9,7 +9,17 @@ import { ThemeProvider } from "@material-ui/styles";
 import "./CourseSearch.global.css";
 import CompiledLists from "./CompiledLists";
 
-const dummy = { label: "", value: "" };
+const styles = {
+	filter: {
+		width: "100%",
+	},
+	button: {
+		display: "inline-block",
+		float: "center",
+		margin: 8,
+		padding: 2,
+	},
+};
 
 /**
  * TODO: MAKE A FRAGMENT! THIS IS USED IN TWO PLACES
