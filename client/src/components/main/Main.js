@@ -123,9 +123,9 @@ const Main = ({}) => {
                 <div style={{ float: "left", width: "30%" }}>
                     <CourseSearch scheduleID={schedule._id} />
                 </div>
-                {/* <div style={{ float: "right", width: "40%" }}>
+                <div style={{ float: "right", width: "40%" }}>
                     <InstructorSearch scheduleID={schedule._id} />
-                </div> */}
+                </div>
                 <div style={{ float: "left", width: "70%" }}>
                     <CourseCalendar draftSessions={schedule.draftSessions} />
                 </div>

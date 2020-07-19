@@ -9,6 +9,7 @@ import { ThemeProvider } from "@material-ui/styles";
 import "./CourseSearch.global.css";
 
 const dummy = { label: "", value: "" };
+const dummy2 = { label: "", value: "", firstName: "", lastName: "" };
 
 /**
  * TODO: MAKE A FRAGMENT! THIS IS USED IN TWO PLACES
@@ -89,11 +90,55 @@ const GET_DIST_COURSES = gql`
     }
 `;
 
+//NEWWWWW
+const GET_INSTRUCTORS = gql`
+    query getInstructors {
+        instructorMany {
+            firstName
+            lastName
+        }
+    }
+`;
+const COURSES_BY_INSTRUCTORS = gql`
+    query InstructorQuery(
+        $firstName: String!
+        $lastName: String!
+        $term: Float!
+    ) {
+        instructorOne(filter: { firstName: $firstName, lastName: $lastName }) {
+            sessions(filter: { term: $term }) {
+                _id
+                term
+                course {
+                    subject
+                    courseNum
+                    longTitle
+                }
+                class {
+                    days
+                    startTime
+                    endTime
+                }
+                lab {
+                    days
+                    startTime
+                    endTime
+                }
+                crn
+            }
+        }
+    }
+`;
+
 const CourseSearch = ({ scheduleID }) => {
     const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
     const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
 
     const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
+
+    //INSTRUCTOR SEARCH
+    const [getInstruct, setInstruct] = useState([]); // Used for the entire list of instructors
+    const [getInst, setInst] = useState(dummy2); // Used for selection of a particular instructor
 
     const allDistributions = [
         { label: "Distribution I", value: "Distribution I" },
@@ -112,18 +157,50 @@ const CourseSearch = ({ scheduleID }) => {
         variables: { term },
     });
 
+    //get instructor data
+    const { data: instructorData } = useQuery(GET_INSTRUCTORS, {
+        variables: { term },
+    });
+
+    //deal with instructor names with different structures (ex. Benjamin C. Kerswell, Maria Fabiola Lopez Duran, Benjamin Fregly)
+    //easier to split into first and last names for query in InstructorList
+    const instructorsToSplit = (instructors) => {
+        let instructorNames = [];
+        for (let instructor of instructors) {
+            let instructorName =
+                instructor.firstName + " " + instructor.lastName;
+            instructorNames.push({
+                fullName: instructorName,
+                firstName: instructor.firstName,
+                lastName: instructor.lastName,
+            });
+        }
+        return instructorNames;
+    };
+
     // These variables are used in displaySearch function and displayCourseList function:
     // Department is used as a placeholder for Instructors for now
     const searchTypes = ["Department", "Distribution", "Instructors"];
-    const allOptions = [getDepts, allDistributions, getDepts];
-    const allSelected = [getDept, getDist, getDept];
-    const setFuncs = [setDept, setDist, setDept];
+    const allOptions = [getDepts, allDistributions, getInstruct];
+    const allSelected = [getDept, getDist, getInst];
+    const setFuncs = [setDept, setDist, setInst];
     const variables4Query = [
         { subject: getDept.value },
         { distribution: getDist.value },
-        { subject: getDept.value },
+        {
+            instructor: getInst.value,
+            // instructor: {
+            //     fullName: getInst.value,
+            //     firstName: getInst.firstName,
+            //     lastName: getInst.lastName,
+            // },
+        },
     ];
-    const getQuery = [GET_DEPT_COURSES, GET_DIST_COURSES, GET_DEPT_COURSES];
+    const getQuery = [
+        GET_DEPT_COURSES,
+        GET_DIST_COURSES,
+        COURSES_BY_INSTRUCTORS,
+    ];
 
     /**
      * We only want this to run when the subjects list data loads
@@ -134,6 +211,22 @@ const CourseSearch = ({ scheduleID }) => {
             setDepts(departments.map((dept) => ({ label: dept, value: dept })));
         }
     }, [departmentsData]);
+
+    //for instructor data
+    useEffect(() => {
+        if (instructorData) {
+            let instructors = instructorData["instructorMany"];
+            let instructorList = instructorsToSplit(instructors);
+            setInstruct(
+                instructorList.map((inst) => ({
+                    label: inst.fullName,
+                    value: inst.fullName,
+                    firstName: inst.firstName,
+                    lastName: inst.lastName,
+                }))
+            );
+        }
+    }, [instructorData]);
 
     // Set the selected departmen/distribution
     const handleChange = (selectedOption) => {

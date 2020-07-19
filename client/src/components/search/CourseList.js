@@ -223,6 +223,19 @@ const CourseList = ({ scheduleID, query, searchType }) => {
         variables: { ...searchType, term: term },
     });
 
+    //fetch instructor data required
+    // if (searchType.instructor) {
+    //     console.log(searchType);
+    //     console.log(searchType.instructor.firstName);
+    // const { data: instCourseData } = useQuery(query, {
+    //     variables: {
+    //         firstName: searchType.instructor.firstName,
+    //         lastName: searchType.instructor.lastName,
+    //         term: term,
+    //     },
+    // });
+    //}
+
     // Since searchType is passed in as an object with the value as the query returned value,
     // we need to check the object's value instead of directly checking searchType === ""
     if (Object.values(searchType)[0] === "") return <br />;
@@ -233,6 +246,8 @@ const CourseList = ({ scheduleID, query, searchType }) => {
 
     // Once the data has loaded, we want to extract the course results for the distribution
     courseResults = courseData.courseMany;
+    //THERE IS NO COURSEMANY FOR INSTRUCTORS
+    console.log(courseData.courseMany);
 
     // We need to filter out any courses which have 0 sessions
     courseResults = courseResults.filter(

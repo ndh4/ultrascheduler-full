@@ -226,6 +226,7 @@ const SessionItem = ({ scheduleID, course, draftSessions }) => {
 
 const InstructorList = ({ scheduleID, instructor, firstName, lastName }) => {
     const [courseSelected, setCourseSelected] = useState([]);
+    console.log(instructor, firstName, lastName);
 
     // Get term from local state management
     const { data: termData } = useQuery(GET_TERM);
