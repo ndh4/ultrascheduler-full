@@ -319,7 +319,6 @@ const CourseList = ({ scheduleID, query, searchType }) => {
     };
 
     return (
-        // <SwipeableViews containerStyle={styles.slideContainer}>
             <List
             component="nav"
             aria-labelledby="nested-list-subheader"
@@ -352,7 +351,6 @@ const CourseList = ({ scheduleID, query, searchType }) => {
                     );
                 })}
             </List>
-        // </SwipeableViews>
     )
 
 }
