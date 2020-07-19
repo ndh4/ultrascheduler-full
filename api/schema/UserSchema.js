@@ -1,24 +1,28 @@
-import { User, UserTC, ScheduleTC } from '../models';
-import { authenticateTicket, verifyToken, createToken } from '../utils/authenticationUtils';
-import mongoose from 'mongoose';
+import { User, UserTC, ScheduleTC } from "../models";
+import {
+    authenticateTicket,
+    verifyToken,
+    createToken,
+} from "../utils/authenticationUtils";
+import mongoose from "mongoose";
 
 // Create a field NOT on the mongoose model; easy way to fetch schedule for a user in one trip
 UserTC.addFields({
-    schedules: ({
+    schedules: {
         type: [ScheduleTC],
         args: ScheduleTC.getResolver("findMany").getArgs(),
         resolve: (source, args, context, info) =>
             ScheduleTC.getResolver("findMany").resolve({
                 source,
                 // Copy any args the user passes in for this subfield, but also filter by the parent course
-                args: {...args, filter: { ...args.filter, user: source._id } }, 
+                args: { ...args, filter: { ...args.filter, user: source._id } },
                 context,
-                info
+                info,
             }),
         projection: {
-            _id: true
-        }
-    })
+            _id: true,
+        },
+    },
 });
 
 /**
@@ -54,12 +58,16 @@ UserTC.addResolver({
             let token = createToken(user);
 
             // Update the user's token and get their updated information
-            return await User.findByIdAndUpdate(user._id, { token: token }, { new: true });
+            return await User.findByIdAndUpdate(
+                user._id,
+                { token: token },
+                { new: true }
+            );
         } else {
             console.log("Bad auth!");
             throw Error("Bad authentication.");
         }
-    }
+    },
 });
 
 UserTC.addResolver({
@@ -76,16 +84,16 @@ UserTC.addResolver({
             console.log("Bad verify!");
             throw Error("Bad Verification.");
         }
-    }
-})
+    },
+});
 
 // Using auth middleware for sensitive info: https://github.com/graphql-compose/graphql-compose-mongoose/issues/158
 const UserQuery = {
-    userOne: UserTC.getResolver('findOne', [authMiddleware]),
+    userOne: UserTC.getResolver("findOne", [authMiddleware]),
 };
 
 const UserMutation = {
-    userUpdateOne: UserTC.getResolver('updateOne', [authMiddleware]),
+    userUpdateOne: UserTC.getResolver("updateOne", [authMiddleware]),
 };
 
 async function authMiddleware(resolve, source, args, context, info) {
@@ -97,7 +105,7 @@ async function authMiddleware(resolve, source, args, context, info) {
     let { id } = context.decodedJWT;
 
     // Allows a user to only access THEIR user object
-    return resolve(source, {...args, filter: { _id: id } }, context, info);
+    return resolve(source, { ...args, filter: { _id: id } }, context, info);
 }
 
 export { UserQuery, UserMutation };

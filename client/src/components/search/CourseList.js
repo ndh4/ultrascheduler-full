@@ -8,35 +8,6 @@ import { Event } from "../../utils/analytics";
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
-const GET_DEPT_COURSES = gql`
-    query GetDeptCourses($subject: String!, $term: Float!) {
-        courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
-            _id
-            subject
-            courseNum
-            longTitle
-            sessions(filter: { term: $term }) {
-                _id
-                crn
-                class {
-                    days
-                    startTime
-                    endTime
-                }
-                lab {
-                    days
-                    startTime
-                    endTime
-                }
-                instructors {
-                    firstName
-                    lastName
-                }
-            }
-        }
-    }
-`;
-
 /**
  * Gets the term from local state management
  */
@@ -50,7 +21,6 @@ const GET_TERM = gql`
 const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
 
 const courseToLabel = (course) => {
-    console.log("course", course);
     return course.subject + " " + course.courseNum + " || " + course.longTitle;
 };
 
@@ -105,7 +75,7 @@ const sessionToString = (session) => {
 
 const styles = {
     slideContainer: {
-        height: 400,
+        height: 500,
         WebkitOverflowScrolling: "touch", // iOS momentum scrolling
     },
 };
@@ -233,36 +203,36 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
     );
 };
 
-const CourseList = ({ scheduleID, department, searchcourseResults }) => {
+const CourseList = ({ scheduleID, query, searchType }) => {
     const [courseSelected, setCourseSelected] = useState([]);
 
     // Get term from local state management
     const { data: termData } = useQuery(GET_TERM);
     let { term } = termData;
 
-    // Department isn't empty, so we need to fetch the courses for the department
-    const { data: deptCourseData, loading, error } = useQuery(
-        GET_DEPT_COURSES,
-        {
-            variables: { subject: department, term: term },
-        }
-    );
+    let courseResults;
+    let draftSessions;
 
-    // We also want to fetch (from our cache, so this does NOT call the backend) the user's draftSessions
+    // We also want to fetch(from our cache, so this does NOT call the backend) the user's draftSessions
     let { data: scheduleData } = useQuery(QUERY_DRAFT_SESSIONS, {
         variables: { term: term.toString() },
     });
 
-    if (department == "") {
-        return <br />;
-    }
+    // Fetch data required
+    const { data: courseData, loading, error } = useQuery(query, {
+        variables: { ...searchType, term: term },
+    });
+
+    // Since searchType is passed in as an object with the value as the query returned value,
+    // we need to check the object's value instead of directly checking searchType === ""
+    if (Object.values(searchType)[0] === "") return <br />;
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
-    if (!deptCourseData) return <p>No Data...</p>;
+    if (!courseData) return <p>No Data...</p>;
 
-    // Once the data has loaded, we want to extract the course results for the department
-    let courseResults = deptCourseData.courseMany;
+    // Once the data has loaded, we want to extract the course results for the distribution
+    courseResults = courseData.courseMany;
 
     // We need to filter out any courses which have 0 sessions
     courseResults = courseResults.filter(
@@ -270,7 +240,7 @@ const CourseList = ({ scheduleID, department, searchcourseResults }) => {
     );
 
     // We also want to extract the user's draftSessions, nested inside their schedule
-    let draftSessions = scheduleData.scheduleOne.draftSessions;
+    draftSessions = scheduleData.scheduleOne.draftSessions;
 
     /**
      * Adds course to list of courses with their collapsibles open in the search menu,

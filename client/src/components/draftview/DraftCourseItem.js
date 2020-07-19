@@ -14,7 +14,13 @@ import Tooltip from "@material-ui/core/Tooltip";
 import ReactGA from "react-ga";
 import { classTimeString } from "../../utils/CourseTimeTransforms";
 import URLTypes from "../../constants/URLTypes";
+<<<<<<< HEAD
 import { gql, useMutation } from "@apollo/client";
+=======
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { TableBody } from "@material-ui/core";
+import CourseDetail from "./CourseDetail";
+>>>>>>> develop
 
 const createURL = (termcode, crn, type = URLTypes.DETAIL) => {
     switch (type) {
@@ -182,9 +188,62 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
                     >
                         <DeleteIcon />
                     </IconButton>
+<<<<<<< HEAD
                 </Tooltip>
             </TableCell>
         </TableRow>
+=======
+                </TableCell>
+                <TableCell align="right">{session.crn}</TableCell>
+                <TableCell align="right">
+                    {creditsDisplay(course.creditsMin, course.creditsMax)}
+                </TableCell>
+                <TableCell align="right">{course.distribution}</TableCell>
+                {createSectionTimeCells(session.class)}
+                {createSectionTimeCells(session.lab)}
+                <TableCell align="right">
+                    {session.instructors.map((instructor) => {
+                        let webId = webIds(instructor);
+                        return (
+                            <Tooltip title="View Instructor Evaluation">
+                                <ReactGA.OutboundLink
+                                    style={{
+                                        color: "#272D2D",
+                                        textDecoration: "none",
+                                    }}
+                                    eventLabel="instructor_evaluation"
+                                    to={createInstructorURL("202110", webId)}
+                                    target="_blank"
+                                >
+                                    <span style={{ color: "272D2D" }}>
+                                        {instructorToName(instructor)}
+                                    </span>
+                                </ReactGA.OutboundLink>
+                            </Tooltip>
+                        );
+                    })}
+                    {/* {instructorsToNames(session.instructors).join(", ")} */}
+                </TableCell>
+                <TableCell align="right">
+                    <Tooltip title="Delete">
+                        <IconButton
+                            aria-label="delete"
+                            onClick={() => removeDraftSession()}
+                        >
+                            <DeleteIcon />
+                        </IconButton>
+                    </Tooltip>
+                </TableCell>
+            </TableRow>
+            <CourseDetail
+                course={course}
+                session={session}
+                instructorsToNames={instructorsToNames}
+                open={open}
+                classTimeString={classTimeString}
+            />
+        </TableBody>
+>>>>>>> develop
     );
 };
 
