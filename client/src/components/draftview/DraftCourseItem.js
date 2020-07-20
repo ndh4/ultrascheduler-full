@@ -129,11 +129,12 @@ const FETCH_INSTRUCTORS = gql`
     }
 `;
 
-const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
+const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
     const emptyCellGenerator = (count) => {
         let cells = [];
         for (let i = 0; i < count; i++) {
-            cells.push(<TableCell align="right"></TableCell>);
+            //added key here
+            cells.push(<TableCell align="right" key={i}></TableCell>);
         }
         return cells;
     };
@@ -193,12 +194,14 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
 
     const togglePrereq = () => setOpen(!open);
 
+    const boolVisible = visible ? true : false;
+
     return (
         <TableBody>
             <TableRow key={session.crn}>
                 <TableCell padding="checkbox">
                     <Checkbox
-                        checked={visible}
+                        checked={boolVisible}
                         onClick={() => toggleVisibility()}
                     />
                 </TableCell>
@@ -253,7 +256,10 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
                     {session.instructors.map((instructor) => {
                         let webId = webIds(instructor);
                         return (
-                            <Tooltip title="View Instructor Evaluation">
+                            <Tooltip
+                                title="View Instructor Evaluation"
+                                key={webId}
+                            >
                                 <ReactGA.OutboundLink
                                     style={{
                                         color: "#272D2D",
@@ -284,6 +290,7 @@ const DraftCourseItem = ({ scheduleID, visible, session, course }) => {
                 </TableCell>
             </TableRow>
             <CourseDetail
+                key={idx}
                 course={course}
                 session={session}
                 instructorsToNames={instructorsToNames}
