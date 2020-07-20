@@ -4,6 +4,10 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Collapse from "@material-ui/core/Collapse";
 import { Event } from "../../utils/analytics";
+import CourseDetail from "../draftview/CourseDetail.js"
+import { classTimeString } from "../../utils/CourseTimeTransforms";
+import Detail from "./Detail";
+
 
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
@@ -44,55 +48,56 @@ const instructorsToNames = (instructors) => {
     return instructorNames;
 };
 
-const sessionToString = (session) => {
-    let courseResult = [];
-    // Find class times
-    if (session.class.days.length > 0) {
-        let classTime = "Class: " + session.class.days.join("");
-        // Convert times
-        let startTime = formatTime(session.class.startTime);
-        let endTime = formatTime(session.class.endTime);
+// const sessionToString = (session) => {
+//     let courseResult = [];
+//     // Find class times
+//     if (session.class.days.length > 0) {
+//         let classTime = "Class: " + session.class.days.join("");
+//         // Convert times
+//         let startTime = formatTime(session.class.startTime);
+//         let endTime = formatTime(session.class.endTime);
 
-        classTime += " " + startTime + " - " + endTime;
-        courseResult.push(
-            //added key here
-            <p style={{ padding: "5px" }} key={session.crn}>
-                {classTime}
-            </p>
-        );
-    }
-    // Find lab times
-    if (session.lab.days.length > 0) {
-        let labTime = "Lab: " + session.lab.days.join("");
+//         classTime += " " + startTime + " - " + endTime;
+//         courseResult.push(
+//             //added key here
+//             <p style={{ padding: "5px" }} key={session.crn}>
+//                 {classTime}
+//             </p>
+//         );
+//     }
+//     // Find lab times
+//     if (session.lab.days.length > 0) {
+//         let labTime = "Lab: " + session.lab.days.join("");
 
-        // Convert times
-        let startTime = formatTime(session.lab.startTime);
-        let endTime = formatTime(session.lab.endTime);
+//         // Convert times
+//         let startTime = formatTime(session.lab.startTime);
+//         let endTime = formatTime(session.lab.endTime);
 
-        labTime += " " + startTime + " - " + endTime;
-        courseResult.push(
-            //added key here
-            <p style={{ padding: "5px" }} key={session._id}>
-                {labTime}
-            </p>
-        );
-    }
-    // Finally find instructors - only for distribution and departments
-    if (session.instructors) {
-        if (session.instructors.length > 0) {
-            let instructorNames = instructorsToNames(session.instructors);
-            courseResult.push(
-                //added key here
-                <p style={{ padding: "5px" }} key={session._id}>
-                    {instructorNames.join(", ")}{" "}
-                </p>
-            );
-        }
-    }
-    return courseResult.length > 0
-        ? courseResult
-        : ["No information found for this session."];
-};
+//         labTime += " " + startTime + " - " + endTime;
+//         courseResult.push(
+//             //added key here
+//             <p style={{ padding: "5px" }} key={session._id}>
+//                 {labTime}
+//             </p>
+//         );
+//     }
+
+// // Finally find instructors - only for distribution and departments
+// if (session.instructors) {
+//     if (session.instructors.length > 0) {
+//         let instructorNames = instructorsToNames(session.instructors);
+//         courseResult.push(
+//             //added key here
+//             <p style={{ padding: "5px" }} key={session._id}>
+//                 {instructorNames.join(", ")}{" "}
+//             </p>
+//         );
+//     }
+// }
+// return courseResult.length > 0
+//     ? courseResult
+//     : ["No information found for this session."];
+// };
 
 const styles = {
     slideContainer: {
@@ -219,7 +224,19 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
                 }}
                 style={{ alignItems: "left" }}
             />
-            <div style={{ alignItems: "left" }}>{sessionToString(session)}</div>
+            {/* <div style={{ alignItems: "left" }}>{sessionToString(session)}</div> */}
+            <div style={{ alignItems: "left" }}>
+                {console.log(session)}
+                {<Detail session={session} />}
+                {/* {<CourseDetail
+                    // key={idx}
+                    // course={course}
+                    session={session}
+                    instructorsToNames={instructorsToNames}
+                    // open={open}
+                    classTimeString={classTimeString}
+                />} */}
+            </div>
         </div>
     );
 };
@@ -299,7 +316,7 @@ const CourseList = ({ scheduleID, query, searchType }) => {
                 <SessionItem
                     //replace key with uuid
                     key={idx}
-                    course={course}
+                    //course={course}
                     session={session}
                     draftSessions={draftSessions}
                     scheduleID={scheduleID}
@@ -309,7 +326,7 @@ const CourseList = ({ scheduleID, query, searchType }) => {
             //instructors
             return (
                 <SessionItem
-                    course={course}
+                    //course={course}
                     session={course}
                     draftSessions={draftSessions}
                     scheduleID={scheduleID}

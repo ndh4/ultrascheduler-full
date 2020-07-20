@@ -241,8 +241,8 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                         {open ? (
                             <KeyboardArrowUpIcon />
                         ) : (
-                            <KeyboardArrowDownIcon />
-                        )}
+                                <KeyboardArrowDownIcon />
+                            )}
                     </IconButton>
                 </TableCell>
                 <TableCell align="right">{session.crn}</TableCell>
@@ -297,6 +297,7 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                 open={open}
                 classTimeString={classTimeString}
             />
+            {console.log(course)}
         </TableBody>
     );
 };
