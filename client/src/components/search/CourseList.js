@@ -263,17 +263,14 @@ const CourseList = ({ scheduleID, query, searchType }) => {
     //distribution and departments (1 key)
     if (Object.keys(searchType).length === 1) {
         courseResults = courseData.courseMany;
+        // We need to filter out any courses which have 0 sessions - only filter for distribution and departments
+        courseResults = courseResults.filter(
+            (course) => course.sessions.length > 0
+        );
     }
     //instructor (2 keys)
     if (Object.keys(searchType).length === 2) {
         courseResults = courseData.instructorOne.sessions;
-    }
-
-    // We need to filter out any courses which have 0 sessions - only filter for distribution and departments
-    if (courseResults === courseData.courseMany) {
-        courseResults = courseResults.filter(
-            (course) => course.sessions.length > 0
-        );
     }
 
     // We also want to extract the user's draftSessions, nested inside their schedule

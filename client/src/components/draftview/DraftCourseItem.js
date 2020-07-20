@@ -134,7 +134,7 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
         let cells = [];
         for (let i = 0; i < count; i++) {
             //added key here
-            cells.push(<TableCell align="right" key={count}></TableCell>);
+            cells.push(<TableCell align="right" key={i}></TableCell>);
         }
         return cells;
     };
