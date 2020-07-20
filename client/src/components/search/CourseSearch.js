@@ -135,7 +135,7 @@ const CourseSearch = ({ scheduleID }) => {
 	const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
 	const [getDept, setDept] = useState([]); // Used for selection of a particular department
 
-    const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
+    const [getDist, setDist] = useState([]); // Used for selection of a particular distribution
 
     //INSTRUCTOR SEARCH
     const [getInstruct, setInstruct] = useState([]); // Used for the entire list of instructors
@@ -296,23 +296,7 @@ const CourseSearch = ({ scheduleID }) => {
                     show={true}
                     handleChange={handleChange}
                 />
-                <CompiledLists scheduleID={scheduleID} selectedDepts={getDept} />
             </div>
-        );
-    };
-
-    /**
-     * Displays the course list component based on whether user is searching
-     * by distribution or by department
-     */
-    const displayCourseList = () => {
-        return (
-            <CourseList
-                scheduleID={scheduleID}
-                query={getQuery[activeButtonIndex]}
-                searchType={variables4Query[activeButtonIndex]}
-            />
-            //<div></div>
         );
     };
 
@@ -326,7 +310,12 @@ const CourseSearch = ({ scheduleID }) => {
                 <div className="searchTxt">Search By:</div>
                 <div className="buttons">{renderSearchOptions()}</div>
             </div>
-            {displayCourseList()}
+            <CompiledLists 
+                scheduleID={scheduleID} 
+                selectedOptions={allSelected[activeButtonIndex]} 
+                searchKey={variables4Query[activeButtonIndex]}
+                query={getQuery[activeButtonIndex]}
+            />
         </div>
     );
 };
