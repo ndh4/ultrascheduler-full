@@ -27,8 +27,8 @@ const GET_DEPARTMENTS = gql`
 `;
 
 const GET_DEPT_COURSES = gql`
-    query GetDeptCourses($subject: String!, $term: Float!) {
-        courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
+    query GetDeptCourses($subject: String!, $term: Float!, $skip: Int, $limit: Int) {
+        courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC, skip: $skip, limit: $limit ) {
             _id
             subject
             courseNum
@@ -56,10 +56,12 @@ const GET_DEPT_COURSES = gql`
 `;
 // new:
 const GET_DIST_COURSES = gql`
-    query CourseQuery($distribution: String!, $term: Float!) {
+    query CourseQuery($distribution: String!, $term: Float!, $skip: Int, $limit: Int) {
         courseMany(
             filter: { distribution: $distribution }
-            sort: SUBJECT_AND_COURSE_NUM_ASC
+            sort: SUBJECT_AND_COURSE_NUM_ASC,
+            skip: $skip, 
+            limit: $limit 
         ) {
             _id
             subject

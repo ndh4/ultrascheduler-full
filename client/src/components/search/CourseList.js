@@ -8,6 +8,8 @@ import { Event } from "../../utils/analytics";
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
+import InfiniteScroll from "react-infinite-scroll-component";
+
 /**
  * Gets the term from local state management
  */
@@ -204,6 +206,7 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
 };
 
 const CourseList = ({ scheduleID, query, searchType }) => {
+    const [getHasMore, setHasMore] = useState(true);
     const [courseSelected, setCourseSelected] = useState([]);
 
     // Get term from local state management
@@ -219,8 +222,13 @@ const CourseList = ({ scheduleID, query, searchType }) => {
     });
 
     // Fetch data required
-    const { data: courseData, loading, error } = useQuery(query, {
-        variables: { ...searchType, term: term },
+    const { data: courseData, loading, error, fetchMore } = useQuery(query, {
+        variables: {
+            ...searchType,
+            term: term,
+            skip: 0,
+            limit: 20,
+        },
     });
 
     // Since searchType is passed in as an object with the value as the query returned value,
@@ -231,13 +239,18 @@ const CourseList = ({ scheduleID, query, searchType }) => {
     if (error) return <p>Error :(</p>;
     if (!courseData) return <p>No Data...</p>;
 
+    /**
+     * Removes courses where there are no sessions for this term.
+     */
+    const removeEmptyCourses = (courses) => courses.filter(
+        (course) => course.sessions.length > 0
+    );
+
     // Once the data has loaded, we want to extract the course results for the distribution
     courseResults = courseData.courseMany;
 
     // We need to filter out any courses which have 0 sessions
-    courseResults = courseResults.filter(
-        (course) => course.sessions.length > 0
-    );
+    courseResults = removeEmptyCourses(courseResults);
 
     // We also want to extract the user's draftSessions, nested inside their schedule
     draftSessions = scheduleData.scheduleOne.draftSessions;
@@ -267,45 +280,108 @@ const CourseList = ({ scheduleID, query, searchType }) => {
     };
 
     return (
-        <SwipeableViews containerStyle={styles.slideContainer}>
-            <List component="nav" aria-labelledby="nested-list-subheader">
-                {courseResults.map((course) => {
-                    let id = course._id;
-                    return (
-                        <div>
-                            <ListItem
-                                key={id}
-                                onClick={() =>
-                                    courseSelected.includes(id)
-                                        ? removeFromCoursesSelected(id)
-                                        : addToCoursesSelected(id)
-                                }
-                                button
-                            >
-                                {courseToLabel(course)}
-                            </ListItem>
-                            <Collapse
-                                in={courseSelected.includes(id) ? true : false}
-                                timeout="auto"
-                                unmountOnExit
-                            >
-                                <List component="div" disablePadding>
-                                    {course.sessions.map((session) => (
-                                        <SessionItem
-                                            course={course}
-                                            session={session}
-                                            draftSessions={draftSessions}
-                                            scheduleID={scheduleID}
-                                        />
-                                    ))}
-                                </List>
-                            </Collapse>
-                        </div>
-                    );
-                })}
-            </List>
-        </SwipeableViews>
+        <InfiniteScroll
+            dataLength={courseResults.length}
+            next={() => fetchMore({
+                variables: { skip: courseResults.length },
+                updateQuery: (prev, { fetchMoreResult }) => {
+                    if (!fetchMoreResult || fetchMoreResult.courseMany.length < 1) {
+                        setHasMore(false);
+                        return prev;
+                    }
+                    // Filter courses to remove ones with no sessions for this term
+                    const filteredCourses = removeEmptyCourses([...fetchMoreResult.courseMany]);
+                    return Object.assign({}, prev, {
+                        courseMany: [...prev.courseMany, ...filteredCourses]
+                    });
+                }
+            })}
+            hasMore={getHasMore}
+            loader={<h4>Loading...</h4>}
+            endMessage={
+                <p style={{ textAlign: "center" }}>
+                    <b>Yay! You have seen it all</b>
+                </p>
+            }
+            height={500}
+        >
+            {courseResults.map((course) => {
+                let id = course._id;
+                return (
+                    <div>
+                        <ListItem
+                            key={id}
+                            onClick={() =>
+                                courseSelected.includes(id)
+                                    ? removeFromCoursesSelected(id)
+                                    : addToCoursesSelected(id)
+                            }
+                            button
+                        >
+                            {courseToLabel(course)}
+                        </ListItem>
+                        <Collapse
+                            in={courseSelected.includes(id) ? true : false}
+                            timeout="auto"
+                            unmountOnExit
+                        >
+                            <List component="div" disablePadding>
+                                {course.sessions.map((session) => (
+                                    <SessionItem
+                                        course={course}
+                                        session={session}
+                                        draftSessions={draftSessions}
+                                        scheduleID={scheduleID}
+                                    />
+                                ))}
+                            </List>
+                        </Collapse>
+                    </div>
+                );
+            })}
+        </InfiniteScroll>
     );
+
+    // return (
+    //     <SwipeableViews containerStyle={styles.slideContainer}>
+    //         <List component="nav" aria-labelledby="nested-list-subheader">
+    //             {courseResults.map((course) => {
+    //                 let id = course._id;
+    //                 return (
+    //                     <div>
+    //                         <ListItem
+    //                             key={id}
+    //                             onClick={() =>
+    //                                 courseSelected.includes(id)
+    //                                     ? removeFromCoursesSelected(id)
+    //                                     : addToCoursesSelected(id)
+    //                             }
+    //                             button
+    //                         >
+    //                             {courseToLabel(course)}
+    //                         </ListItem>
+    //                         <Collapse
+    //                             in={courseSelected.includes(id) ? true : false}
+    //                             timeout="auto"
+    //                             unmountOnExit
+    //                         >
+    //                             <List component="div" disablePadding>
+    //                                 {course.sessions.map((session) => (
+    //                                     <SessionItem
+    //                                         course={course}
+    //                                         session={session}
+    //                                         draftSessions={draftSessions}
+    //                                         scheduleID={scheduleID}
+    //                                     />
+    //                                 ))}
+    //                             </List>
+    //                         </Collapse>
+    //                     </div>
+    //                 );
+    //             })}
+    //         </List>
+    //     </SwipeableViews>
+    // );
 };
 
 export default CourseList;
