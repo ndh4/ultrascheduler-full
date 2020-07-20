@@ -23,18 +23,10 @@ const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
 const courseToLabel = (course) => {
     //distribution and department
     if (course.sessions) {
-        return (
-            course.subject + " " + course.courseNum + " || " + course.longTitle
-        );
+        return `${course.subject} ${course.courseNum} || ${course.longTitle}`;
     } else {
         //instructors
-        return (
-            course.course.subject +
-            " " +
-            course.course.courseNum +
-            " || " +
-            course.course.longTitle
-        );
+        return `${course.course.subject} ${course.course.courseNum} || ${course.course.longTitle}`;
     }
 };
 
