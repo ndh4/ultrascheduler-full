@@ -9,25 +9,30 @@ const styles = {
     },
   };
 
-// Create an array with all of the values of the selected departments
-const getDeptValues = (selectedDepts) => {
-    let deptValues = [];
-    if(selectedDepts) {
-        for (let i = 0; i < selectedDepts.length; i++) {
-            deptValues.push(selectedDepts[i].value);
+// Create an array with all of the values of the selected options
+const getValues = (selectedOptions) => {
+    let selectedValues = [];
+    if(selectedOptions) {
+        for (let i = 0; i < selectedOptions.length; i++) {
+            selectedValues.push(selectedOptions[i].value);
         }
     }
-    return deptValues.sort();
+    return selectedValues.sort();
 }
 
-const CompiledLists = ({ scheduleID, selectedDepts }) => {
-    let deptValues = getDeptValues(selectedDepts);
+const CompiledLists = ({ scheduleID, selectedOptions, searchKey, query }) => {
+    let optionValues = getValues(selectedOptions);
+    
     return (
         <SwipeableViews containerStyle={styles.slideContainer}>
             <div>
-                {deptValues.map(department => {
+                
+                {
+                    // return a CourseList for each of the selected options
+                    optionValues.map(option => {
+                    let searchType = {[searchKey]: option};
                     return (
-                        <CourseList scheduleID={scheduleID} department={department} key = {department}/>
+                        <CourseList scheduleID={scheduleID} query={query} searchType={searchType} key={option}/>
                     )
                 })}
             </div>

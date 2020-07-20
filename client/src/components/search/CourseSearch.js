@@ -9,6 +9,8 @@ import { ThemeProvider } from "@material-ui/styles";
 import "./CourseSearch.global.css";
 import CompiledLists from "./CompiledLists";
 
+const dummy = { label: "", value: "" };
+
 const styles = {
 	filter: {
 		width: "100%",
@@ -103,7 +105,7 @@ const CourseSearch = ({ scheduleID }) => {
 	const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
 	const [getDept, setDept] = useState([]); // Used for selection of a particular department
 
-    const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
+    const [getDist, setDist] = useState([]); // Used for selection of a particular distribution
 
     const allDistributions = [
         { label: "Distribution I", value: "Distribution I" },
@@ -128,11 +130,7 @@ const CourseSearch = ({ scheduleID }) => {
     const allOptions = [getDepts, allDistributions, getDepts];
     const allSelected = [getDept, getDist, getDept];
     const setFuncs = [setDept, setDist, setDept];
-    const variables4Query = [
-        { subject: getDept.value },
-        { distribution: getDist.value },
-        { subject: getDept.value },
-    ];
+    const variables4Query = ["subject", "distribution", "subject"];
     const getQuery = [GET_DEPT_COURSES, GET_DIST_COURSES, GET_DEPT_COURSES];
 
     /**
@@ -213,22 +211,7 @@ const CourseSearch = ({ scheduleID }) => {
                     show={true}
                     handleChange={handleChange}
                 />
-                <CompiledLists scheduleID={scheduleID} selectedDepts={getDept} />
             </div>
-        );
-    };
-
-    /**
-     * Displays the course list component based on whether user is searching
-     * by distribution or by department
-     */
-    const displayCourseList = () => {
-        return (
-            <CourseList
-                scheduleID={scheduleID}
-                query={getQuery[activeButtonIndex]}
-                searchType={variables4Query[activeButtonIndex]}
-            />
         );
     };
 
@@ -242,7 +225,12 @@ const CourseSearch = ({ scheduleID }) => {
                 <div className="searchTxt">Search By:</div>
                 <div className="buttons">{renderSearchOptions()}</div>
             </div>
-            {displayCourseList()}
+            <CompiledLists 
+                scheduleID={scheduleID} 
+                selectedOptions={allSelected[activeButtonIndex]} 
+                searchKey={variables4Query[activeButtonIndex]}
+                query={getQuery[activeButtonIndex]}
+            />
         </div>
     );
 };
