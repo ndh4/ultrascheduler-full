@@ -57,6 +57,25 @@ CourseTC.addResolver({
     },
 });
 
+// CourseTC.addResolver({
+//     name: "findManyInTime",
+//     type: [CourseTC],
+//     args: { startTime: "String!" },
+//     resolve: async ({ source, args, context, info }) => {
+//         // -(field) puts into descending order
+//         // let sortParam = args.ascending ? "courseNum" : "-courseNum";
+//         console.log("args", args.startTime);
+//         let count = await Course.find({
+//             "sessions.class.startTime": args.startTime,
+//         }).count();
+//         console.log("count", count);
+//         // return [Course];
+//         return await Course.find({
+//             "sessions.class.startTime": args.startTime,
+//         });
+//     },
+// });
+
 const CourseQuery = {
     courseOne: CourseTC.getResolver("findOne"),
     courseMany: CourseTC.getResolver("findMany")
@@ -107,14 +126,22 @@ const CourseQuery = {
             type: "String",
             description: "Search for a course by its distribution",
             query: (query, value) => {
-                // Split value into subject & code
                 let distribution = value;
-                console.log(distribution);
                 query.distribution = distribution;
             },
         }),
+    // .addFilterArg({
+    //     name: "courseByTime", // From here: https://github.com/graphql-compose/graphql-compose-examples/blob/master/examples/northwind/models/product.js#L38,L49
+    //     type: "String",
+    //     description: "Search for a course by the start time",
+    //     query: (query, value) => {
+    //         let time = value;
+    //         query.sessions.class.startTime = time;
+    //     },
+    // }),
     // courseManyInSubject: CourseTC.getResolver('findManyInSubject'),
     courseManyInDistribution: CourseTC.getResolver("findManyInDistribution"),
+    // courseManyInTime: CourseTC.getResolver("findManyInTime"),
     departments: {
         name: "departments",
         type: "[String]",
