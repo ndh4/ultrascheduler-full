@@ -5,7 +5,9 @@ import { Calendar, Views, momentLocalizer }  from "react-big-calendar"
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 
 const localizer = momentLocalizer(moment)
+
 let id = 1;
+var hexId;
 
 const dayCode2dayString = {
     "M": "Monday",
@@ -22,6 +24,8 @@ const courseToCourseLabel = (course) => {
 }
 
 const convertSectionToEvents = (section, session) => {
+
+
     let events = [];
     if (!section.startTime || !section.endTime) {
         return events;
@@ -36,6 +40,7 @@ const convertSectionToEvents = (section, session) => {
 
     // Create event for each day
     for (let dayCode of section.days) {
+        console.log(events)
         // Convert the shorthand to a full weekday string
         let dayString = dayCode2dayString[dayCode];
 
@@ -51,11 +56,16 @@ const convertSectionToEvents = (section, session) => {
             desc: session.course.longTitle,
             source: section,
             start: eventStart.toDate(),
-            end: eventEnd.toDate()
+            end: eventEnd.toDate(),
+            hexId: hexId
         });
     }
+    hexId++;
     return events;
 }
+
+
+
 
 /**
  * Goal is to transform each session into weekly events, in the following format:
@@ -67,6 +77,7 @@ const convertSectionToEvents = (section, session) => {
  * }
  */
 const draftSessionsToEvents = (draftSessions) => {
+    hexId = 0;
     // All our events will go in here
     let events = [];
 
@@ -80,8 +91,48 @@ const draftSessionsToEvents = (draftSessions) => {
             events = events.concat(convertSectionToEvents(session.lab, session));
         }
     }
+
     return events;
 }
+
+
+const eventStyleGetter = (event) => {
+    console.log(event);
+    if(event.hexId % 7 == 0){
+        var backgroundColor = '#3D9970'
+    }
+    else if(event.hexId % 7 == 1){
+        var backgroundColor = '#7FDBFF'
+    }
+    else if(event.hexId % 7 == 2){
+        var backgroundColor = '#F012BE'
+    }
+    else if(event.hexId % 7 == 3){
+        var backgroundColor = '#E74C3C'
+    }
+    else if(event.hexId % 7 == 4){
+        var backgroundColor = '#FF851B'
+    }
+    else if(event.hexId % 7 == 5){
+        var backgroundColor = '#D4AC0D'
+    }
+    else if(event.hexId % 7 == 6){
+        var backgroundColor = '#C39BD3'
+    }
+    var style = {
+        backgroundColor: backgroundColor,
+        borderRadius: '0px',
+        opacity: 0.8,
+        color: 'black',
+        border: '0px',
+        display: 'block'
+    };
+    return {
+        style: style
+    };
+}
+
+
 
 const CourseCalendar = ({ draftSessions }) => {
     return (
@@ -96,7 +147,8 @@ const CourseCalendar = ({ draftSessions }) => {
             views={{month: false, week: CourseWeek, day: false}}
             drilldownView={null}
             defaultDate={moment("Sunday", "dddd")} // Always start on Sunday of the week
-            onSelectEvent={event => alert(event.title + "\n" + event.desc + "\n")}
+            onSelectEvent={event => alert(event.title + "\n" + event.hexId + "\n")}
+            eventPropGetter={(eventStyleGetter)}
             toolbar={false}
             style={style}
             />
@@ -105,7 +157,10 @@ const CourseCalendar = ({ draftSessions }) => {
 }
 
 const style = {
-    height: '100%'
+    height: '100%',
 }
+
+
+
 
 export default CourseCalendar;
