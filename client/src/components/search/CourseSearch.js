@@ -139,7 +139,7 @@ const CourseSearch = ({ scheduleID }) => {
 
     //INSTRUCTOR SEARCH
     const [getInstruct, setInstruct] = useState([]); // Used for the entire list of instructors
-    const [getInst, setInst] = useState(dummy2); // Used for selection of a particular instructor
+    const [getInst, setInst] = useState([]); // Used for selection of a particular instructor
 
     const allDistributions = [
         { label: "Distribution I", value: "Distribution I" },
@@ -186,12 +186,14 @@ const CourseSearch = ({ scheduleID }) => {
     const allSelected = [getDept, getDist, getInst];
     const setFuncs = [setDept, setDist, setInst];
     const variables4Query = [
-        { subject: getDept.value },
-        { distribution: getDist.value },
-        {
-            firstName: getInst.firstName,
-            lastName: getInst.lastName,
-        },
+       ['subject'],
+       ['distribution'],
+       ['firstName', 'lastName']
+    ];
+    const queryFilters = [
+        ['value'],
+        ['value'],
+        ['firstName', 'lastName']
     ];
     const getQuery = [
         GET_DEPT_COURSES,
@@ -315,6 +317,7 @@ const CourseSearch = ({ scheduleID }) => {
                 selectedOptions={allSelected[activeButtonIndex]} 
                 searchKey={variables4Query[activeButtonIndex]}
                 query={getQuery[activeButtonIndex]}
+                queryFilters={queryFilters[activeButtonIndex]}
             />
         </div>
     );

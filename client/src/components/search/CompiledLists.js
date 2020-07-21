@@ -9,19 +9,25 @@ const styles = {
     },
   };
 
-// Create an array with all of the values of the selected options
-const getValues = (selectedOptions) => {
+// Create an array with all of the necessary search values of the selected options
+const getValues = (selectedOptions, searchKey, queryFilters) => {
     let selectedValues = [];
-    if(selectedOptions) {
+    if (selectedOptions) {
+        // for each selected option, create a new object and get query filter values
         for (let i = 0; i < selectedOptions.length; i++) {
-            selectedValues.push(selectedOptions[i].value);
+            let option = {}
+            // for each query filter, store appropriate value with the corresponding search key
+            for (let j = 0; j < queryFilters.length; j++) {
+                option[searchKey[j]] = selectedOptions[i][queryFilters[j]];
+            }
+            selectedValues.push(option);
         }
     }
-    return selectedValues.sort();
+    return selectedValues;
 }
 
-const CompiledLists = ({ scheduleID, selectedOptions, searchKey, query }) => {
-    let optionValues = getValues(selectedOptions);
+const CompiledLists = ({ scheduleID, selectedOptions, searchKey, query, queryFilters }) => {
+    let optionValues = getValues(selectedOptions, searchKey, queryFilters);
     
     return (
         <SwipeableViews containerStyle={styles.slideContainer}>
@@ -30,9 +36,12 @@ const CompiledLists = ({ scheduleID, selectedOptions, searchKey, query }) => {
                 {
                     // return a CourseList for each of the selected options
                     optionValues.map(option => {
-                    let searchType = {[searchKey]: option};
+                    let searchType = {};
+                    for(let key of searchKey) {
+                        searchType[key] = option[key];
+                    }
                     return (
-                        <CourseList scheduleID={scheduleID} query={query} searchType={searchType} key={option}/>
+                        <CourseList scheduleID={scheduleID} query={query} searchType={searchType} key={option[searchKey[0]]}/>
                     )
                 })}
             </div>
