@@ -12,6 +12,18 @@ import CompiledLists from "./CompiledLists";
 const dummy = { label: "", value: "" };
 const dummy2 = { label: "", value: "", firstName: "", lastName: "" };
 
+const styles = {
+	filter: {
+		width: "100%",
+	},
+	button: {
+		display: "inline-block",
+		float: "center",
+		margin: 8,
+		padding: 2,
+	},
+};
+
 /**
  * TODO: MAKE A FRAGMENT! THIS IS USED IN TWO PLACES
  * Gets the term from local state management
