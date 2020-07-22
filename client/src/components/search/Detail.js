@@ -51,8 +51,13 @@ const Detail = ({
             );
         }
     };
-
-    console.log(session.maxCrossEnrollment);
+    const longTitle = (course) => {
+        if (course.course) {
+            return formatDiv("Long Title:", course.course.longTitle);
+        } else {
+            return formatDiv("Long Title:", course.longTitle);
+        }
+    };
     return (
         <TableRow>
             <TableCell>
@@ -89,7 +94,24 @@ const Detail = ({
                     replaceNull(course.restrictions)
                 )} */}
             </TableCell>
-            <TableCell />
+            <TableCell>
+                {longTitle(course)}
+                {formatDiv(
+                    "Prerequisites:",
+                    session.course.prereqs === ""
+                        ? "None"
+                        : session.course.prereqs
+                )}
+                {formatDiv(
+                    "Corequisites:",
+                    session.course.coreqs.length === 0
+                        ? "None"
+                        : session.course.coreqs.join(", ")
+                )}
+                {formatDiv("Department:", "N/A")}
+                {formatDiv("Session:", replaceNull(session.term))}
+                {formatDiv("Grade Mode:", "Standard Letter")}
+            </TableCell>
         </TableRow>
     );
 };

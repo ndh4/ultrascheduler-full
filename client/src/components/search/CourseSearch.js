@@ -36,6 +36,7 @@ const GET_DEPT_COURSES = gql`
             longTitle
             sessions(filter: { term: $term }) {
                 _id
+                term
                 crn
                 class {
                     days
@@ -53,6 +54,8 @@ const GET_DEPT_COURSES = gql`
                 }
                 course {
                     distribution
+                    prereqs
+                    coreqs
                 }
                 enrollment
                 maxEnrollment
@@ -79,6 +82,7 @@ const GET_DIST_COURSES = gql`
             distribution
             sessions(filter: { term: $term }) {
                 _id
+                term
                 crn
                 class {
                     days
@@ -96,6 +100,8 @@ const GET_DIST_COURSES = gql`
                 }
                 course {
                     distribution
+                    prereqs
+                    coreqs
                 }
                 enrollment
                 maxEnrollment
@@ -132,6 +138,8 @@ const COURSES_BY_INSTRUCTORS = gql`
                     courseNum
                     longTitle
                     distribution
+                    prereqs
+                    coreqs
                 }
                 class {
                     days
