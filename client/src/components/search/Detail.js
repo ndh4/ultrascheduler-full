@@ -2,20 +2,96 @@ import React, { Fragment, useState } from "react";
 import { Table, TableBody, TableRow, TableCell, Box } from "@material-ui/core";
 import Collapse from "@material-ui/core/Collapse";
 
-
-const Detail = ({
-    course, //course is multiple sessions or used for instructorQuery 
-    session, //session is within course; used for courseQuery 
-    // instructorsToNames,
-    // open,
-    // classTimeString,
-}) => {
+/* Return a div for each row */
+const formatDiv = (bold, normalTxt) => {
     return (
-
-        <p>{course === undefined ? session.crn : course.longTitle}</p>
-
+        <div>
+            <b>{bold}</b> {normalTxt}
+        </div>
     );
 };
+/* Replace undefined or null value to N/A */
+const replaceNull = (text) => {
+    switch (text) {
+        case undefined:
+            return "N/A";
+        case "":
+            return "N/A";
+        case null:
+            return "N/A";
+        default:
+            return text;
+    }
+};
 
+const Detail = ({
+    course, //course is multiple sessions or used for instructorQuery
+    session, //session is within course; used for courseQuery; for instructorQuery, session and course are the same
+    instructorsToNames,
+    // open,
+    classTimeString,
+}) => {
+    const Times = (section) => {
+        if (!section.startTime || !section.endTime) {
+            return "None";
+        } else {
+            return (
+                <span>
+                    {section.days}{" "}
+                    {classTimeString(section.startTime, section.endTime)}
+                </span>
+            );
+        }
+    };
+    const Instructors = (session) => {
+        if (session.instructors) {
+            return formatDiv(
+                "Instructor:",
+                replaceNull(instructorsToNames(session.instructors).join(", "))
+            );
+        }
+    };
+
+    console.log(session.maxCrossEnrollment);
+    return (
+        <TableRow>
+            <TableCell>
+                {formatDiv("Class Time:", Times(session.class))}
+                {formatDiv("Lab Time:", Times(session.lab))}
+                {Instructors(session)}
+                {formatDiv("Course Type:", "Lecture/Laboratory")}
+                {formatDiv(
+                    "Distribution Group:",
+                    replaceNull(session.course.distribution)
+                )}
+                {formatDiv("CRN:", replaceNull(session.crn))}
+            </TableCell>
+            <TableCell>
+                {formatDiv(
+                    "Section Max Enrollment:",
+                    replaceNull(session.maxEnrollment)
+                )}
+                {formatDiv(
+                    "Section Enrolled:",
+                    replaceNull(session.enrollment)
+                )}
+                {formatDiv(
+                    "Total Cross-list Max Enrollment:",
+                    replaceNull(session.maxCrossEnrollment)
+                )}
+                {formatDiv(
+                    "Total Cross-list Enrolled:",
+                    replaceNull(session.crossEnrollment)
+                )}
+                {/*look at queries again*/}
+                {/* {formatDiv(
+                    "Enrollment Restrictions:",
+                    replaceNull(course.restrictions)
+                )} */}
+            </TableCell>
+            <TableCell />
+        </TableRow>
+    );
+};
 
 export default Detail;

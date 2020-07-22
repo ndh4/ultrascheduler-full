@@ -51,6 +51,15 @@ const GET_DEPT_COURSES = gql`
                     firstName
                     lastName
                 }
+                course {
+                    distribution
+                }
+                enrollment
+                maxEnrollment
+                crossEnrollment
+                maxCrossEnrollment
+                waitlisted
+                maxWaitlisted
             }
         }
     }
@@ -85,6 +94,15 @@ const GET_DIST_COURSES = gql`
                     firstName
                     lastName
                 }
+                course {
+                    distribution
+                }
+                enrollment
+                maxEnrollment
+                crossEnrollment
+                maxCrossEnrollment
+                waitlisted
+                maxWaitlisted
             }
         }
     }
@@ -113,6 +131,7 @@ const COURSES_BY_INSTRUCTORS = gql`
                     subject
                     courseNum
                     longTitle
+                    distribution
                 }
                 class {
                     days
@@ -125,6 +144,12 @@ const COURSES_BY_INSTRUCTORS = gql`
                     endTime
                 }
                 crn
+                enrollment
+                maxEnrollment
+                crossEnrollment
+                maxCrossEnrollment
+                waitlisted
+                maxWaitlisted
             }
         }
     }

@@ -4,10 +4,9 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Collapse from "@material-ui/core/Collapse";
 import { Event } from "../../utils/analytics";
-import CourseDetail from "../draftview/CourseDetail.js"
+import CourseDetail from "../draftview/CourseDetail.js";
 import { classTimeString } from "../../utils/CourseTimeTransforms";
 import Detail from "./Detail";
-
 
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
@@ -160,7 +159,7 @@ const REMOVE_DRAFT_SESSION = gql`
     }
 `;
 
-const SessionItem = ({ scheduleID, session, draftSessions }) => {
+const SessionItem = ({ scheduleID, course, session, draftSessions }) => {
     let sessionSelected = false;
 
     // Check if this course is in draftSessions
@@ -226,16 +225,14 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
             />
             {/* <div style={{ alignItems: "left" }}>{sessionToString(session)}</div> */}
             <div style={{ alignItems: "left" }}>
-                {console.log(session)}
-                {<Detail session={session} />}
-                {/* {<CourseDetail
-                    // key={idx}
-                    // course={course}
-                    session={session}
-                    instructorsToNames={instructorsToNames}
-                    // open={open}
-                    classTimeString={classTimeString}
-                />} */}
+                {
+                    <Detail
+                        session={session}
+                        course={course}
+                        classTimeString={classTimeString}
+                        instructorsToNames={instructorsToNames}
+                    />
+                }
             </div>
         </div>
     );
@@ -312,11 +309,12 @@ const CourseList = ({ scheduleID, query, searchType }) => {
     const collapseItem = (course) => {
         //distribution and department
         if (course.sessions) {
+            // return <Detail course={course} classTimeString={classTimeString} />;
             return course.sessions.map((session, idx) => (
                 <SessionItem
                     //replace key with uuid
                     key={idx}
-                    //course={course}
+                    course={course}
                     session={session}
                     draftSessions={draftSessions}
                     scheduleID={scheduleID}
@@ -326,7 +324,7 @@ const CourseList = ({ scheduleID, query, searchType }) => {
             //instructors
             return (
                 <SessionItem
-                    //course={course}
+                    course={course}
                     session={course}
                     draftSessions={draftSessions}
                     scheduleID={scheduleID}
