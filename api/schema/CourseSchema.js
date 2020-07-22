@@ -1,6 +1,7 @@
 import { Course, CourseTC, Session, SessionTC } from "../models";
 import { toInputObjectType } from "graphql-compose";
 import { getSubjects } from "../utils/courseUtils";
+import { getTime } from "../utils/sessionUtils";
 import { valueFromAST } from "graphql";
 
 /**
@@ -148,6 +149,14 @@ const CourseQuery = {
         args: { term: "Int!" },
         resolve: async (_, args) => {
             return await getSubjects(args.term);
+        },
+    },
+    classTimes: {
+        name: "all class time",
+        type: "[String]",
+        args: { term: "Int!" },
+        resolve: async (_, args) => {
+            return await getTime(args.term);
         },
     },
 };
