@@ -89,6 +89,40 @@ const GET_DIST_COURSES = gql`
     }
 `;
 
+const GET_TIME_INTERVAL_COURSES = gql`
+    query GetTimeIntervalCourses(
+        $startTime: String!
+        $endTime: String!
+        $term: Float!
+    ) {
+        sessionByTimeInterval(startTime: $startTime, endTime: $endTime) {
+            _id
+            crn
+            class {
+                days
+                startTime
+                endTime
+            }
+            lab {
+                days
+                startTime
+                endTime
+            }
+            instructors {
+                firstName
+                lastName
+            }
+            course {
+                _id
+                subject
+                courseNum
+                longTitle
+                distribution
+            }
+        }
+    }
+`;
+
 const formatTime = (time) => {
     return time.replace(":", "");
 };
@@ -133,8 +167,14 @@ const CourseSearch = ({ scheduleID }) => {
         { subject: getDept.value },
         { distribution: getDist.value },
         { subject: getDept.value },
+        { startTime: getStartTime, endTime: getEndTime },
     ];
-    const getQuery = [GET_DEPT_COURSES, GET_DIST_COURSES, GET_DEPT_COURSES];
+    const getQuery = [
+        GET_DEPT_COURSES,
+        GET_DIST_COURSES,
+        GET_DEPT_COURSES,
+        GET_TIME_INTERVAL_COURSES,
+    ];
 
     /**
      * We only want this to run when the subjects list data loads
