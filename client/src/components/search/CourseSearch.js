@@ -120,9 +120,14 @@ const CourseSearch = ({ scheduleID }) => {
 
     // These variables are used in displaySearch function and displayCourseList function:
     // Department is used as a placeholder for Instructors for now
-    const searchTypes = ["Department", "Distribution", "Instructors"];
-    const allOptions = [getDepts, allDistributions, getDepts];
-    const allSelected = [getDept, getDist, getDept];
+    const searchTypes = [
+        "Department",
+        "Distribution",
+        "Instructors",
+        "CourseTime",
+    ];
+    const allOptions = [getDepts, allDistributions, getDepts, getDepts];
+    const allSelected = [getDept, getDist, getDept, getDept];
     const setFuncs = [setDept, setDist, setDept];
     const variables4Query = [
         { subject: getDept.value },
@@ -219,6 +224,8 @@ const CourseSearch = ({ scheduleID }) => {
         );
     };
 
+    const displaySearchBtn = <Button variant="contained"> Search </Button>;
+
     /**
      * Displays the search component based on whether user is searching
      * by distribution or by department
@@ -240,6 +247,7 @@ const CourseSearch = ({ scheduleID }) => {
                 />
                 {displayTimeTF("To", "06:00", handleStartTimeTFChange)}
                 {displayTimeTF("From", "22:00", handleEndTimeTFChange)}
+                {displaySearchBtn}
             </div>
         );
     };
