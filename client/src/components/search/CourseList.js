@@ -4,7 +4,6 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Collapse from "@material-ui/core/Collapse";
 import { Event } from "../../utils/analytics";
-import CourseDetail from "../draftview/CourseDetail.js";
 import { classTimeString } from "../../utils/CourseTimeTransforms";
 import Detail from "./Detail";
 
@@ -229,6 +228,7 @@ const SessionItem = ({ scheduleID, course, session, draftSessions }) => {
                     <Detail
                         session={session}
                         course={course}
+                        open={true}
                         classTimeString={classTimeString}
                         instructorsToNames={instructorsToNames}
                     />
