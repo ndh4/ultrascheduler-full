@@ -6,6 +6,7 @@ import { useQuery, gql } from "@apollo/client";
 import Button from "@material-ui/core/Button";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
+import TextField from "@material-ui/core/TextField";
 import "./CourseSearch.global.css";
 
 const dummy = { label: "", value: "" };
@@ -88,11 +89,17 @@ const GET_DIST_COURSES = gql`
     }
 `;
 
+const formatTime = (time) => {
+    return time.replace(":", "");
+};
+
 const CourseSearch = ({ scheduleID }) => {
     const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
     const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
 
     const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
+    const [getStartTime, setStartTime] = useState("0600");
+    const [getEndTime, setEndTime] = useState("2200");
 
     const allDistributions = [
         { label: "Distribution I", value: "Distribution I" },
@@ -140,6 +147,17 @@ const CourseSearch = ({ scheduleID }) => {
         setFunc(selectedOption);
     };
 
+    const handleStartTimeTFChange = (event) => {
+        let selectedTime = event.target.value;
+        console.log("selectedStartTime", selectedTime);
+        setStartTime(formatTime(selectedTime));
+    };
+    const handleEndTimeTFChange = (event) => {
+        let selectedTime = event.target.value;
+        console.log("selectedEndTime", selectedTime);
+        setEndTime(formatTime(selectedTime));
+    };
+
     // Set color theme for the button for clicked and unclicked effect
     const muiTheme = createMuiTheme({
         palette: {
@@ -183,6 +201,24 @@ const CourseSearch = ({ scheduleID }) => {
         });
     };
 
+    const displayTimeTF = (lbl, defaultVal, onChangeHandler) => {
+        return (
+            <TextField
+                id="time"
+                label={lbl}
+                type="time"
+                defaultValue={defaultVal}
+                InputLabelProps={{
+                    shrink: true,
+                }}
+                inputProps={{
+                    step: 300, // 5 min
+                }}
+                onChange={onChangeHandler}
+            />
+        );
+    };
+
     /**
      * Displays the search component based on whether user is searching
      * by distribution or by department
@@ -193,14 +229,18 @@ const CourseSearch = ({ scheduleID }) => {
         const selected = allSelected[activeButtonIndex];
 
         return (
-            <Selection
-                className="filter"
-                title={searchType}
-                options={option}
-                selected={selected}
-                show={true}
-                handleChange={handleChange}
-            />
+            <div>
+                <Selection
+                    className="filter"
+                    title={searchType}
+                    options={option}
+                    selected={selected}
+                    show={true}
+                    handleChange={handleChange}
+                />
+                {displayTimeTF("To", "06:00", handleStartTimeTFChange)}
+                {displayTimeTF("From", "22:00", handleEndTimeTFChange)}
+            </div>
         );
     };
 

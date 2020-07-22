@@ -2,6 +2,7 @@ import { Session } from "../models/index";
 
 /**
  * Return unique list of all class time (0900, 1300, etc)
+ * Not sure if this is needed
  */
 export const getTime = async (term) => {
     if (term == "") {
