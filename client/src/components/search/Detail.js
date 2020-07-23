@@ -1,6 +1,8 @@
 import React, { Fragment, useState } from "react";
 import { Table, TableBody, TableRow, TableCell, Box } from "@material-ui/core";
 import Collapse from "@material-ui/core/Collapse";
+import "./Detail.global.css";
+
 
 /* Return a div for each row */
 const formatDiv = (bold, normalTxt) => {
@@ -30,6 +32,7 @@ const Detail = ({
     instructorsToNames,
     open,
     classTimeString,
+    style
 }) => {
     const Times = (section) => {
         if (!section.startTime || !section.endTime) {
@@ -59,7 +62,6 @@ const Detail = ({
         }
     };
 
-    console.log(open);
     return (
         <TableRow>
             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
@@ -67,7 +69,7 @@ const Detail = ({
                     <Table>
                         <TableBody>
                             <TableRow>
-                                <TableCell>
+                                <TableCell style={style}>
                                     {formatDiv(
                                         "Class Time:",
                                         Times(session.class)
@@ -87,7 +89,7 @@ const Detail = ({
                                         replaceNull(session.crn)
                                     )}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell style={style}>
                                     {formatDiv(
                                         "Section Max Enrollment:",
                                         replaceNull(session.maxEnrollment)
@@ -110,7 +112,7 @@ const Detail = ({
                                         replaceNull(course.restrictions)
                                     )} */}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell style={style}>
                                     {longTitle(course)}
                                     {formatDiv(
                                         "Prerequisites:",

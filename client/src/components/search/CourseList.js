@@ -10,6 +10,12 @@ import Detail from "./Detail";
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
+const detailStyle = {
+    fontSize: "10px",
+    color: "#6C7488",
+    background: "#F7F8FA"
+};
+
 /**
  * Gets the term from local state management
  */
@@ -25,10 +31,10 @@ const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
 const courseToLabel = (course) => {
     //distribution and department
     if (course.sessions) {
-        return `${course.subject} ${course.courseNum} || ${course.longTitle}`;
+        return `${course.subject} ${course.courseNum}: ${course.longTitle}`;
     } else {
         //instructors
-        return `${course.course.subject} ${course.course.courseNum} || ${course.course.longTitle}`;
+        return `${course.course.subject} ${course.course.courseNum}: ${course.course.longTitle}`;
     }
 };
 
@@ -184,7 +190,7 @@ const SessionItem = ({ scheduleID, course, session, draftSessions }) => {
 
     return (
         <div
-            style={{ borderStyle: "solid", display: "inline-block" }}
+            // style={{ borderStyle: "solid", display: "inline-block" }}
             key={session.crn}
         >
             <input
@@ -223,9 +229,12 @@ const SessionItem = ({ scheduleID, course, session, draftSessions }) => {
                 style={{ alignItems: "left" }}
             />
             {/* <div style={{ alignItems: "left" }}>{sessionToString(session)}</div> */}
-            <div style={{ alignItems: "left" }}>
+            <div style={{
+                alignItems: "left"
+            }}>
                 {
                     <Detail
+                        style={detailStyle}
                         session={session}
                         course={course}
                         open={true}
@@ -349,7 +358,9 @@ const CourseList = ({ scheduleID, query, searchType }) => {
                                 }
                                 button
                             >
-                                {courseToLabel(course)}
+                                <div style={{ uppercase: "none" }}>
+                                    {courseToLabel(course)}
+                                </div>
                             </ListItem>
                             <Collapse
                                 in={courseSelected.includes(id) ? true : false}
