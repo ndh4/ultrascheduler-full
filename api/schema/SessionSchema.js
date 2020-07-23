@@ -122,6 +122,26 @@ SessionTC.addResolver({
     },
 });
 
+SessionTC.addResolver({
+    name: "findByDayAndTimeInterval",
+    type: [SessionTC],
+    args: {
+        days: "[String!]",
+        startTime: "String!",
+        endTime: "String!",
+        term: "Float!",
+    },
+    resolve: async ({ source, args, context, info }) => {
+        let filter = {
+            "class.startTime": { $gte: args.startTime },
+            "class.endTime": { $lte: args.endTime },
+            "class.days": { $eq: args.days },
+            term: args.term,
+        };
+        return await Session.find(filter);
+    },
+});
+
 // SessionTC.addResolver({
 //     name: "findManyBySubjects",
 //     type: [SessionTC],
@@ -139,6 +159,10 @@ const SessionQuery = {
     sessionByDays: SessionTC.getResolver("findByDays"),
     sessionByStartTime: SessionTC.getResolver("findByStartTime"),
     sessionByTimeInterval: SessionTC.getResolver("findByTimeInterval"),
+    sessionByDayAndTimeInterval: SessionTC.getResolver(
+        "findByDayAndTimeInterval"
+    ),
+
     // sessionManyBySubject: SessionTC.getResolver("findManyBySubjects"),
 };
 
