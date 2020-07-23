@@ -95,7 +95,11 @@ const GET_TIME_INTERVAL_COURSES = gql`
         $endTime: String!
         $term: Float!
     ) {
-        sessionByTimeInterval(startTime: $startTime, endTime: $endTime) {
+        sessionByTimeInterval(
+            startTime: $startTime
+            endTime: $endTime
+            term: $term
+        ) {
             _id
             crn
             class {

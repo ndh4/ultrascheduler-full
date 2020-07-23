@@ -232,12 +232,13 @@ const CourseList = ({ scheduleID, query, searchType }) => {
     if (!courseData) return <p>No Data...</p>;
 
     // Once the data has loaded, we want to extract the course results for the distribution
-    courseResults = courseData.courseMany;
+    // courseResults = courseData.courseMany;
+    courseResults = courseData.sessionByTimeInterval;
 
     // We need to filter out any courses which have 0 sessions
-    courseResults = courseResults.filter(
-        (course) => course.sessions.length > 0
-    );
+    // courseResults = courseResults.filter(
+    //     (course) => course.sessions.length > 0
+    // );
 
     // We also want to extract the user's draftSessions, nested inside their schedule
     draftSessions = scheduleData.scheduleOne.draftSessions;
@@ -270,7 +271,7 @@ const CourseList = ({ scheduleID, query, searchType }) => {
         <SwipeableViews containerStyle={styles.slideContainer}>
             <List component="nav" aria-labelledby="nested-list-subheader">
                 {courseResults.map((course) => {
-                    let id = course._id;
+                    let id = course.course._id;
                     return (
                         <div>
                             <ListItem
@@ -282,7 +283,7 @@ const CourseList = ({ scheduleID, query, searchType }) => {
                                 }
                                 button
                             >
-                                {courseToLabel(course)}
+                                {courseToLabel(course.course)}
                             </ListItem>
                             <Collapse
                                 in={courseSelected.includes(id) ? true : false}
@@ -290,14 +291,22 @@ const CourseList = ({ scheduleID, query, searchType }) => {
                                 unmountOnExit
                             >
                                 <List component="div" disablePadding>
-                                    {course.sessions.map((session) => (
+                                    {
+                                        <SessionItem
+                                            course={course.course}
+                                            session={course}
+                                            draftSessions={draftSessions}
+                                            scheduleID={scheduleID}
+                                        />
+                                    }
+                                    {/* {course.sessions.map((session) => (
                                         <SessionItem
                                             course={course}
                                             session={session}
                                             draftSessions={draftSessions}
                                             scheduleID={scheduleID}
                                         />
-                                    ))}
+                                    ))} */}
                                 </List>
                             </Collapse>
                         </div>

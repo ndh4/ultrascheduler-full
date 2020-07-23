@@ -111,11 +111,12 @@ SessionTC.addResolver({
 SessionTC.addResolver({
     name: "findByTimeInterval",
     type: [SessionTC],
-    args: { startTime: "String!", endTime: "String!" },
+    args: { startTime: "String!", endTime: "String!", term: "Float!" },
     resolve: async ({ source, args, context, info }) => {
         let filter = {
             "class.startTime": { $gte: args.startTime },
             "class.endTime": { $lte: args.endTime },
+            term: args.term,
         };
         return await Session.find(filter);
     },
