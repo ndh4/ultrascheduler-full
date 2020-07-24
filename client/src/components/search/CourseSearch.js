@@ -7,9 +7,51 @@ import Button from "@material-ui/core/Button";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import TextField from "@material-ui/core/TextField";
+import Select from "@material-ui/core/Select";
+import Input from "@material-ui/core/Input";
+import MenuItem from "@material-ui/core/MenuItem";
+import Checkbox from "@material-ui/core/Checkbox";
+import ListItemText from "@material-ui/core/ListItemText";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import "./CourseSearch.global.css";
 
 const dummy = { label: "", value: "" };
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
+const useStyles = makeStyles((theme) => ({
+    formControl: {
+        margin: theme.spacing(1),
+        minWidth: 120,
+        maxWidth: 300,
+    },
+    chips: {
+        display: "flex",
+        flexWrap: "wrap",
+    },
+    chip: {
+        margin: 2,
+    },
+    noLabel: {
+        marginTop: theme.spacing(3),
+    },
+}));
+//   function getStyles(day, days, theme) {
+//     return {
+//       fontWeight:
+//         days.indexOf(day) === -1
+//           ? theme.typography.fontWeightRegular
+//           : theme.typography.fontWeightMedium,
+//     };
+//   }
 
 /**
  * TODO: MAKE A FRAGMENT! THIS IS USED IN TWO PLACES
@@ -91,37 +133,41 @@ const GET_DIST_COURSES = gql`
 
 const GET_TIME_INTERVAL_COURSES = gql`
     query GetTimeIntervalCourses(
+        $days: [String!]
         $startTime: String!
         $endTime: String!
         $term: Float!
     ) {
-        sessionByTimeInterval(
+        sessionByDayAndTimeInterval(
+            days: $days
             startTime: $startTime
             endTime: $endTime
             term: $term
         ) {
-            _id
-            crn
-            class {
-                days
-                startTime
-                endTime
-            }
-            lab {
-                days
-                startTime
-                endTime
-            }
-            instructors {
-                firstName
-                lastName
-            }
             course {
                 _id
                 subject
                 courseNum
                 longTitle
                 distribution
+                sessions(filter: { term: $term }) {
+                    _id
+                    crn
+                    class {
+                        days
+                        startTime
+                        endTime
+                    }
+                    lab {
+                        days
+                        startTime
+                        endTime
+                    }
+                    instructors {
+                        firstName
+                        lastName
+                    }
+                }
             }
         }
     }
@@ -132,9 +178,11 @@ const formatTime = (time) => {
 };
 
 const CourseSearch = ({ scheduleID }) => {
+    const classes = useStyles();
+    const theme = useTheme();
+
     const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
     const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
-
     const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
     const [getStartTime, setStartTime] = useState("0600");
     const [getEndTime, setEndTime] = useState("2200");
@@ -144,6 +192,26 @@ const CourseSearch = ({ scheduleID }) => {
         { label: "Distribution II", value: "Distribution II" },
         { label: "Distribution III", value: "Distribution III" },
     ]; // All distributions
+
+    const allDaysLong = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+    ]; // All days in full name
+    const allDaysMap = {
+        Monday: "M",
+        Tuesday: "T",
+        Wednesday: "W",
+        Thursday: "R",
+        Friday: "F",
+        Saturday: "S",
+        Sunday: "U",
+    }; // All days in abbreviation, used for query
+    const [getDays, setDays] = useState(allDaysLong);
 
     // Represents which button is currently clicked for styling and returning data
     const [activeButtonIndex, setButtonIndex] = useState(0);
@@ -156,22 +224,36 @@ const CourseSearch = ({ scheduleID }) => {
         variables: { term },
     });
 
+    const convertDays = (days) => {
+        return days.map((day) => allDaysMap[day]);
+    };
+
     // These variables are used in displaySearch function and displayCourseList function:
     // Department is used as a placeholder for Instructors for now
     const searchTypes = [
         "Department",
         "Distribution",
         "Instructors",
-        "CourseTime",
+        "Course Time",
+        "Course Day",
     ];
     const allOptions = [getDepts, allDistributions, getDepts, getDepts];
     const allSelected = [getDept, getDist, getDept, getDept];
-    const setFuncs = [setDept, setDist, setDept];
+    const setFuncs = [setDept, setDist, setDept, setDept, setDays];
     const variables4Query = [
         { subject: getDept.value },
         { distribution: getDist.value },
         { subject: getDept.value },
-        { startTime: getStartTime, endTime: getEndTime },
+        {
+            days: convertDays(getDays),
+            startTime: getStartTime,
+            endTime: getEndTime,
+        },
+        {
+            days: convertDays(getDays),
+            startTime: getStartTime,
+            endTime: getEndTime,
+        },
     ];
     const getQuery = [
         GET_DEPT_COURSES,
@@ -250,6 +332,7 @@ const CourseSearch = ({ scheduleID }) => {
         });
     };
 
+    // Display the time textfield for user to select time range for the search
     const displayTimeTF = (lbl, defaultVal, onChangeHandler) => {
         return (
             <TextField
@@ -268,7 +351,27 @@ const CourseSearch = ({ scheduleID }) => {
         );
     };
 
-    const displaySearchBtn = <Button variant="contained"> Search </Button>;
+    const displayDaySelect = (vals, onChangeHandler) => {
+        return (
+            <Select
+                labelId="demo-mutiple-name-label"
+                id="demo-mutiple-name"
+                multiple
+                value={vals}
+                onChange={onChangeHandler}
+                input={<Input />}
+                renderValue={(selected) => selected.join(", ")}
+                MenuProps={MenuProps}
+            >
+                {vals.map((day) => (
+                    <MenuItem key={day} value={day}>
+                        <Checkbox checked={getDays.indexOf(day) > -1} />
+                        <ListItemText primary={day} />
+                    </MenuItem>
+                ))}
+            </Select>
+        );
+    };
 
     /**
      * Displays the search component based on whether user is searching
@@ -291,7 +394,7 @@ const CourseSearch = ({ scheduleID }) => {
                 />
                 {displayTimeTF("To", "06:00", handleStartTimeTFChange)}
                 {displayTimeTF("From", "22:00", handleEndTimeTFChange)}
-                {displaySearchBtn}
+                {displayDaySelect(allDaysLong, handleChange)}
             </div>
         );
     };
