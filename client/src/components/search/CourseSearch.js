@@ -7,9 +7,22 @@ import Button from "@material-ui/core/Button";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import "./CourseSearch.global.css";
+import CompiledLists from "./CompiledLists";
 
 const dummy = { label: "", value: "" };
 const dummy2 = { label: "", value: "", firstName: "", lastName: "" };
+
+const styles = {
+	filter: {
+		width: "100%",
+	},
+	button: {
+		display: "inline-block",
+		float: "center",
+		margin: 8,
+		padding: 2,
+	},
+};
 
 /**
  * TODO: MAKE A FRAGMENT! THIS IS USED IN TWO PLACES
@@ -131,14 +144,14 @@ const COURSES_BY_INSTRUCTORS = gql`
 `;
 
 const CourseSearch = ({ scheduleID }) => {
-    const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
-    const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
+	const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
+	const [getDept, setDept] = useState([]); // Used for selection of a particular department
 
-    const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
+    const [getDist, setDist] = useState([]); // Used for selection of a particular distribution
 
     //INSTRUCTOR SEARCH
     const [getInstruct, setInstruct] = useState([]); // Used for the entire list of instructors
-    const [getInst, setInst] = useState(dummy2); // Used for selection of a particular instructor
+    const [getInst, setInst] = useState([]); // Used for selection of a particular instructor
 
     const allDistributions = [
         { label: "Distribution I", value: "Distribution I" },
@@ -185,12 +198,14 @@ const CourseSearch = ({ scheduleID }) => {
     const allSelected = [getDept, getDist, getInst];
     const setFuncs = [setDept, setDist, setInst];
     const variables4Query = [
-        { subject: getDept.value },
-        { distribution: getDist.value },
-        {
-            firstName: getInst.firstName,
-            lastName: getInst.lastName,
-        },
+       ['subject'],
+       ['distribution'],
+       ['firstName', 'lastName']
+    ];
+    const queryFilters = [
+        ['value'],
+        ['value'],
+        ['firstName', 'lastName']
     ];
     const getQuery = [
         GET_DEPT_COURSES,
@@ -286,29 +301,16 @@ const CourseSearch = ({ scheduleID }) => {
         const selected = allSelected[activeButtonIndex];
 
         return (
-            <Selection
-                className="filter"
-                title={searchType}
-                options={option}
-                selected={selected}
-                show={true}
-                handleChange={handleChange}
-            />
-        );
-    };
-
-    /**
-     * Displays the course list component based on whether user is searching
-     * by distribution or by department
-     */
-    const displayCourseList = () => {
-        return (
-            <CourseList
-                scheduleID={scheduleID}
-                query={getQuery[activeButtonIndex]}
-                searchType={variables4Query[activeButtonIndex]}
-            />
-            //<div></div>
+            <div>
+                <Selection
+                    className="filter"
+                    title={searchType}
+                    options={option}
+                    selected={selected}
+                    show={true}
+                    handleChange={handleChange}
+                />
+            </div>
         );
     };
 
@@ -322,7 +324,13 @@ const CourseSearch = ({ scheduleID }) => {
                 <div className="searchTxt">Search By:</div>
                 <div className="buttons">{renderSearchOptions()}</div>
             </div>
-            {displayCourseList()}
+            <CompiledLists 
+                scheduleID={scheduleID} 
+                selectedOptions={allSelected[activeButtonIndex]} 
+                searchKey={variables4Query[activeButtonIndex]}
+                query={getQuery[activeButtonIndex]}
+                queryFilters={queryFilters[activeButtonIndex]}
+            />
         </div>
     );
 };
