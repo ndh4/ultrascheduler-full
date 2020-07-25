@@ -183,7 +183,6 @@ const CourseSearch = ({ scheduleID }) => {
         Sunday: "U",
     }; // All days in abbreviation, used for query
     const [getDays, setDays] = useState([]);
-    console.log("geDays", getDays);
 
     // Represents which button is currently clicked for styling and returning data
     const [activeButtonIndex, setButtonIndex] = useState(0);
@@ -360,15 +359,14 @@ const CourseSearch = ({ scheduleID }) => {
     };
 
     /**
-     * Displays the search component based on whether user is searching
-     * by distribution or by department
+     * Displays the search component based on the user's search option
      */
     const displaySearch = () => {
         const searchType = searchTypes[activeButtonIndex];
         const option = allOptions[activeButtonIndex];
         const selected = allSelected[activeButtonIndex];
 
-        return (
+        const selection = (
             <div>
                 <Selection
                     className="filter"
@@ -378,11 +376,18 @@ const CourseSearch = ({ scheduleID }) => {
                     show={true}
                     handleChange={handleChange}
                 />
-                {displayTimeTF("To", "06:00", handleStartTimeTFChange)}
-                {displayTimeTF("From", "22:00", handleEndTimeTFChange)}
-                {displayDaySelect(getDays, handleChange)}
             </div>
         );
+        const time = (
+            <div>
+                {displayTimeTF("To", "06:00", handleStartTimeTFChange)}
+                {displayTimeTF("From", "22:00", handleEndTimeTFChange)}
+            </div>
+        );
+        const days = <div>{displayDaySelect(getDays, handleChange)}</div>;
+        const displayArray = [selection, selection, selection, time, days];
+
+        return displayArray[activeButtonIndex];
     };
 
     /**
