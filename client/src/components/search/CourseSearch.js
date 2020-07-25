@@ -12,7 +12,6 @@ import Input from "@material-ui/core/Input";
 import MenuItem from "@material-ui/core/MenuItem";
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
 import "./CourseSearch.global.css";
 
 const dummy = { label: "", value: "" };
@@ -27,31 +26,6 @@ const MenuProps = {
         },
     },
 };
-const useStyles = makeStyles((theme) => ({
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 120,
-        maxWidth: 300,
-    },
-    chips: {
-        display: "flex",
-        flexWrap: "wrap",
-    },
-    chip: {
-        margin: 2,
-    },
-    noLabel: {
-        marginTop: theme.spacing(3),
-    },
-}));
-//   function getStyles(day, days, theme) {
-//     return {
-//       fontWeight:
-//         days.indexOf(day) === -1
-//           ? theme.typography.fontWeightRegular
-//           : theme.typography.fontWeightMedium,
-//     };
-//   }
 
 /**
  * TODO: MAKE A FRAGMENT! THIS IS USED IN TWO PLACES
@@ -178,13 +152,10 @@ const formatTime = (time) => {
 };
 
 const CourseSearch = ({ scheduleID }) => {
-    const classes = useStyles();
-    const theme = useTheme();
-
     const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
     const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
     const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
-    const [getStartTime, setStartTime] = useState("0600");
+    const [getStartTime, setStartTime] = useState("0630");
     const [getEndTime, setEndTime] = useState("2200");
 
     const allDistributions = [
@@ -225,16 +196,15 @@ const CourseSearch = ({ scheduleID }) => {
         variables: { term },
     });
 
+    // Convert day's longname to its abbreviation
     const convertDays = (days) => {
-        console.log("presort days", days);
+        // We need to first sort the selected array to match the order that is stored
+        // in our database. Otherwise the $eq in SessionSchema will not work correctly
+        // as the order of the elements in the selected array may be different from that
+        // in the database
         days.sort((a, b) => {
-            console.log("a", a);
-            console.log("idx a", allDaysLong.indexOf(a));
-            console.log("b", b);
-            console.log("idx b", allDaysLong.indexOf(b));
             return allDaysLong.indexOf(a) - allDaysLong.indexOf(b);
         });
-        console.log("days", days);
         return days.map((day) => allDaysMap[day]);
     };
 
@@ -255,7 +225,7 @@ const CourseSearch = ({ scheduleID }) => {
         { distribution: getDist.value },
         { subject: getDept.value },
         {
-            days: convertDays(getDays),
+            days: convertDays(allDaysLong),
             startTime: getStartTime,
             endTime: getEndTime,
         },
@@ -343,7 +313,9 @@ const CourseSearch = ({ scheduleID }) => {
         });
     };
 
-    // Display the time textfield for user to select time range for the search
+    /**
+     * Display the time textfield for user to select time range for the search
+     */
     const displayTimeTF = (lbl, defaultVal, onChangeHandler) => {
         return (
             <TextField
@@ -362,6 +334,9 @@ const CourseSearch = ({ scheduleID }) => {
         );
     };
 
+    /**
+     * Displays the select components for user to select days to search
+     */
     const displayDaySelect = (vals, onChangeHandler) => {
         return (
             <Select
@@ -420,6 +395,7 @@ const CourseSearch = ({ scheduleID }) => {
                 scheduleID={scheduleID}
                 query={getQuery[activeButtonIndex]}
                 searchType={variables4Query[activeButtonIndex]}
+                idx={activeButtonIndex}
             />
         );
     };

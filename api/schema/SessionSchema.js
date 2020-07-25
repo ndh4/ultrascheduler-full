@@ -78,50 +78,7 @@ SessionTC.addResolver({
     },
 });
 
-// Find session through days
-SessionTC.addResolver({
-    name: "findByDays",
-    type: [SessionTC],
-    args: {
-        days: SessionTC.getInputTypeComposer()
-            .getFieldTC("class")
-            .getFieldType("days"),
-    },
-    resolve: async ({ source, args, context, info }) => {
-        let filter = {
-            "class.days": args.days,
-        };
-
-        return await Session.find(filter);
-    },
-});
-
-// Find session by start time
-SessionTC.addResolver({
-    name: "findByStartTime",
-    type: [SessionTC],
-    args: { startTime: "String!" },
-    resolve: async ({ source, args, context, info }) => {
-        let filter = { "class.startTime": args.startTime };
-        return await Session.find(filter);
-    },
-});
-
-// Find session through time interval
-SessionTC.addResolver({
-    name: "findByTimeInterval",
-    type: [SessionTC],
-    args: { startTime: "String!", endTime: "String!", term: "Float!" },
-    resolve: async ({ source, args, context, info }) => {
-        let filter = {
-            "class.startTime": { $gte: args.startTime },
-            "class.endTime": { $lte: args.endTime },
-            term: args.term,
-        };
-        return await Session.find(filter);
-    },
-});
-
+// Find session through time interval and days
 SessionTC.addResolver({
     name: "findByDayAndTimeInterval",
     type: [SessionTC],
@@ -135,10 +92,13 @@ SessionTC.addResolver({
         let filter = {
             "class.startTime": { $gte: args.startTime },
             "class.endTime": { $lte: args.endTime },
-            "class.days": { $eq: args.days },
+            "class.days": { $in: args.days },
             term: args.term,
         };
-        return await Session.find(filter);
+        return await Session.find(filter).sort({
+            "course.courseNum": 1,
+            subject: 1,
+        });
     },
 });
 
@@ -156,9 +116,6 @@ const SessionQuery = {
     sessionOne: SessionTC.getResolver("findOne"),
     sessionMany: SessionTC.getResolver("findMany"),
     sessionsByCourse: SessionTC.getResolver("findByCourse"),
-    sessionByDays: SessionTC.getResolver("findByDays"),
-    sessionByStartTime: SessionTC.getResolver("findByStartTime"),
-    sessionByTimeInterval: SessionTC.getResolver("findByTimeInterval"),
     sessionByDayAndTimeInterval: SessionTC.getResolver(
         "findByDayAndTimeInterval"
     ),

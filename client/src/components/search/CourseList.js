@@ -203,7 +203,7 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
     );
 };
 
-const CourseList = ({ scheduleID, query, searchType }) => {
+const CourseList = ({ scheduleID, query, searchType, idx }) => {
     const [courseSelected, setCourseSelected] = useState([]);
 
     // Get term from local state management
@@ -231,15 +231,18 @@ const CourseList = ({ scheduleID, query, searchType }) => {
     if (error) return <p>Error :(</p>;
     if (!courseData) return <p>No Data...</p>;
 
-    // Once the data has loaded, we want to extract the course results for the distribution
-    // courseResults = courseData.courseMany;
-    courseResults = courseData.sessionByDayAndTimeInterval;
+    // Once the data has loaded, we want to extract the course results
+    courseResults =
+        idx <= 2
+            ? courseData.courseMany
+            : courseData.sessionByDayAndTimeInterval;
 
     // We need to filter out any courses which have 0 sessions
-    // courseResults = courseResults.filter(
-    //     (course) => course.sessions.length > 0
-    // );
-    courseResults = courseResults.map((session) => session.course);
+    courseResults =
+        idx <= 2
+            ? courseResults.filter((course) => course.sessions.length > 0)
+            : courseResults.map((session) => session.course);
+
     if (courseResults.length === 0)
         return <p>No Available Course In This Range</p>;
 
