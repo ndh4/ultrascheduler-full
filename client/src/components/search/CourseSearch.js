@@ -211,7 +211,8 @@ const CourseSearch = ({ scheduleID }) => {
         Saturday: "S",
         Sunday: "U",
     }; // All days in abbreviation, used for query
-    const [getDays, setDays] = useState(allDaysLong);
+    const [getDays, setDays] = useState([]);
+    console.log("geDays", getDays);
 
     // Represents which button is currently clicked for styling and returning data
     const [activeButtonIndex, setButtonIndex] = useState(0);
@@ -225,6 +226,15 @@ const CourseSearch = ({ scheduleID }) => {
     });
 
     const convertDays = (days) => {
+        console.log("presort days", days);
+        days.sort((a, b) => {
+            console.log("a", a);
+            console.log("idx a", allDaysLong.indexOf(a));
+            console.log("b", b);
+            console.log("idx b", allDaysLong.indexOf(b));
+            return allDaysLong.indexOf(a) - allDaysLong.indexOf(b);
+        });
+        console.log("days", days);
         return days.map((day) => allDaysMap[day]);
     };
 
@@ -259,6 +269,7 @@ const CourseSearch = ({ scheduleID }) => {
         GET_DEPT_COURSES,
         GET_DIST_COURSES,
         GET_DEPT_COURSES,
+        GET_TIME_INTERVAL_COURSES,
         GET_TIME_INTERVAL_COURSES,
     ];
 
@@ -358,14 +369,14 @@ const CourseSearch = ({ scheduleID }) => {
                 id="demo-mutiple-name"
                 multiple
                 value={vals}
-                onChange={onChangeHandler}
+                onChange={(e) => onChangeHandler(e.target.value)}
                 input={<Input />}
                 renderValue={(selected) => selected.join(", ")}
                 MenuProps={MenuProps}
             >
-                {vals.map((day) => (
+                {allDaysLong.map((day) => (
                     <MenuItem key={day} value={day}>
-                        <Checkbox checked={getDays.indexOf(day) > -1} />
+                        <Checkbox checked={vals.indexOf(day) > -1} />
                         <ListItemText primary={day} />
                     </MenuItem>
                 ))}
@@ -394,7 +405,7 @@ const CourseSearch = ({ scheduleID }) => {
                 />
                 {displayTimeTF("To", "06:00", handleStartTimeTFChange)}
                 {displayTimeTF("From", "22:00", handleEndTimeTFChange)}
-                {displayDaySelect(allDaysLong, handleChange)}
+                {displayDaySelect(getDays, handleChange)}
             </div>
         );
     };

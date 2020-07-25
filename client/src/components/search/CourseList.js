@@ -233,13 +233,15 @@ const CourseList = ({ scheduleID, query, searchType }) => {
 
     // Once the data has loaded, we want to extract the course results for the distribution
     // courseResults = courseData.courseMany;
-    courseResults = courseData.sessionByTimeInterval;
+    courseResults = courseData.sessionByDayAndTimeInterval;
 
     // We need to filter out any courses which have 0 sessions
     // courseResults = courseResults.filter(
     //     (course) => course.sessions.length > 0
     // );
     courseResults = courseResults.map((session) => session.course);
+    if (courseResults.length === 0)
+        return <p>No Available Course In This Range</p>;
 
     // We also want to extract the user's draftSessions, nested inside their schedule
     draftSessions = scheduleData.scheduleOne.draftSessions;
