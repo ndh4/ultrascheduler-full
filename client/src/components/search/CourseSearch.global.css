@@ -38,3 +38,8 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+.selectTime {
+    display: flex;
+    justify-content: center;
+}

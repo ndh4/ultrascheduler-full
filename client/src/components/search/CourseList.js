@@ -238,6 +238,7 @@ const CourseList = ({ scheduleID, query, searchType, idx }) => {
             : courseData.sessionByDayAndTimeInterval;
 
     // We need to filter out any courses which have 0 sessions
+    // or we get the session's course field for days and time interval selection
     courseResults =
         idx <= 2
             ? courseResults.filter((course) => course.sessions.length > 0)

@@ -294,6 +294,8 @@ const CourseSearch = ({ scheduleID }) => {
                         style={{
                             textTransform: "none",
                             marginRight: "12px",
+                            marginTop: "6px",
+                            marginBottom: "6px",
                             padding: "1px 24px 1px 24px",
                             borderRadius: "25px",
                             fontSize: "12px",
@@ -318,6 +320,12 @@ const CourseSearch = ({ scheduleID }) => {
     const displayTimeTF = (lbl, defaultVal, onChangeHandler) => {
         return (
             <TextField
+                style={{
+                    marginTop: "12px",
+                    marginRight: "12px",
+                    marginLeft: "50px",
+                    width: "7vw",
+                }}
                 id="time"
                 label={lbl}
                 type="time"
@@ -339,8 +347,11 @@ const CourseSearch = ({ scheduleID }) => {
     const displayDaySelect = (vals, onChangeHandler) => {
         return (
             <Select
-                labelId="demo-mutiple-name-label"
-                id="demo-mutiple-name"
+                style={{
+                    marginTop: "20px",
+                    marginLeft: "20px",
+                    width: "25vw",
+                }}
                 multiple
                 value={vals}
                 onChange={(e) => onChangeHandler(e.target.value)}
@@ -379,12 +390,12 @@ const CourseSearch = ({ scheduleID }) => {
             </div>
         );
         const time = (
-            <div>
+            <div className="selectTime">
                 {displayTimeTF("To", "06:00", handleStartTimeTFChange)}
                 {displayTimeTF("From", "22:00", handleEndTimeTFChange)}
             </div>
         );
-        const days = <div>{displayDaySelect(getDays, handleChange)}</div>;
+        const days = displayDaySelect(getDays, handleChange);
         const displayArray = [selection, selection, selection, time, days];
 
         return displayArray[activeButtonIndex];
