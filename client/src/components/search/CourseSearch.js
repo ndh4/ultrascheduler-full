@@ -208,8 +208,8 @@ const formatTime = (time) => {
 
 const CourseSearch = ({ scheduleID }) => {
     const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
-    const [getDept, setDept] = useState([]); // Used for selection of a particular department
-    const [getDist, setDist] = useState([]); // Used for selection of a particular distribution
+    const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
+    const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
     const [getStartTime, setStartTime] = useState("0630");
     const [getEndTime, setEndTime] = useState("2200");
     //INSTRUCTOR SEARCH
@@ -295,12 +295,12 @@ const CourseSearch = ({ scheduleID }) => {
         "Course Day",
     ];
     const allOptions = [getDepts, allDistributions, getInstruct, getDepts];
-    const allSelected = [getDept, getDist, getInstruct, getDept];
+    const allSelected = [getDept, getDist, getInst, getDept];
     const setFuncs = [setDept, setDist, setInst, setDept, setDays];
     const variables4Query = [
-        ["subject"],
-        ["distribution"],
-        ["firstName", "lastName"],
+        { subject: getDept.value },
+        { distribution: getDist.value },
+        { firstName: getInst.firstName, lastName: getInst.lastName },
         {
             days: convertDays(allDaysLong),
             startTime: getStartTime,
@@ -313,7 +313,7 @@ const CourseSearch = ({ scheduleID }) => {
         },
     ];
 
-    const queryFilters = [["value"], ["value"], ["firstName", "lastName"]];
+    // const queryFilters = [["value"], ["value"], ["firstName", "lastName"]];
 
     const getQuery = [
         GET_DEPT_COURSES,
@@ -529,10 +529,12 @@ const CourseSearch = ({ scheduleID }) => {
             </div>
             {/* <CompiledLists
                 scheduleID={scheduleID}
-                selectedOptions={allSelected[activeButtonIndex]}
-                searchKey={variables4Query[activeButtonIndex]}
+                // selectedOptions={allSelected[activeButtonIndex]}
+                // searchKey={variables4Query[activeButtonIndex]}
                 query={getQuery[activeButtonIndex]}
-                queryFilters={queryFilters[activeButtonIndex]}
+                searchType={variables4Query[activeButtonIndex]}
+                idx={activeButtonIndex}
+                // queryFilters={queryFilters[activeButtonIndex]}
             /> */}
         </div>
     );

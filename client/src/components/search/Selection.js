@@ -18,15 +18,32 @@ const style = {
  * @param handleChange: The function to execute when the selection changes.
  */
 function Selection({ options, selected, show, handleChange }) {
-  if (show) {
-    return (
-      <div style={style}>
-        <Select value={selected} onChange={handleChange} options={options} isMulti={true}/>
-      </div>
-    );
-  } else {
-    return <div></div>;
-  }
+    if (show) {
+        // if (selected !== "") {
+        //     return (
+        //         <div style={style}>
+        //             <Select
+        //                 value={selected}
+        //                 onChange={handleChange}
+        //                 options={options}
+        //                 isMulti={true}
+        //             />
+        //         </div>
+        //     );
+        // }
+        return (
+            <div style={style}>
+                <Select
+                    value={selected}
+                    onChange={handleChange}
+                    options={options}
+                    isMulti={false}
+                />
+            </div>
+        );
+    } else {
+        return <div></div>;
+    }
 }
 
 export default Selection;
