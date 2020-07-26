@@ -262,7 +262,7 @@ const CourseSearch = ({ scheduleID }) => {
         "Friday",
         "Saturday",
         "Sunday",
-    ].map((day) => ({ label: day, value: day })); // All days in full name
+    ].map((day, idx) => ({ index: idx, label: day, value: day })); // All days in full name
     const allDaysMap = {
         Monday: "M",
         Tuesday: "T",
@@ -295,9 +295,9 @@ const CourseSearch = ({ scheduleID }) => {
         // as the order of the elements in the selected array may be different from that
         // in the database
         days.sort((a, b) => {
-            return allDaysLong.indexOf(a) - allDaysLong.indexOf(b);
+            return a.index - b.index;
         });
-        return days.map((day) => allDaysMap[day]);
+        return days.map((day) => allDaysMap[day.value]);
     };
     //get instructor data
     const { data: instructorData } = useQuery(GET_INSTRUCTORS, {
@@ -371,7 +371,7 @@ const CourseSearch = ({ scheduleID }) => {
     console.log("getDept", getDept);
     console.log("getDist", getDist);
     console.log("getDepts", getDepts);
-    console.log("getDays", getDay);
+    console.log("getDay", getDay);
 
     const getQuery = [
         GET_DEPT_COURSES,

@@ -35,9 +35,10 @@ const displayDaysCourseList = (
     convertDays,
     idx
 ) => {
-    if (selectedOptions) {
+    if (selectedOptions && selectedOptions.length) {
         let daysArray = convertDays(
-            selectedOptions.map((option) => option.value)
+            selectedOptions
+            // selectedOptions.map((option) => option.value)
         );
         console.log("daysArray", daysArray);
         let searchType = { days: daysArray };
@@ -46,11 +47,12 @@ const displayDaysCourseList = (
                 scheduleID={scheduleID}
                 query={query}
                 searchType={searchType}
-                // key={option[searchKey[0]]}
+                key={idx}
                 idx={idx}
             />
         );
     }
+    return <div></div>;
 };
 
 const CompiledLists = ({
@@ -62,7 +64,7 @@ const CompiledLists = ({
     convertDays,
     idx,
 }) => {
-    if (idx === 4)
+    if (idx === 4) {
         return displayDaysCourseList(
             scheduleID,
             query,
@@ -70,6 +72,7 @@ const CompiledLists = ({
             convertDays,
             idx
         );
+    }
 
     let optionValues = getValues(selectedOptions, searchKey, queryFilters);
 
@@ -79,6 +82,7 @@ const CompiledLists = ({
                 {
                     // return a CourseList for each of the selected options
                     optionValues.map((option) => {
+                        console.log("key", option[searchKey[0]]);
                         let searchType = {};
                         for (let key of searchKey) {
                             searchType[key] = option[key];

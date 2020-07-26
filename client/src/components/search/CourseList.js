@@ -261,11 +261,15 @@ const CourseList = ({ scheduleID, query, searchType, idx }) => {
             break;
         case 3:
             courseResults = courseData.sessionByTimeInterval;
-            courseResults = courseResults.map((session) => session.course);
+            courseResults = courseResults
+                .map((session) => session.course)
+                .filter((course) => course.sessions.length > 0);
             break;
         case 4:
             courseResults = courseData.sessionByDay;
-            courseResults = courseResults.map((session) => session.course);
+            courseResults = courseResults
+                .map((session) => session.course)
+                .filter((course) => course.sessions.length > 0);
             break;
         default:
             courseResults = courseData.courseMany;
