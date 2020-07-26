@@ -127,33 +127,14 @@ const CourseQuery = {
                 let distribution = value;
                 query.distribution = distribution;
             },
-        })
-        .addFilterArg({
-            name: "courseByTime", // From here: https://github.com/graphql-compose/graphql-compose-examples/blob/master/examples/northwind/models/product.js#L38,L49
-            type: "String",
-            description: "Search for a course by the start time",
-            query: (query, value) => {
-                let time = value;
-                query.sessions.class.startTime = time;
-            },
         }),
-    // courseManyInSubject: CourseTC.getResolver('findManyInSubject'),
     courseManyInDistribution: CourseTC.getResolver("findManyInDistribution"),
-    // courseManyInTime: CourseTC.getResolver("findManyInTime"),
     departments: {
         name: "departments",
         type: "[String]",
         args: { term: "Int!" },
         resolve: async (_, args) => {
             return await getSubjects(args.term);
-        },
-    },
-    classTimes: {
-        name: "all class time",
-        type: "[String]",
-        args: { term: "Int!" },
-        resolve: async (_, args) => {
-            return await getTime(args.term);
         },
     },
 };

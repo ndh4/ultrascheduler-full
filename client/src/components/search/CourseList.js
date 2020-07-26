@@ -335,12 +335,13 @@ const CourseList = ({ scheduleID, query, searchType, idx }) => {
 
     return (
         <List component="nav" aria-labelledby="nested-list-subheader">
-            {courseResults.map((course) => {
+            {courseResults.map((course, idx) => {
                 let id = course._id;
+                let key = `${id}-${idx}`;
                 return (
-                    <div key={id}>
+                    <div key={key}>
                         <ListItem
-                            key={id}
+                            key={key}
                             onClick={() =>
                                 courseSelected.includes(id)
                                     ? removeFromCoursesSelected(id)

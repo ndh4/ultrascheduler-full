@@ -84,7 +84,6 @@ const CompiledLists = ({
                 {
                     // return a CourseList for each of the selected options
                     optionValues.map((option) => {
-                        console.log("key", option[searchKey[0]]);
                         let searchType = {};
                         for (let key of searchKey) {
                             searchType[key] = option[key];

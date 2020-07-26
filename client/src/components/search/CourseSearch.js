@@ -1,45 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Selection from "./Selection";
-import CourseList from "./CourseList";
 import { initGA } from "../../utils/analytics";
 import { useQuery, gql } from "@apollo/client";
 import Button from "@material-ui/core/Button";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import TextField from "@material-ui/core/TextField";
-import Select from "@material-ui/core/Select";
-import Input from "@material-ui/core/Input";
-import MenuItem from "@material-ui/core/MenuItem";
-import Checkbox from "@material-ui/core/Checkbox";
-import ListItemText from "@material-ui/core/ListItemText";
 import "./CourseSearch.global.css";
 import CompiledLists from "./CompiledLists";
-
-const dummy = { label: "", value: "" };
-const dummy2 = { label: "", value: "", firstName: "", lastName: "" };
-
-const styles = {
-    filter: {
-        width: "100%",
-    },
-    button: {
-        display: "inline-block",
-        float: "center",
-        margin: 8,
-        padding: 2,
-    },
-};
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
 
 /**
  * TODO: MAKE A FRAGMENT! THIS IS USED IN TWO PLACES
