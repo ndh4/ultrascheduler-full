@@ -78,12 +78,31 @@ SessionTC.addResolver({
     },
 });
 
-// Find session through time interval and days
+// Find session through days
 SessionTC.addResolver({
-    name: "findByDayAndTimeInterval",
+    name: "findByDay",
     type: [SessionTC],
     args: {
         days: "[String!]",
+        term: "Float!",
+    },
+    resolve: async ({ source, args, context, info }) => {
+        let filter = {
+            "class.days": { $eq: args.days },
+            term: args.term,
+        };
+        return await Session.find(filter).sort({
+            "course.courseNum": 1,
+            subject: 1,
+        });
+    },
+});
+
+// Find session through time interval
+SessionTC.addResolver({
+    name: "findByTimeInterval",
+    type: [SessionTC],
+    args: {
         startTime: "String!",
         endTime: "String!",
         term: "Float!",
@@ -92,7 +111,6 @@ SessionTC.addResolver({
         let filter = {
             "class.startTime": { $gte: args.startTime },
             "class.endTime": { $lte: args.endTime },
-            "class.days": { $in: args.days },
             term: args.term,
         };
         return await Session.find(filter).sort({
@@ -116,9 +134,8 @@ const SessionQuery = {
     sessionOne: SessionTC.getResolver("findOne"),
     sessionMany: SessionTC.getResolver("findMany"),
     sessionsByCourse: SessionTC.getResolver("findByCourse"),
-    sessionByDayAndTimeInterval: SessionTC.getResolver(
-        "findByDayAndTimeInterval"
-    ),
+    sessionByDay: SessionTC.getResolver("findByDay"),
+    sessionByTimeInterval: SessionTC.getResolver("findByTimeInterval"),
 
     // sessionManyBySubject: SessionTC.getResolver("findManyBySubjects"),
 };
