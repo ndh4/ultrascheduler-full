@@ -79,7 +79,7 @@ const SEEN_RECENT_UPDATE = gql`
 `;
 
 // Toast for notifications
-const Main = ({}) => {
+const Main = ({ }) => {
     // Check for recent update from cache
     let { data: storeData } = useQuery(GET_LOCAL_DATA);
     let { term, recentUpdate } = storeData;
@@ -128,52 +128,52 @@ const Main = ({}) => {
                     draftSessions={schedule.draftSessions}
                 />
             </div>
-            <ButtonGroup style={{ margin: "30px" }}>
+            <ButtonGroup style={{ marginLeft: "35px", marginBottom: "10px" }}>
                 <IconButton
-                    style={{ border: "1px solid" }}
+                    style={{ border: "1px solid #6C7488", height: "13px", borderRadius: "5px 0px 0px 5px" }}
                     onClick={handleClick}
                     value="Calendar"
                 >
                     <DateRangeIcon
                         style={
                             clickValue === "Calendar"
-                                ? { color: "#e91e63" }
-                                : { color: "black" }
+                                ? { color: "#e91e63", width: "17px" }
+                                : { color: "#6C7488", width: "17px" }
                         }
                     />
                 </IconButton>
                 <IconButton
-                    style={{ border: "1px solid" }}
+                    style={{ border: "1px solid #6C7488", height: "13px", borderRadius: "0px 5px 5px 0px" }}
                     onClick={handleClick}
                     value="Details"
                 >
                     <ListIcon
                         style={
                             clickValue === "Details"
-                                ? { color: "#e91e63" }
-                                : { color: "black" }
+                                ? { color: "#e91e63", width: "17px" }
+                                : { color: "#6C7488", width: "17px" }
                         }
                     />
                 </IconButton>
             </ButtonGroup>
             {clickValue === "Details" ? (
-                <div className="Container" style={{ padding: "2%" }}>
-                    <div style={{ float: "right", width: "30%" }}>
+                <div className="Container" style={{ paddingLeft: "2%", paddingRight: "2%", paddingTop: "0%" }}>
+                    <div style={{ float: "right", width: "100%" }}>
                         <CourseSearch scheduleID={schedule._id} />
                     </div>
                 </div>
             ) : (
-                <div className="Container" style={{ padding: "2%" }}>
-                    <div style={{ float: "left", width: "30%" }}>
-                        <CourseSearch scheduleID={schedule._id} />
+                    <div className="Container" style={{ paddingLeft: "2%", paddingRight: "2%", paddingTop: "0%" }}>
+                        <div style={{ float: "left", width: "30%" }}>
+                            <CourseSearch scheduleID={schedule._id} />
+                        </div>
+                        <div style={{ float: "left", width: "70%" }}>
+                            <CourseCalendar
+                                draftSessions={schedule.draftSessions}
+                            />
+                        </div>
                     </div>
-                    <div style={{ float: "left", width: "70%" }}>
-                        <CourseCalendar
-                            draftSessions={schedule.draftSessions}
-                        />
-                    </div>
-                </div>
-            )}
+                )}
         </div>
     );
 };

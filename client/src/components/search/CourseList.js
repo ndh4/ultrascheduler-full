@@ -13,7 +13,8 @@ import { useQuery, gql, useMutation } from "@apollo/client";
 const detailStyle = {
     fontSize: "10px",
     color: "#6C7488",
-    background: "#F7F8FA"
+    background: "#F7F8FA",
+    width: "415px"
 };
 
 /**
