@@ -1,8 +1,5 @@
 import { Course, CourseTC, Session, SessionTC } from "../models";
-import { toInputObjectType } from "graphql-compose";
 import { getSubjects } from "../utils/courseUtils";
-import { getTime } from "../utils/sessionUtils";
-import { valueFromAST } from "graphql";
 
 /**
  * THIS IS THE MOST IMPORTANT LINE HERE - IT TOOK ALMOST 2 WEEKS TO GET THIS RIGHT

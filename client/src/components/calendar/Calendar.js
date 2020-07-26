@@ -21,6 +21,24 @@ const courseToCourseLabel = (course) => {
     return course.subject + " " + course.courseNum;
 }
 
+const courseToTooltipLabel = (session) => {
+    let tooltipString = courseToCourseLabel(session.course);
+    
+    // add course details
+    tooltipString += '\n' + session.course.longTitle;
+    tooltipString += '\nCRN: ' + session.crn; 
+    tooltipString += '\nEnrollment: ' + session.enrollment;
+    tooltipString += '\nMax enrollment: ' + session.maxEnrollment;
+    
+    tooltipString += '\nInstructor(s): ';
+    // add all instructors
+    for (let instructor of session.instructors) {
+        tooltipString += instructor.firstName +' ' + instructor.lastName;
+    }
+    
+    return tooltipString; 
+}
+
 const convertSectionToEvents = (section, session) => {
     let events = [];
     if (!section.startTime || !section.endTime) {
@@ -33,6 +51,9 @@ const convertSectionToEvents = (section, session) => {
     // Create moment objects for the time
     let momentStart = moment(section.startTime, 'HH:mm');
     let momentEnd = moment(section.endTime, 'HH:mm');
+
+    // create tooltip label
+    let tooltipLabel = courseToTooltipLabel(session);
 
     // Create event for each day
     for (let dayCode of section.days) {
@@ -51,7 +72,8 @@ const convertSectionToEvents = (section, session) => {
             desc: session.course.longTitle,
             source: section,
             start: eventStart.toDate(),
-            end: eventEnd.toDate()
+            end: eventEnd.toDate(),
+            tooltip: tooltipLabel
         });
     }
     return events;
@@ -96,9 +118,9 @@ const CourseCalendar = ({ draftSessions }) => {
             views={{month: false, week: CourseWeek, day: false}}
             drilldownView={null}
             defaultDate={moment("Sunday", "dddd")} // Always start on Sunday of the week
-            onSelectEvent={event => alert(event.title + "\n" + event.desc + "\n")}
             toolbar={false}
             style={style}
+            tooltipAccessor = {"tooltip"}
             />
         </div>
     )

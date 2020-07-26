@@ -76,9 +76,27 @@ InstructorTC.addFields({
 });
 
 const InstructorQuery = {
-    instructorOne: InstructorTC.getResolver("findOne"),
-    instructorMany: InstructorTC.getResolver("findMany"),
     instructorList: InstructorTC.getResolver("fetchInstructors"),
+    instructorMany: InstructorTC.getResolver("findMany"),
+    instructorOne: InstructorTC.getResolver("findOne")
+        .addFilterArg({
+            name: "coursefirstNameRegExp", // From here: https://github.com/graphql-compose/graphql-compose-examples/blob/master/examples/northwind/models/product.js#L38,L49
+            type: "String",
+            description: "Search for courses by instructor's first name",
+            query: (query, value) => {
+                let firstName = value;
+                query.firstName = firstName;
+            },
+        })
+        .addFilterArg({
+            name: "courselastNameRegExp", // From here: https://github.com/graphql-compose/graphql-compose-examples/blob/master/examples/northwind/models/product.js#L38,L49
+            type: "String",
+            description: "Search for a course by instructor's last name",
+            query: (query, value) => {
+                let lastName = value;
+                query.lastName = lastName;
+            },
+        }),
 };
 
 const InstructorMutation = {
