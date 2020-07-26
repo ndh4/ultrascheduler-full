@@ -11,8 +11,6 @@ const styles = {
 
 // Create an array with all of the necessary search values of the selected options
 const getValues = (selectedOptions, searchKey, queryFilters) => {
-    console.log("selectedOptions", selectedOptions);
-    console.log("searchKey", searchKey);
     let selectedValues = [];
     if (selectedOptions) {
         // for each selected option, create a new object and get query filter values
@@ -28,6 +26,8 @@ const getValues = (selectedOptions, searchKey, queryFilters) => {
     return selectedValues;
 };
 
+// The selected days should be stored in an array for the query variable i.e. {days:["M", "W", "F"]} and therefore
+// are converted differently than the other search options
 const displayDaysCourseList = (
     scheduleID,
     query,
@@ -36,20 +36,21 @@ const displayDaysCourseList = (
     idx
 ) => {
     if (selectedOptions && selectedOptions.length) {
-        let daysArray = convertDays(
-            selectedOptions
-            // selectedOptions.map((option) => option.value)
-        );
-        console.log("daysArray", daysArray);
+        let daysArray = convertDays(selectedOptions);
+
         let searchType = { days: daysArray };
         return (
-            <CourseList
-                scheduleID={scheduleID}
-                query={query}
-                searchType={searchType}
-                key={idx}
-                idx={idx}
-            />
+            <SwipeableViews containerStyle={styles.slideContainer}>
+                <div>
+                    <CourseList
+                        scheduleID={scheduleID}
+                        query={query}
+                        searchType={searchType}
+                        key={idx}
+                        idx={idx}
+                    />
+                </div>
+            </SwipeableViews>
         );
     }
     return <div></div>;
@@ -64,6 +65,7 @@ const CompiledLists = ({
     convertDays,
     idx,
 }) => {
+    // If the search option is by days, we need to convert the query variables to an array i.e. {days: ["M", "W", "F"]}
     if (idx === 4) {
         return displayDaysCourseList(
             scheduleID,

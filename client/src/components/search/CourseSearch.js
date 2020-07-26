@@ -240,10 +240,7 @@ const CourseSearch = ({ scheduleID }) => {
     const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
     const [getDept, setDept] = useState([]); // Used for selection of a particular department
     const [getDist, setDist] = useState([]); // Used for selection of a particular distribution
-    // const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
-    // const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
-    const [getStartTime, setStartTime] = useState("0630");
-    const [getEndTime, setEndTime] = useState("2200");
+
     //INSTRUCTOR SEARCH
     const [getInstruct, setInstruct] = useState([]); // Used for the entire list of instructors
     const [getInst, setInst] = useState([]); // Used for selection of a particular instructor
@@ -263,6 +260,7 @@ const CourseSearch = ({ scheduleID }) => {
         "Saturday",
         "Sunday",
     ].map((day, idx) => ({ index: idx, label: day, value: day })); // All days in full name
+
     const allDaysMap = {
         Monday: "M",
         Tuesday: "T",
@@ -272,10 +270,11 @@ const CourseSearch = ({ scheduleID }) => {
         Saturday: "S",
         Sunday: "U",
     }; // All days in abbreviation, used for query
-    const [getDay, setDay] = useState([]);
+
+    const [getDay, setDay] = useState([]); // store the selected days
     const [getTime, setTime] = useState([
         { startTime: "0630", endTime: "2200" },
-    ]);
+    ]); // store the selected time interval
 
     // Represents which button is currently clicked for styling and returning data
     const [activeButtonIndex, setButtonIndex] = useState(0);
@@ -288,17 +287,6 @@ const CourseSearch = ({ scheduleID }) => {
         variables: { term },
     });
 
-    // Convert day's longname to its abbreviation
-    const convertDays = (days) => {
-        // We need to first sort the selected array to match the order that is stored
-        // in our database. Otherwise the $eq in SessionSchema will not work correctly
-        // as the order of the elements in the selected array may be different from that
-        // in the database
-        days.sort((a, b) => {
-            return a.index - b.index;
-        });
-        return days.map((day) => allDaysMap[day.value]);
-    };
     //get instructor data
     const { data: instructorData } = useQuery(GET_INSTRUCTORS, {
         variables: { term },
@@ -320,6 +308,18 @@ const CourseSearch = ({ scheduleID }) => {
         return instructorNames;
     };
 
+    // Convert day's longname to its abbreviation
+    const convertDays = (days) => {
+        // We need to first sort the selected array to match the order that is stored
+        // in our database. Otherwise the $eq in SessionSchema will not work correctly
+        // as the order of the elements in the selected array may be different from that
+        // in the database
+        days.sort((a, b) => {
+            return a.index - b.index;
+        });
+        return days.map((day) => allDaysMap[day.value]);
+    };
+
     // These variables are used in displaySearch function and displayCourseList function:
     // Department is used as a placeholder for Instructors for now
     const searchTypes = [
@@ -336,29 +336,15 @@ const CourseSearch = ({ scheduleID }) => {
         getDepts,
         allDaysLong,
     ];
-    const allSelected = [getDept, getDist, getInst, getDept, getDay];
+    const allSelected = [getDept, getDist, getInst, getTime, getDay];
     const setFuncs = [setDept, setDist, setInst, setTime, setDay];
-    // const variables4Query = [
-    //     { subject: getDept.value },
-    //     { distribution: getDist.value },
-    //     { firstName: getInst.firstName, lastName: getInst.lastName },
-    //     {
-    //         days: convertDays(allDaysLong),
-    //         startTime: getStartTime,
-    //         endTime: getEndTime,
-    //     },
-    //     {
-    //         days: convertDays(getDays),
-    //         startTime: getStartTime,
-    //         endTime: getEndTime,
-    //     },
-    // ];
+
     const variables4Query = [
         ["subject"],
         ["distribution"],
         ["firstName", "lastName"],
         ["startTime", "endTime"],
-        ["days"],
+        ["days"], // this is not used in CompiledLists.js
     ];
 
     const queryFilters = [
@@ -366,12 +352,8 @@ const CourseSearch = ({ scheduleID }) => {
         ["value"],
         ["firstName", "lastName"],
         ["startTime", "endTime"],
-        ["value"],
+        ["value"], // this is not used in CompiledLists.js
     ];
-    console.log("getDept", getDept);
-    console.log("getDist", getDist);
-    console.log("getDepts", getDepts);
-    console.log("getDay", getDay);
 
     const getQuery = [
         GET_DEPT_COURSES,
@@ -413,20 +395,14 @@ const CourseSearch = ({ scheduleID }) => {
         setFunc(selectedOption);
     };
 
+    // Set the selected startTime/EndTime
     const handleStartTimeTFChange = (event) => {
         let selectedTime = event.target.value;
-        console.log("selectedStartTime", selectedTime);
-        setStartTime([{ ...getTime[0], startTime: formatTime(selectedTime) }]);
+        setTime([{ ...getTime[0], startTime: formatTime(selectedTime) }]);
     };
     const handleEndTimeTFChange = (event) => {
         let selectedTime = event.target.value;
-        console.log("selectedEndTime", selectedTime);
-        setEndTime([{ ...getTime[0], endTime: formatTime(selectedTime) }]);
-    };
-    const handleDaysChange = (event) => {
-        let selectedDays = event.target.value;
-        console.log("selectedDays", selectedDays);
-        setDays([{ ...getDays[0], days: convertDays(selectedDays) }]);
+        setTime([{ ...getTime[0], endTime: formatTime(selectedTime) }]);
     };
 
     // Set color theme for the button for clicked and unclicked effect
@@ -487,8 +463,8 @@ const CourseSearch = ({ scheduleID }) => {
                 style={{
                     marginTop: "12px",
                     marginRight: "12px",
-                    marginLeft: "50px",
-                    width: "7vw",
+                    marginLeft: "30px",
+                    width: "10vw",
                 }}
                 id="time"
                 label={lbl}
@@ -502,34 +478,6 @@ const CourseSearch = ({ scheduleID }) => {
                 }}
                 onChange={onChangeHandler}
             />
-        );
-    };
-
-    /**
-     * Displays the select components for user to select days to search
-     */
-    const displayDaySelect = (vals, onChangeHandler) => {
-        return (
-            <Select
-                style={{
-                    marginTop: "20px",
-                    marginLeft: "20px",
-                    width: "25vw",
-                }}
-                multiple
-                value={vals}
-                onChange={onChangeHandler}
-                input={<Input />}
-                renderValue={(selected) => selected.join(", ")}
-                MenuProps={MenuProps}
-            >
-                {allDaysLong.map((day) => (
-                    <MenuItem key={day} value={day}>
-                        <Checkbox checked={vals.indexOf(day) > -1} />
-                        <ListItemText primary={day} />
-                    </MenuItem>
-                ))}
-            </Select>
         );
     };
 
@@ -555,29 +503,14 @@ const CourseSearch = ({ scheduleID }) => {
         );
         const time = (
             <div className="selectTime">
-                {displayTimeTF("To", "06:00", handleStartTimeTFChange)}
+                {displayTimeTF("To", "06:30", handleStartTimeTFChange)}
                 {displayTimeTF("From", "22:00", handleEndTimeTFChange)}
             </div>
         );
-        // const days = displayDaySelect(getDays, handleDaysChange);
+
         const displayArray = [selection, selection, selection, time, selection];
 
         return displayArray[activeButtonIndex];
-    };
-
-    /**
-     * Displays the course list component based on whether user is searching
-     * by distribution or by department
-     */
-    const displayCourseList = () => {
-        return (
-            <CourseList
-                scheduleID={scheduleID}
-                query={getQuery[activeButtonIndex]}
-                searchType={variables4Query[activeButtonIndex]}
-                idx={activeButtonIndex}
-            />
-        );
     };
 
     // Initialize Google Analytics
@@ -595,11 +528,9 @@ const CourseSearch = ({ scheduleID }) => {
                 selectedOptions={allSelected[activeButtonIndex]}
                 searchKey={variables4Query[activeButtonIndex]}
                 query={getQuery[activeButtonIndex]}
-                // searchType={variables4Query[activeButtonIndex]}
-                // idx={activeButtonIndex}
                 queryFilters={queryFilters[activeButtonIndex]}
-                convertDays={convertDays}
-                idx={activeButtonIndex}
+                convertDays={convertDays} // Use to convert days longname to its abbreviation
+                idx={activeButtonIndex} // need this to identify which field to call on the value returned by the query
             />
         </div>
     );

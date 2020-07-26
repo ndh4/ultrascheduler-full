@@ -226,7 +226,6 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
 
 const CourseList = ({ scheduleID, query, searchType, idx }) => {
     const [courseSelected, setCourseSelected] = useState([]);
-    console.log("searchType", searchType);
 
     // Get term from local state management
     const { data: termData } = useQuery(GET_TERM);
@@ -277,17 +276,6 @@ const CourseList = ({ scheduleID, query, searchType, idx }) => {
                 (course) => course.sessions.length > 0
             );
     }
-    // if (idx < 2) {
-    //     courseResults = courseData.courseMany;
-    //     courseResults = courseResults.filter(
-    //         (course) => course.sessions.length > 0
-    //     );
-    // } else if (idx === 2) {
-    //     courseResults = courseData.instructorOne.sessions;
-    // } else {
-    //     courseResults = courseData.sessionByDayAndTimeInterval;
-    //     courseResults = courseResults.map((session) => session.course);
-    // }
 
     if (courseResults.length === 0)
         return <p>No Available Course In This Range</p>;
@@ -369,14 +357,6 @@ const CourseList = ({ scheduleID, query, searchType, idx }) => {
                         >
                             <List component="div" disablePadding>
                                 {collapseItem(course)}
-                                {/* {course.sessions.map((session) => (
-                                    <SessionItem
-                                        course={course}
-                                        session={session}
-                                        draftSessions={draftSessions}
-                                        scheduleID={scheduleID}
-                                    />
-                                ))} */}
                             </List>
                         </Collapse>
                     </div>
