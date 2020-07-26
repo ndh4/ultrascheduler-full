@@ -259,7 +259,7 @@ const CourseList = ({ scheduleID, query, searchType, idx }) => {
         courseResults = courseResults.filter(
             (course) => course.sessions.length > 0
         );
-    } else if (idx === 3) {
+    } else if (idx === 2) {
         courseResults = courseData.instructorOne.sessions;
     } else {
         courseResults = courseData.sessionByDayAndTimeInterval;
@@ -297,7 +297,7 @@ const CourseList = ({ scheduleID, query, searchType, idx }) => {
     };
 
     const collapseItem = (course) => {
-        //distribution and department
+        //distribution, department, day, time interval
         if (course.sessions) {
             return course.sessions.map((session, idx) => (
                 <SessionItem
@@ -345,14 +345,15 @@ const CourseList = ({ scheduleID, query, searchType, idx }) => {
                             unmountOnExit
                         >
                             <List component="div" disablePadding>
-                                {course.sessions.map((session) => (
+                                {collapseItem(course)}
+                                {/* {course.sessions.map((session) => (
                                     <SessionItem
                                         course={course}
                                         session={session}
                                         draftSessions={draftSessions}
                                         scheduleID={scheduleID}
                                     />
-                                ))}
+                                ))} */}
                             </List>
                         </Collapse>
                     </div>

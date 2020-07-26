@@ -208,8 +208,10 @@ const formatTime = (time) => {
 
 const CourseSearch = ({ scheduleID }) => {
     const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
-    const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
-    const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
+    const [getDept, setDept] = useState([]); // Used for selection of a particular department
+    const [getDist, setDist] = useState([]); // Used for selection of a particular distribution
+    // const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
+    // const [getDist, setDist] = useState(dummy); // Used for selection of a particular distribution
     const [getStartTime, setStartTime] = useState("0630");
     const [getEndTime, setEndTime] = useState("2200");
     //INSTRUCTOR SEARCH
@@ -230,7 +232,7 @@ const CourseSearch = ({ scheduleID }) => {
         "Friday",
         "Saturday",
         "Sunday",
-    ]; // All days in full name
+    ].map((day) => ({ label: day, value: day })); // All days in full name
     const allDaysMap = {
         Monday: "M",
         Tuesday: "T",
@@ -240,7 +242,10 @@ const CourseSearch = ({ scheduleID }) => {
         Saturday: "S",
         Sunday: "U",
     }; // All days in abbreviation, used for query
-    const [getDays, setDays] = useState([]);
+    const [getDays, setDays] = useState(allDaysLong);
+    const [getTime, setTime] = useState([
+        { startTime: "0630", endTime: "2200" },
+    ]);
 
     // Represents which button is currently clicked for styling and returning data
     const [activeButtonIndex, setButtonIndex] = useState(0);
@@ -294,26 +299,43 @@ const CourseSearch = ({ scheduleID }) => {
         "Course Time",
         "Course Day",
     ];
-    const allOptions = [getDepts, allDistributions, getInstruct, getDepts];
+    const allOptions = [
+        getDepts,
+        allDistributions,
+        getInstruct,
+        getDepts,
+        getDays,
+    ];
     const allSelected = [getDept, getDist, getInst, getDept];
-    const setFuncs = [setDept, setDist, setInst, setDept, setDays];
+    const setFuncs = [setDept, setDist, setInst, setTime, setDays];
+    // const variables4Query = [
+    //     { subject: getDept.value },
+    //     { distribution: getDist.value },
+    //     { firstName: getInst.firstName, lastName: getInst.lastName },
+    //     {
+    //         days: convertDays(allDaysLong),
+    //         startTime: getStartTime,
+    //         endTime: getEndTime,
+    //     },
+    //     {
+    //         days: convertDays(getDays),
+    //         startTime: getStartTime,
+    //         endTime: getEndTime,
+    //     },
+    // ];
     const variables4Query = [
-        { subject: getDept.value },
-        { distribution: getDist.value },
-        { firstName: getInst.firstName, lastName: getInst.lastName },
-        {
-            days: convertDays(allDaysLong),
-            startTime: getStartTime,
-            endTime: getEndTime,
-        },
-        {
-            days: convertDays(getDays),
-            startTime: getStartTime,
-            endTime: getEndTime,
-        },
+        ["subject"],
+        ["distribution"],
+        ["firstName", "lastName"],
+        ["startTime", "endTime"],
+        ["days"],
     ];
 
-    // const queryFilters = [["value"], ["value"], ["firstName", "lastName"]];
+    const queryFilters = [["value"], ["value"], ["firstName", "lastName"]];
+    console.log("getDept", getDept);
+    console.log("getDist", getDist);
+    console.log("getDepts", getDepts);
+    console.log("getDays", getDays);
 
     const getQuery = [
         GET_DEPT_COURSES,
@@ -349,7 +371,7 @@ const CourseSearch = ({ scheduleID }) => {
         }
     }, [instructorData]);
 
-    // Set the selected departmen/distribution
+    // Set the selected department/distribution/instructor
     const handleChange = (selectedOption) => {
         const setFunc = setFuncs[activeButtonIndex];
         setFunc(selectedOption);
@@ -358,12 +380,17 @@ const CourseSearch = ({ scheduleID }) => {
     const handleStartTimeTFChange = (event) => {
         let selectedTime = event.target.value;
         console.log("selectedStartTime", selectedTime);
-        setStartTime(formatTime(selectedTime));
+        setStartTime([{ ...getTime[0], startTime: formatTime(selectedTime) }]);
     };
     const handleEndTimeTFChange = (event) => {
         let selectedTime = event.target.value;
         console.log("selectedEndTime", selectedTime);
-        setEndTime(formatTime(selectedTime));
+        setEndTime([{ ...getTime[0], endTime: formatTime(selectedTime) }]);
+    };
+    const handleDaysChange = (event) => {
+        let selectedDays = event.target.value;
+        console.log("selectedDays", selectedDays);
+        setDays([{ ...getDays[0], days: convertDays(selectedDays) }]);
     };
 
     // Set color theme for the button for clicked and unclicked effect
@@ -455,7 +482,7 @@ const CourseSearch = ({ scheduleID }) => {
                 }}
                 multiple
                 value={vals}
-                onChange={(e) => onChangeHandler(e.target.value)}
+                onChange={onChangeHandler}
                 input={<Input />}
                 renderValue={(selected) => selected.join(", ")}
                 MenuProps={MenuProps}
@@ -496,8 +523,8 @@ const CourseSearch = ({ scheduleID }) => {
                 {displayTimeTF("From", "22:00", handleEndTimeTFChange)}
             </div>
         );
-        const days = displayDaySelect(getDays, handleChange);
-        const displayArray = [selection, selection, selection, time, days];
+        const days = displayDaySelect(getDays, handleDaysChange);
+        const displayArray = [selection, selection, selection, time, selection];
 
         return displayArray[activeButtonIndex];
     };
@@ -527,15 +554,16 @@ const CourseSearch = ({ scheduleID }) => {
                 <div className="searchTxt">Search By:</div>
                 <div className="buttons">{renderSearchOptions()}</div>
             </div>
-            {/* <CompiledLists
+            <CompiledLists
                 scheduleID={scheduleID}
-                // selectedOptions={allSelected[activeButtonIndex]}
-                // searchKey={variables4Query[activeButtonIndex]}
+                selectedOptions={allSelected[activeButtonIndex]}
+                searchKey={variables4Query[activeButtonIndex]}
                 query={getQuery[activeButtonIndex]}
-                searchType={variables4Query[activeButtonIndex]}
+                // searchType={variables4Query[activeButtonIndex]}
+                // idx={activeButtonIndex}
+                queryFilters={queryFilters[activeButtonIndex]}
                 idx={activeButtonIndex}
-                // queryFilters={queryFilters[activeButtonIndex]}
-            /> */}
+            />
         </div>
     );
 };

@@ -11,6 +11,8 @@ const styles = {
 
 // Create an array with all of the necessary search values of the selected options
 const getValues = (selectedOptions, searchKey, queryFilters) => {
+    console.log("selectedOptions", selectedOptions);
+    console.log("searchKey", searchKey);
     let selectedValues = [];
     if (selectedOptions) {
         // for each selected option, create a new object and get query filter values
@@ -26,41 +28,53 @@ const getValues = (selectedOptions, searchKey, queryFilters) => {
     return selectedValues;
 };
 
-const CompiledLists = ({ scheduleID, query, searchType, idx }) => {
+// const CompiledLists = ({ scheduleID, query, searchType, idx }) => {
+//     return (
+//         <SwipeableViews containerStyle={styles.slideContainer}>
+//             <CourseList
+//                 scheduleID={scheduleID}
+//                 query={query}
+//                 searchType={searchType}
+//                 idx={idx}
+//             />
+//         </SwipeableViews>
+//     );
+// };
+
+const CompiledLists = ({
+    scheduleID,
+    selectedOptions,
+    searchKey,
+    query,
+    queryFilters,
+    idx,
+}) => {
+    let optionValues = getValues(selectedOptions, searchKey, queryFilters);
+
     return (
         <SwipeableViews containerStyle={styles.slideContainer}>
-            <CourseList
-                scheduleID={scheduleID}
-                query={query}
-                searchType={searchType}
-                idx={idx}
-            />
+            <div>
+                {
+                    // return a CourseList for each of the selected options
+                    optionValues.map((option) => {
+                        let searchType = {};
+                        for (let key of searchKey) {
+                            searchType[key] = option[key];
+                        }
+                        return (
+                            <CourseList
+                                scheduleID={scheduleID}
+                                query={query}
+                                searchType={searchType}
+                                key={option[searchKey[0]]}
+                                idx={idx}
+                            />
+                        );
+                    })
+                }
+            </div>
         </SwipeableViews>
     );
 };
-
-// const CompiledLists = ({ scheduleID, selectedOptions, searchKey, query, queryFilters }) => {
-//     let optionValues = getValues(selectedOptions, searchKey, queryFilters);
-
-//     return (
-//         <SwipeableViews containerStyle={styles.slideContainer}>
-//             <div>
-
-//                 {
-//                     // return a CourseList for each of the selected options
-//                     optionValues.map(option => {
-//                     let searchType = {};
-//                     for(let key of searchKey) {
-//                         searchType[key] = option[key];
-//                     }
-//                     return (
-//                         <CourseList scheduleID={scheduleID} query={query} searchType={searchType} key={option[searchKey[0]]}/>
-//                     )
-//                 })}
-//             </div>
-//         </SwipeableViews>
-//     )
-
-// };
 
 export default CompiledLists;

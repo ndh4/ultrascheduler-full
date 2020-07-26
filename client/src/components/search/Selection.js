@@ -37,7 +37,7 @@ function Selection({ options, selected, show, handleChange }) {
                     value={selected}
                     onChange={handleChange}
                     options={options}
-                    isMulti={false}
+                    isMulti={true}
                 />
             </div>
         );
