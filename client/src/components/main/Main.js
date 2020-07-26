@@ -3,10 +3,14 @@ import Header from "../header/Header";
 import CourseCalendar from "../calendar/Calendar";
 import ClassSelector from "../draftview/ClassSelector";
 import CourseSearch from "../search/CourseSearch";
-import InstructorSearch from "../search/InstructorSearch";
 import { useToasts } from "react-toast-notifications";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import LoadingScreen from "../LoadingScreen";
+import IconButton from "@material-ui/core/IconButton";
+import DateRangeIcon from "@material-ui/icons/DateRange";
+import ListIcon from "@material-ui/icons/List";
+
+import ButtonGroup from "@material-ui/core/ButtonGroup";
 
 export const GET_USER_SCHEDULE = gql`
     query GetUserSchedule($term: String!) {
@@ -79,6 +83,7 @@ const Main = ({}) => {
     // Check for recent update from cache
     let { data: storeData } = useQuery(GET_LOCAL_DATA);
     let { term, recentUpdate } = storeData;
+    const [clickValue, setClickValue] = useState("");
 
     // Need to be able to update recentUpdate field on the user when they dismiss
     let [seenRecentUpdate] = useMutation(SEEN_RECENT_UPDATE);
@@ -110,6 +115,10 @@ const Main = ({}) => {
 
     const schedule = data.scheduleOne;
 
+    const handleClick = (e) => {
+        setClickValue(e.currentTarget.value);
+    };
+
     return (
         <div className="App" style={{ display: "inline", color: "#272D2D" }}>
             <Header />
@@ -119,17 +128,52 @@ const Main = ({}) => {
                     draftSessions={schedule.draftSessions}
                 />
             </div>
-            <div className="Container" style={{ padding: "2%" }}>
-                <div style={{ float: "left", width: "30%" }}>
-                    <CourseSearch scheduleID={schedule._id} />
+            <ButtonGroup style={{ margin: "30px" }}>
+                <IconButton
+                    style={{ border: "1px solid" }}
+                    onClick={handleClick}
+                    value="Calendar"
+                >
+                    <DateRangeIcon
+                        style={
+                            clickValue === "Calendar"
+                                ? { color: "#e91e63" }
+                                : { color: "black" }
+                        }
+                    />
+                </IconButton>
+                <IconButton
+                    style={{ border: "1px solid" }}
+                    onClick={handleClick}
+                    value="Details"
+                >
+                    <ListIcon
+                        style={
+                            clickValue === "Details"
+                                ? { color: "#e91e63" }
+                                : { color: "black" }
+                        }
+                    />
+                </IconButton>
+            </ButtonGroup>
+            {clickValue === "Details" ? (
+                <div className="Container" style={{ padding: "2%" }}>
+                    <div style={{ float: "right", width: "30%" }}>
+                        <CourseSearch scheduleID={schedule._id} />
+                    </div>
                 </div>
-                {/* <div style={{ float: "right", width: "40%" }}>
-                    <InstructorSearch scheduleID={schedule._id} />
-                </div> */}
-                <div style={{ float: "left", width: "70%" }}>
-                    <CourseCalendar draftSessions={schedule.draftSessions} />
+            ) : (
+                <div className="Container" style={{ padding: "2%" }}>
+                    <div style={{ float: "left", width: "30%" }}>
+                        <CourseSearch scheduleID={schedule._id} />
+                    </div>
+                    <div style={{ float: "left", width: "70%" }}>
+                        <CourseCalendar
+                            draftSessions={schedule.draftSessions}
+                        />
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

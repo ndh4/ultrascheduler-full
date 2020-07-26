@@ -3,7 +3,6 @@ import { Table, TableBody, TableRow, TableCell, Box } from "@material-ui/core";
 import Collapse from "@material-ui/core/Collapse";
 import "./Detail.global.css";
 
-
 /* Return a div for each row */
 const formatDiv = (bold, normalTxt) => {
     return (
@@ -32,7 +31,7 @@ const Detail = ({
     instructorsToNames,
     open,
     classTimeString,
-    style
+    style,
 }) => {
     const Times = (section) => {
         if (!section.startTime || !section.endTime) {
