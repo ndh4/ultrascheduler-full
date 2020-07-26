@@ -120,15 +120,45 @@ const GET_DIST_COURSES = gql`
     }
 `;
 
+const GET_DAYS_COURSES = gql`
+    query GetDaysCourses($days: [String!], $term: Float!) {
+        sessionByDay(days: $days, term: $term) {
+            course {
+                _id
+                subject
+                courseNum
+                longTitle
+                distribution
+                sessions(filter: { term: $term }) {
+                    _id
+                    crn
+                    class {
+                        days
+                        startTime
+                        endTime
+                    }
+                    lab {
+                        days
+                        startTime
+                        endTime
+                    }
+                    instructors {
+                        firstName
+                        lastName
+                    }
+                }
+            }
+        }
+    }
+`;
+
 const GET_TIME_INTERVAL_COURSES = gql`
     query GetTimeIntervalCourses(
-        $days: [String!]
         $startTime: String!
         $endTime: String!
         $term: Float!
     ) {
-        sessionByDayAndTimeInterval(
-            days: $days
+        sessionByTimeInterval(
             startTime: $startTime
             endTime: $endTime
             term: $term
@@ -242,7 +272,7 @@ const CourseSearch = ({ scheduleID }) => {
         Saturday: "S",
         Sunday: "U",
     }; // All days in abbreviation, used for query
-    const [getDays, setDays] = useState(allDaysLong);
+    const [getDay, setDay] = useState([]);
     const [getTime, setTime] = useState([
         { startTime: "0630", endTime: "2200" },
     ]);
@@ -304,10 +334,10 @@ const CourseSearch = ({ scheduleID }) => {
         allDistributions,
         getInstruct,
         getDepts,
-        getDays,
+        allDaysLong,
     ];
-    const allSelected = [getDept, getDist, getInst, getDept];
-    const setFuncs = [setDept, setDist, setInst, setTime, setDays];
+    const allSelected = [getDept, getDist, getInst, getDept, getDay];
+    const setFuncs = [setDept, setDist, setInst, setTime, setDay];
     // const variables4Query = [
     //     { subject: getDept.value },
     //     { distribution: getDist.value },
@@ -331,18 +361,24 @@ const CourseSearch = ({ scheduleID }) => {
         ["days"],
     ];
 
-    const queryFilters = [["value"], ["value"], ["firstName", "lastName"]];
+    const queryFilters = [
+        ["value"],
+        ["value"],
+        ["firstName", "lastName"],
+        ["startTime", "endTime"],
+        ["value"],
+    ];
     console.log("getDept", getDept);
     console.log("getDist", getDist);
     console.log("getDepts", getDepts);
-    console.log("getDays", getDays);
+    console.log("getDays", getDay);
 
     const getQuery = [
         GET_DEPT_COURSES,
         GET_DIST_COURSES,
         COURSES_BY_INSTRUCTORS,
         GET_TIME_INTERVAL_COURSES,
-        GET_TIME_INTERVAL_COURSES,
+        GET_DAYS_COURSES,
     ];
 
     /**
@@ -523,7 +559,7 @@ const CourseSearch = ({ scheduleID }) => {
                 {displayTimeTF("From", "22:00", handleEndTimeTFChange)}
             </div>
         );
-        const days = displayDaySelect(getDays, handleDaysChange);
+        // const days = displayDaySelect(getDays, handleDaysChange);
         const displayArray = [selection, selection, selection, time, selection];
 
         return displayArray[activeButtonIndex];
@@ -562,6 +598,7 @@ const CourseSearch = ({ scheduleID }) => {
                 // searchType={variables4Query[activeButtonIndex]}
                 // idx={activeButtonIndex}
                 queryFilters={queryFilters[activeButtonIndex]}
+                convertDays={convertDays}
                 idx={activeButtonIndex}
             />
         </div>

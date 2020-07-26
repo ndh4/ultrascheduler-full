@@ -28,18 +28,30 @@ const getValues = (selectedOptions, searchKey, queryFilters) => {
     return selectedValues;
 };
 
-// const CompiledLists = ({ scheduleID, query, searchType, idx }) => {
-//     return (
-//         <SwipeableViews containerStyle={styles.slideContainer}>
-//             <CourseList
-//                 scheduleID={scheduleID}
-//                 query={query}
-//                 searchType={searchType}
-//                 idx={idx}
-//             />
-//         </SwipeableViews>
-//     );
-// };
+const displayDaysCourseList = (
+    scheduleID,
+    query,
+    selectedOptions,
+    convertDays,
+    idx
+) => {
+    if (selectedOptions) {
+        let daysArray = convertDays(
+            selectedOptions.map((option) => option.value)
+        );
+        console.log("daysArray", daysArray);
+        let searchType = { days: daysArray };
+        return (
+            <CourseList
+                scheduleID={scheduleID}
+                query={query}
+                searchType={searchType}
+                // key={option[searchKey[0]]}
+                idx={idx}
+            />
+        );
+    }
+};
 
 const CompiledLists = ({
     scheduleID,
@@ -47,8 +59,18 @@ const CompiledLists = ({
     searchKey,
     query,
     queryFilters,
+    convertDays,
     idx,
 }) => {
+    if (idx === 4)
+        return displayDaysCourseList(
+            scheduleID,
+            query,
+            selectedOptions,
+            convertDays,
+            idx
+        );
+
     let optionValues = getValues(selectedOptions, searchKey, queryFilters);
 
     return (

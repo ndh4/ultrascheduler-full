@@ -226,6 +226,7 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
 
 const CourseList = ({ scheduleID, query, searchType, idx }) => {
     const [courseSelected, setCourseSelected] = useState([]);
+    console.log("searchType", searchType);
 
     // Get term from local state management
     const { data: termData } = useQuery(GET_TERM);
@@ -254,17 +255,35 @@ const CourseList = ({ scheduleID, query, searchType, idx }) => {
     // Once the data has loaded, we want to extract the course results
     // We need to filter out any courses which have 0 sessions
     // or we get the session's course field for days and time interval selection
-    if (idx < 2) {
-        courseResults = courseData.courseMany;
-        courseResults = courseResults.filter(
-            (course) => course.sessions.length > 0
-        );
-    } else if (idx === 2) {
-        courseResults = courseData.instructorOne.sessions;
-    } else {
-        courseResults = courseData.sessionByDayAndTimeInterval;
-        courseResults = courseResults.map((session) => session.course);
+    switch (idx) {
+        case 2:
+            courseResults = courseData.instructorOne.sessions;
+            break;
+        case 3:
+            courseResults = courseData.sessionByTimeInterval;
+            courseResults = courseResults.map((session) => session.course);
+            break;
+        case 4:
+            courseResults = courseData.sessionByDay;
+            courseResults = courseResults.map((session) => session.course);
+            break;
+        default:
+            courseResults = courseData.courseMany;
+            courseResults = courseResults.filter(
+                (course) => course.sessions.length > 0
+            );
     }
+    // if (idx < 2) {
+    //     courseResults = courseData.courseMany;
+    //     courseResults = courseResults.filter(
+    //         (course) => course.sessions.length > 0
+    //     );
+    // } else if (idx === 2) {
+    //     courseResults = courseData.instructorOne.sessions;
+    // } else {
+    //     courseResults = courseData.sessionByDayAndTimeInterval;
+    //     courseResults = courseResults.map((session) => session.course);
+    // }
 
     if (courseResults.length === 0)
         return <p>No Available Course In This Range</p>;
