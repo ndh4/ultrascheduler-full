@@ -19,18 +19,6 @@ const style = {
  */
 function Selection({ options, selected, show, handleChange }) {
     if (show) {
-        // if (selected !== "") {
-        //     return (
-        //         <div style={style}>
-        //             <Select
-        //                 value={selected}
-        //                 onChange={handleChange}
-        //                 options={options}
-        //                 isMulti={true}
-        //             />
-        //         </div>
-        //     );
-        // }
         return (
             <div style={style}>
                 <Select
