@@ -53,7 +53,12 @@ const displayDaysCourseList = (
             </SwipeableViews>
         );
     }
-    return <div></div>;
+    // This is to ensure that the search result section will always show up even though there's nothing yet
+    return (
+        <SwipeableViews containerStyle={styles.slideContainer}>
+            <div></div>
+        </SwipeableViews>
+    );
 };
 
 const CompiledLists = ({
