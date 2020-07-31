@@ -1,12 +1,44 @@
-import React from "react";
+import React, {useState} from "react";
 import Title from "./Title";
-import { Button } from "@material-ui/core";
+import { Button, Popover } from "@material-ui/core";
 import ReactGA from "react-ga";
+import { useQuery, gql } from "@apollo/client";
 
 import RiceAppsLogo from "../../riceappslogo.png";
 import { initGA, OutboundLink } from "../../utils/analytics";
 
+export const GET_USER_INFO = gql`
+  query UserQuery {
+    userOne {
+      netid
+      firstName
+      lastName
+      majors
+      phone
+      token
+      recentUpdate
+      _id
+    }
+  }
+`;
+
 function Header() {
+  // tracks whether popover is open
+  const [showSettings, setShowSettings] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  let user = {
+    netid: "netId",
+    firstName: "",
+    lastName: "",
+    majors: [],
+  };
+
+  const { data } = useQuery(GET_USER_INFO);
+  if (data) {
+    user = data.userOne;
+  }
+  console.log('user ' , user);
+
   // Where we collect feedback
   let feedbackURL = "https://forms.gle/6uyRuTxKgP3n53vB6";
 
@@ -37,6 +69,34 @@ function Header() {
         >
           Feedback?
         </Button>
+        <Button
+          variant="outlined"
+          style={styles.userSettingButton}
+          onClick={evt => { 
+              setShowSettings(!showSettings);
+              setAnchorEl(evt.currentTarget);
+            }
+          }
+        >
+          {user.netid}
+        </Button>
+        <Popover 
+          open = {showSettings}
+          anchorEl = {anchorEl}
+          onClose = {() => setShowSettings(false)}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+        >
+          <p>net id: {user.netid}</p>
+          <p>name: {user.firstName + " " + user.lastName}</p>
+          <p>major: {user.majors}</p>
+        </Popover>
       </div>
     </div>
   );
@@ -55,6 +115,11 @@ const styles = {
     width: "5%",
     height: "5%",
   },
+  userSettingButton: {
+    float: "right",
+    marginTop: "-50px",
+    marginRight: "12vw"
+  }
 };
 
 export default Header;
