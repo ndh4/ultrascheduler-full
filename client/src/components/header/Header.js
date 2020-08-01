@@ -14,7 +14,7 @@ function Header() {
   // This initializes Google Analytics
   initGA();
 
-
+  // Redirects people to our Medium page on a new page if they click our logo to learn more about us
   const handleLogoClick = () => {
     OutboundLink(
       "Clicked Logo.",
