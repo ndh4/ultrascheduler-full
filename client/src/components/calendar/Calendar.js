@@ -68,7 +68,6 @@ const convertSectionToEvents = (section, session) => {
 
     // Create event for each day
     for (let dayCode of section.days) {
-        console.log(events);
         // Convert the shorthand to a full weekday string
         let dayString = dayCode2dayString[dayCode];
 
@@ -84,12 +83,15 @@ const convertSectionToEvents = (section, session) => {
             .add(momentEnd.hour(), "hours")
             .add(momentEnd.minute(), "minutes");
 
+        let instructorName = session.instructors[0].firstName + " " + session.instructors[0].lastName;
+
         events.push({
             id: id++,
             title: courseLabel,
             desc: `${eventStart.format("hh:mm a")} - ${eventEnd.format(
                 "hh:mm a"
             )}`,
+            instructor: instructorName,
             source: section,
             start: eventStart.toDate(),
             end: eventEnd.toDate(),
@@ -192,9 +194,9 @@ const CustomClassEvent = ({ event }) => {
         <div className="courseEventWrapper">
             <hr style={{ backgroundColor: `${sidebarColor}`}} className="courseEventBar" />
             <div className="courseEvent">
-                <p id="courseCode">ARCH 225</p>
-                <p id="courseTime">09:25am - 10:30am</p>
-                <p id="courseInstructor">Reto Geiser</p>
+                <p id="courseCode">{event.title}</p>
+                <p id="courseTime">{event.desc}</p>
+                <p id="courseInstructor">{event.instructor}</p>
             </div>
         </div>
     );
@@ -206,8 +208,8 @@ const CourseCalendar = ({ draftSessions }) => {
             <Calendar
                 components={{ event: CustomClassEvent }}
                 events={draftSessionsToEvents(draftSessions)}
-                step={10}
-                timeslots={3}
+                step={15}
+                timeslots={2}
                 localizer={localizer}
                 defaultView={Views.WEEK}
                 formats={{ dayFormat: "ddd" }} // Calendar columns show "MON", "TUES", ...
