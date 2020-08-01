@@ -7,6 +7,7 @@ import InstructorSearch from "../search/InstructorSearch";
 import { useToasts } from "react-toast-notifications";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import LoadingScreen from "../LoadingScreen";
+import "./Main.global.css";
 
 export const GET_USER_SCHEDULE = gql`
     query GetUserSchedule($term: String!) {
@@ -119,16 +120,9 @@ const Main = ({}) => {
                     draftSessions={schedule.draftSessions}
                 />
             </div>
-            <div className="Container" style={{ padding: "2%" }}>
-                <div style={{ float: "left", width: "30%" }}>
-                    <CourseSearch scheduleID={schedule._id} />
-                </div>
-                {/* <div style={{ float: "right", width: "40%" }}>
-                    <InstructorSearch scheduleID={schedule._id} />
-                </div> */}
-                <div style={{ float: "left", width: "70%" }}>
-                    <CourseCalendar draftSessions={schedule.draftSessions} />
-                </div>
+            <div className="container">
+                <CourseSearch scheduleID={schedule._id} />
+                <CourseCalendar draftSessions={schedule.draftSessions} />
             </div>
         </div>
     );

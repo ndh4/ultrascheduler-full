@@ -83,7 +83,10 @@ const convertSectionToEvents = (section, session) => {
             .add(momentEnd.hour(), "hours")
             .add(momentEnd.minute(), "minutes");
 
-        let instructorName = session.instructors[0].firstName + " " + session.instructors[0].lastName;
+        let instructorName =
+            session.instructors[0].firstName +
+            " " +
+            session.instructors[0].lastName;
 
         events.push({
             id: id++,
@@ -192,7 +195,10 @@ const CustomClassEvent = ({ event }) => {
 
     return (
         <div className="courseEventWrapper">
-            <hr style={{ backgroundColor: `${sidebarColor}`}} className="courseEventBar" />
+            <hr
+                style={{ backgroundColor: `${sidebarColor}` }}
+                className="courseEventBar"
+            />
             <div className="courseEvent">
                 <p id="courseCode">{event.title}</p>
                 <p id="courseTime">{event.desc}</p>
@@ -204,7 +210,7 @@ const CustomClassEvent = ({ event }) => {
 
 const CourseCalendar = ({ draftSessions }) => {
     return (
-        <div>
+        <div className="courseCalendar">
             <Calendar
                 components={{ event: CustomClassEvent }}
                 events={draftSessionsToEvents(draftSessions)}
