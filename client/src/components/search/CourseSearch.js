@@ -429,9 +429,6 @@ const CourseSearch = ({ scheduleID }) => {
         return (
             <TextField
                 style={{
-                    marginTop: "12px",
-                    marginRight: "12px",
-                    marginLeft: "30px",
                     width: "10vw",
                 }}
                 id="time"
@@ -458,16 +455,14 @@ const CourseSearch = ({ scheduleID }) => {
         const selected = allSelected[activeButtonIndex];
 
         const selection = (
-            <div>
-                <Selection
-                    className="filter"
-                    title={searchType}
-                    options={option}
-                    selected={selected}
-                    show={true}
-                    handleChange={handleChange}
-                />
-            </div>
+            <Selection
+                className="filter"
+                title={searchType}
+                options={option}
+                selected={selected}
+                show={true}
+                handleChange={handleChange}
+            />
         );
         const time = (
             <div className="selectTime">
@@ -486,20 +481,20 @@ const CourseSearch = ({ scheduleID }) => {
 
     return (
         <div className="searchBar">
-            <div>
+            <div className="searchBar-content">
                 <div className="filter">{displaySearch()}</div>
                 <div className="searchTxt">Search By:</div>
                 <div className="buttons">{renderSearchOptions()}</div>
+                <CompiledLists
+                    scheduleID={scheduleID}
+                    selectedOptions={allSelected[activeButtonIndex]}
+                    searchKey={variables4Query[activeButtonIndex]}
+                    query={getQuery[activeButtonIndex]}
+                    queryFilters={queryFilters[activeButtonIndex]}
+                    convertDays={convertDays} // Use to convert days longname to its abbreviation
+                    idx={activeButtonIndex} // need this to identify which field to call on the value returned by the query
+                />
             </div>
-            <CompiledLists
-                scheduleID={scheduleID}
-                selectedOptions={allSelected[activeButtonIndex]}
-                searchKey={variables4Query[activeButtonIndex]}
-                query={getQuery[activeButtonIndex]}
-                queryFilters={queryFilters[activeButtonIndex]}
-                convertDays={convertDays} // Use to convert days longname to its abbreviation
-                idx={activeButtonIndex} // need this to identify which field to call on the value returned by the query
-            />
         </div>
     );
 };
