@@ -120,7 +120,7 @@ const Main = ({}) => {
                     draftSessions={schedule.draftSessions}
                 />
             </div>
-            <div className="container" style={{ padding: "2%" }}>
+            <div className="container">
                 <CourseSearch scheduleID={schedule._id} />
                 <CourseCalendar draftSessions={schedule.draftSessions} />
             </div>
