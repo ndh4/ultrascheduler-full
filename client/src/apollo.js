@@ -28,8 +28,8 @@ const authLink = setContext((_, { headers }) => {
 
 // HTTP Backend Link
 const httpLink = new HttpLink({
-    uri: "http://localhost:3000/graphql",
-    // uri: "/graphql"
+    // uri: "http://localhost:3000/graphql",
+    uri: "/graphql",
 });
 
 // WebSocket Backend Link
