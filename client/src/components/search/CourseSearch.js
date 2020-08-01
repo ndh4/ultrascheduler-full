@@ -471,8 +471,8 @@ const CourseSearch = ({ scheduleID }) => {
         );
         const time = (
             <div className="selectTime">
-                {displayTimeTF("To", "06:30", handleStartTimeTFChange)}
-                {displayTimeTF("From", "22:00", handleEndTimeTFChange)}
+                {displayTimeTF("From", "06:30", handleStartTimeTFChange)}
+                {displayTimeTF("To", "22:00", handleEndTimeTFChange)}
             </div>
         );
 
