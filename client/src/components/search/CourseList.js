@@ -224,7 +224,7 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
     );
 };
 
-const CourseList = ({ scheduleID, query, searchType }) => {
+const CourseList = ({ scheduleID, query, searchType, idx }) => {
     const [courseSelected, setCourseSelected] = useState([]);
 
     // Get term from local state management
@@ -251,19 +251,34 @@ const CourseList = ({ scheduleID, query, searchType }) => {
     if (error) return <p>Error :(</p>;
     if (!courseData) return <p>No Data...</p>;
 
-    // Once the data has loaded, we want to extract the course results for the distribution
-    //distribution and departments (1 key)
-    if (Object.keys(searchType).length === 1) {
-        courseResults = courseData.courseMany;
-        // We need to filter out any courses which have 0 sessions - only filter for distribution and departments
-        courseResults = courseResults.filter(
-            (course) => course.sessions.length > 0
-        );
+    // Once the data has loaded, we want to extract the course results
+    // We need to filter out any courses which have 0 sessions
+    // or we get the session's course field for days and time interval selection
+    switch (idx) {
+        case 2:
+            courseResults = courseData.instructorOne.sessions;
+            break;
+        case 3:
+            courseResults = courseData.sessionByTimeInterval;
+            courseResults = courseResults
+                .map((session) => session.course)
+                .filter((course) => course.sessions.length > 0);
+            break;
+        case 4:
+            courseResults = courseData.sessionByDay;
+            courseResults = courseResults
+                .map((session) => session.course)
+                .filter((course) => course.sessions.length > 0);
+            break;
+        default:
+            courseResults = courseData.courseMany;
+            courseResults = courseResults.filter(
+                (course) => course.sessions.length > 0
+            );
     }
-    //instructor (2 keys)
-    if (Object.keys(searchType).length === 2) {
-        courseResults = courseData.instructorOne.sessions;
-    }
+
+    if (courseResults.length === 0)
+        return <p>No Available Course In This Range</p>;
 
     // We also want to extract the user's draftSessions, nested inside their schedule
     draftSessions = scheduleData.scheduleOne.draftSessions;
@@ -293,7 +308,7 @@ const CourseList = ({ scheduleID, query, searchType }) => {
     };
 
     const collapseItem = (course) => {
-        //distribution and department
+        //distribution, department, day, time interval
         if (course.sessions) {
             return course.sessions.map((session, idx) => (
                 <SessionItem
@@ -319,40 +334,37 @@ const CourseList = ({ scheduleID, query, searchType }) => {
     };
 
     return (
-            <List
-            component="nav"
-            aria-labelledby="nested-list-subheader"
-            >
-                {courseResults.map(course => {
-                    let id = course._id;
-                    return (
-                        <div key={id}>
-                            <ListItem
-                                key={id}
-                                onClick={() =>
-                                    courseSelected.includes(id)
-                                        ? removeFromCoursesSelected(id)
-                                        : addToCoursesSelected(id)
-                                }
-                                button
-                            >
-                                {courseToLabel(course)}
-                            </ListItem>
-                            <Collapse
-                                in={courseSelected.includes(id) ? true : false}
-                                timeout="auto"
-                                unmountOnExit
-                            >
-                                <List component="div" disablePadding>
-                                    {collapseItem(course)}
-                                </List>
-                            </Collapse>
-                        </div>
-                    );
-                })}
-            </List>
-    )
-
-}
+        <List component="nav" aria-labelledby="nested-list-subheader">
+            {courseResults.map((course, idx) => {
+                let id = course._id;
+                let key = `${id}-${idx}`;
+                return (
+                    <div key={key}>
+                        <ListItem
+                            key={key}
+                            onClick={() =>
+                                courseSelected.includes(id)
+                                    ? removeFromCoursesSelected(id)
+                                    : addToCoursesSelected(id)
+                            }
+                            button
+                        >
+                            {courseToLabel(course)}
+                        </ListItem>
+                        <Collapse
+                            in={courseSelected.includes(id) ? true : false}
+                            timeout="auto"
+                            unmountOnExit
+                        >
+                            <List component="div" disablePadding>
+                                {collapseItem(course)}
+                            </List>
+                        </Collapse>
+                    </div>
+                );
+            })}
+        </List>
+    );
+};
 
 export default CourseList;
