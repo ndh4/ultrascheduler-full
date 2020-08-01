@@ -1,11 +1,16 @@
 import React from "react";
 import CourseList from "./CourseList";
 import SwipeableViews from "react-swipeable-views";
+import "./CompiledLists.global.css";
 
 const styles = {
     slideContainer: {
         height: 500,
         WebkitOverflowScrolling: "touch", // iOS momentum scrolling
+    },
+    slideContainerNoHeight: {
+        WebkitOverflowScrolling: "touch", // iOS momentum scrolling
+        height: "100%",
     },
 };
 
@@ -40,8 +45,8 @@ const displayDaysCourseList = (
 
         let searchType = { days: daysArray };
         return (
-            <SwipeableViews containerStyle={styles.slideContainer}>
-                <div>
+            <SwipeableViews containerStyle={styles.slideContainerNoHeight}>
+                <div className="courseListContainer">
                     <CourseList
                         scheduleID={scheduleID}
                         query={query}
@@ -55,7 +60,7 @@ const displayDaysCourseList = (
     }
     // This is to ensure that the search result section will always show up even though there's nothing yet
     return (
-        <SwipeableViews containerStyle={styles.slideContainer}>
+        <SwipeableViews containerStyle={styles.slideContainerNoHeight}>
             <div></div>
         </SwipeableViews>
     );
@@ -84,8 +89,8 @@ const CompiledLists = ({
     let optionValues = getValues(selectedOptions, searchKey, queryFilters);
 
     return (
-        <SwipeableViews containerStyle={styles.slideContainer}>
-            <div>
+        <SwipeableViews containerStyle={styles.slideContainerNoHeight}>
+            <div className="courseListContainer">
                 {
                     // return a CourseList for each of the selected options
                     optionValues.map((option) => {
