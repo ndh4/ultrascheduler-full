@@ -242,9 +242,8 @@ const CourseList = ({ scheduleID, query, searchType }) => {
     /**
      * Removes courses where there are no sessions for this term.
      */
-    const removeEmptyCourses = (courses) => courses.filter(
-        (course) => course.sessions.length > 0
-    );
+    const removeEmptyCourses = (courses) =>
+        courses.filter((course) => course.sessions.length > 0);
 
     // Once the data has loaded, we want to extract the course results for the distribution
     courseResults = courseData.courseMany;
@@ -279,23 +278,41 @@ const CourseList = ({ scheduleID, query, searchType }) => {
         setCourseSelected(copy);
     };
 
+    /**
+     * Function that is called when the user scrolls to the bottom of the infinite scroll component,
+     * and there are still more results to be fetched remotely.
+     * 
+     * Fetches next "batch" of sessions and concatenates to the current list of sessions
+     * 
+     * If there are no more sessions, this function uses setHasMore to false to stop the infinite scroll
+     * from running the function again.
+     */
+    const fetchMoreSessions = () => {
+        return fetchMore({
+            // We want to skip the courses as we already have in our list
+            variables: { skip: courseResults.length },
+            updateQuery: (prev, { fetchMoreResult }) => {
+                // If there are no more remote results (no new pages), let the component know through setHasMore
+                if (!fetchMoreResult || fetchMoreResult.courseMany.length < 1) {
+                    setHasMore(false);
+                    return prev;
+                }
+                // Filter courses to remove ones with no sessions for this term
+                const filteredCourses = removeEmptyCourses([
+                    ...fetchMoreResult.courseMany,
+                ]);
+                // Concatenate new sessions with old ones
+                return Object.assign({}, prev, {
+                    courseMany: [...prev.courseMany, ...filteredCourses],
+                });
+            },
+        });
+    };
+
     return (
         <InfiniteScroll
             dataLength={courseResults.length}
-            next={() => fetchMore({
-                variables: { skip: courseResults.length },
-                updateQuery: (prev, { fetchMoreResult }) => {
-                    if (!fetchMoreResult || fetchMoreResult.courseMany.length < 1) {
-                        setHasMore(false);
-                        return prev;
-                    }
-                    // Filter courses to remove ones with no sessions for this term
-                    const filteredCourses = removeEmptyCourses([...fetchMoreResult.courseMany]);
-                    return Object.assign({}, prev, {
-                        courseMany: [...prev.courseMany, ...filteredCourses]
-                    });
-                }
-            })}
+            next={fetchMoreSessions}
             hasMore={getHasMore}
             loader={<h4>Loading...</h4>}
             endMessage={
@@ -307,6 +324,7 @@ const CourseList = ({ scheduleID, query, searchType }) => {
         >
             {courseResults.map((course) => {
                 let id = course._id;
+                // TODO: Encapsulate this JSX into its own component
                 return (
                     <div>
                         <ListItem
