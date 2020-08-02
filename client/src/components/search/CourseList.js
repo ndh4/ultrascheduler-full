@@ -6,6 +6,7 @@ import Collapse from "@material-ui/core/Collapse";
 import { Event } from "../../utils/analytics";
 import { classTimeString } from "../../utils/CourseTimeTransforms";
 import Detail from "./Detail";
+import { Table, TableBody, TableRow, TableCell, Box } from "@material-ui/core";
 
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
@@ -14,7 +15,7 @@ const detailStyle = {
     fontSize: "10px",
     color: "#6C7488",
     background: "#F7F8FA",
-    width: "415px"
+    width: "415px",
 };
 
 /**
@@ -230,18 +231,24 @@ const SessionItem = ({ scheduleID, course, session, draftSessions }) => {
                 style={{ alignItems: "left" }}
             />
             {/* <div style={{ alignItems: "left" }}>{sessionToString(session)}</div> */}
-            <div style={{
-                alignItems: "left"
-            }}>
+            <div
+                style={{
+                    alignItems: "left",
+                }}
+            >
                 {
-                    <Detail
-                        style={detailStyle}
-                        session={session}
-                        course={course}
-                        open={true}
-                        classTimeString={classTimeString}
-                        instructorsToNames={instructorsToNames}
-                    />
+                    <Table>
+                        <TableBody>
+                            <Detail
+                                style={detailStyle}
+                                session={session}
+                                course={course}
+                                open={true}
+                                classTimeString={classTimeString}
+                                instructorsToNames={instructorsToNames}
+                            />
+                        </TableBody>
+                    </Table>
                 }
             </div>
         </div>
