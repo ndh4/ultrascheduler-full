@@ -4,6 +4,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Collapse from '@material-ui/core/Collapse';
 import { Event } from "../../utils/analytics";
+import Checkbox from '@material-ui/core/Checkbox';
 
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
@@ -21,7 +22,10 @@ const GET_DEPT_COURSES = gql`
                 class {
                     days
                     startTime
-                    endTime
+                    endTime               
+                }
+                course {
+                    distribution
                 }
                 lab {
                     days
@@ -71,30 +75,50 @@ const sessionToString = (session) => {
     let courseResult = [];
     // Find class times
     if (session.class.days.length > 0) {
-        let classTime = "Class: " + session.class.days.join("")
+        let classTime =  session.class.days.join("")
         // Convert times
         let startTime = formatTime(session.class.startTime);
         let endTime = formatTime(session.class.endTime);
 
-        classTime += " " + startTime + " - " + endTime
-        courseResult.push(<p style={{ padding: "5px" }}>{classTime}</p>);
+        classTime += ",     " + startTime + " - " + endTime
+        courseResult.push(<p style={stylesDesc.classDesc}><span style={{ fontWeight: "bold"}}> Class Time: </span>{classTime}</p>);
     }
     // Find lab times
     if (session.lab.days.length > 0) {
-        let labTime = "Lab: " + session.lab.days.join("")
+        let labTime = session.lab.days.join("")
 
         // Convert times
         let startTime = formatTime(session.lab.startTime);
         let endTime = formatTime(session.lab.endTime);
 
-        labTime += " " + startTime + " - " + endTime
-        courseResult.push(<p style={{ padding: "5px" }}>{labTime}</p>);
+        labTime += ",     " + startTime + " - " + endTime
+        courseResult.push(<p style={stylesDesc.classDesc}> <span style={{ fontWeight: "bold"}}> Lab Time: </span>{labTime}</p>);
     }
     // Finally find instructors
     if (session.instructors.length > 0) {
         let instructorNames = instructorsToNames(session.instructors);
-        courseResult.push(<p style={{ padding: "5px" }}>{instructorNames.join(", ")}</p>)
+        courseResult.push(<p style={stylesDesc.classDesc}> <span style={{ fontWeight: "bold"}}> Instructors: </span>{instructorNames.join(", ")}</p>)
     }
+    else if(session.instructors.length <= 0){
+        courseResult.push(<p style={stylesDesc.classDesc}> <span style={{ fontWeight: "bold"}}> Instructor: </span>N/A</p>)
+    }
+
+    if(session.crn > 0){
+        let crnName = session.crn;
+        courseResult.push(<p style={stylesDesc.classDesc}> <span style={{ fontWeight: "bold"}}> CRN: </span> {crnName}</p>)
+    }
+
+    if(session.course.distribution.length > 0){
+        let distributionName = session.course.distribution;
+        courseResult.push(<p style={stylesDesc.classDesc}> <span style={{ fontWeight: "bold"}}> Distribution: </span> {distributionName}</p>)
+    }
+    console.log("DISTRIBUTION", (session.course.distribution))
+
+    // if(session.distribution > 0){
+    //     let distributionName = session.distribution;
+    //     courseResult.push(<p style={stylesDesc.classDesc}> <span style={{ fontWeight: "bold"}}> Distribution: </span> {distributionName}</p>)
+    // }
+
     return ((courseResult.length > 0) ? courseResult : ["No information found for this session."]);
 }
 
@@ -180,9 +204,8 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
     )
 
     return (
-    <div key={session.crn} style={{ borderStyle: 'solid', display: "inline-block" }}>
-        <input 
-            type="checkbox" 
+    <div key={session.crn} style={{ borderBottom: 'solid black 1px', borderLeft: 'solid black 1px',  display: "flex" }}>
+        <Checkbox
             checked={sessionSelected}
             onChange={() => {
                 // Simple transformation of CRN to a string
@@ -206,7 +229,7 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
                     addDraftSession();
                 }
             }} 
-            style={{ alignItems: "left" }} 
+            style={stylesDesc.checkbox}
         />
         <div style={{ alignItems: "left" }}>
             {sessionToString(session)}
@@ -309,7 +332,19 @@ const CourseList = ({ scheduleID, department, searchcourseResults }) => {
             </List>
         </SwipeableViews>
     )
-
 }
+const stylesDesc = {
+    classDesc: {
+        marginLeft: "30px",
+        marginTop: "6px",
+    },
+    checkbox: {
+        alignItems: 'top',
+        marginTop: "1px",
+        marginLeft: '15px'
+    }
+}
+
+
 
 export default CourseList;
