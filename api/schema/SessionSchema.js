@@ -1,23 +1,23 @@
-import { Session, SessionTC, CourseTC, InstructorTC } from '../models';
+import { Session, SessionTC, CourseTC, InstructorTC } from "../models";
 
 /**
  * Relations (necessary for any fields that link to other types in the schema)
  * https://graphql-compose.github.io/docs/plugins/plugin-mongoose.html#how-to-build-nesting-relations
  */
 SessionTC.addRelation("course", {
-    "resolver": () => CourseTC.getResolver('findById'),
+    resolver: () => CourseTC.getResolver("findById"),
     prepareArgs: {
         _id: (source) => source.course,
     },
-    projection: { course: 1 }
+    projection: { course: 1 },
 });
 
 SessionTC.addRelation("instructors", {
-    "resolver": () => InstructorTC.getResolver('findByIds'),
+    resolver: () => InstructorTC.getResolver("findByIds"),
     prepareArgs: {
         _ids: (source) => source.instructors,
     },
-    projection: { instructors: 1 }
+    projection: { instructors: 1 },
 });
 
 /**
@@ -40,7 +40,7 @@ SessionTC.addResolver({
             }
         }
         return Session.find(filter);
-    }
+    },
 });
 
 /**
@@ -59,7 +59,7 @@ SessionTC.addResolver({
             }
         }
         return Session.find(filter);
-    }
+    },
 });
 
 /**
@@ -75,7 +75,49 @@ SessionTC.addResolver({
             filter["term"] = args.term;
         }
         return Session.find(filter);
-    }
+    },
+});
+
+// Find session through days
+SessionTC.addResolver({
+    name: "findByDay",
+    type: [SessionTC],
+    args: {
+        days: "[String!]",
+        term: "Float!",
+    },
+    resolve: async ({ source, args, context, info }) => {
+        let filter = {
+            "class.days": { $eq: args.days },
+            term: args.term,
+        };
+        return await Session.find(filter).sort({
+            "course.courseNum": 1,
+            subject: 1,
+        });
+    },
+});
+
+// Find session through time interval
+SessionTC.addResolver({
+    name: "findByTimeInterval",
+    type: [SessionTC],
+    args: {
+        startTime: "String!",
+        endTime: "String!",
+        term: "Float!",
+    },
+    resolve: async ({ source, args, context, info }) => {
+        let filter = {
+            "class.startTime": { $gte: args.startTime },
+            "class.endTime": { $lte: args.endTime },
+            term: args.term,
+        };
+        return await Session.find(filter).sort({
+            "course.courseNum": 1,
+            subject: 1,
+        });
+    },
 });
 
 // SessionTC.addResolver({
@@ -89,14 +131,17 @@ SessionTC.addResolver({
 // })
 
 const SessionQuery = {
-    sessionOne: SessionTC.getResolver('findOne'),
-    sessionMany: SessionTC.getResolver('findMany'),
-    sessionsByCourse: SessionTC.getResolver('findByCourse')
+    sessionOne: SessionTC.getResolver("findOne"),
+    sessionMany: SessionTC.getResolver("findMany"),
+    sessionsByCourse: SessionTC.getResolver("findByCourse"),
+    sessionByDay: SessionTC.getResolver("findByDay"),
+    sessionByTimeInterval: SessionTC.getResolver("findByTimeInterval"),
+
     // sessionManyBySubject: SessionTC.getResolver("findManyBySubjects"),
 };
 
 const SessionMutation = {
-    sessionCreateOne: SessionTC.getResolver('createOne')
+    sessionCreateOne: SessionTC.getResolver("createOne"),
 };
 
 export { SessionQuery, SessionMutation };

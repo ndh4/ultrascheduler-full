@@ -1,16 +1,16 @@
-import { Schedule, ScheduleTC, UserTC, SessionTC } from '../models';
-import { checkScheduleUserMatch } from '../utils/authorizationUtils';
+import { Schedule, ScheduleTC, UserTC, SessionTC } from "../models";
+import { checkScheduleUserMatch } from "../utils/authorizationUtils";
 
 /**
  * Relations (necessary for any fields that link to other types in the schema)
  * https://graphql-compose.github.io/docs/plugins/plugin-mongoose.html#how-to-build-nesting-relations
  */
 ScheduleTC.addRelation("user", {
-    "resolver": () => UserTC.getResolver('findById'),
+    resolver: () => UserTC.getResolver("findById"),
     prepareArgs: {
         _id: (source) => source.user,
     },
-    projection: { user: 1 }
+    projection: { user: 1 },
 });
 
 /**
@@ -20,11 +20,11 @@ ScheduleTC.addRelation("user", {
  */
 const DraftSessionTC = ScheduleTC.getFieldTC("draftSessions");
 DraftSessionTC.addRelation("session", {
-    "resolver": () => SessionTC.getResolver("findById"),
+    resolver: () => SessionTC.getResolver("findById"),
     prepareArgs: {
-        _id: (source) => source.session
+        _id: (source) => source.session,
     },
-    projection: { session: 1 }
+    projection: { session: 1 },
 });
 
 /**
@@ -43,15 +43,18 @@ ScheduleTC.addResolver({
         let { term, user } = args.filter;
 
         // Find schedule for the term for the user
-        let schedule = await Schedule.findOne({ term: term, user: user }).exec();
+        let schedule = await Schedule.findOne({
+            term: term,
+            user: user,
+        }).exec();
 
         // Return it if it exists
         if (schedule) return schedule;
 
         // Create if it doesn't exist
         return await Schedule.create({ term: term, user: user });
-    }
-})
+    },
+});
 
 /**
  * Used to find all schedules for a particular user
@@ -69,14 +72,14 @@ ScheduleTC.addResolver({
             }
         }
         return await Schedule.find(filter);
-    }
-})
+    },
+});
 
 /**
-  * Used to update the draft sessions for a schedule
-  * Can either add or remove a session from their draft sessions
-  */
- ScheduleTC.addResolver({
+ * Used to update the draft sessions for a schedule
+ * Can either add or remove a session from their draft sessions
+ */
+ScheduleTC.addResolver({
     name: "scheduleUpdateDraftSessions",
     type: ScheduleTC,
     // day is an enum, so we want to get its enum from the model directly
@@ -92,18 +95,18 @@ ScheduleTC.addResolver({
         let operation = args.push ? "$addToSet" : "$pull";
 
         // Setup update based on operation
-        let update = {}
+        let update = {};
         update[operation] = { draftSessions: { session: args.sessionID } };
-        
+
         // Execute update
         const schedule = await Schedule.updateOne(
             { _id: args.scheduleID }, // find Vendor by id
             update
         );
-        
-        if (!schedule) return null; 
+
+        if (!schedule) return null;
         return Schedule.findById(args.scheduleID); // Finally return the new schedule object
-    }
+    },
 });
 
 /**
@@ -123,30 +126,38 @@ ScheduleTC.addResolver({
         let options = {
             upsert: false,
             new: true,
-            arrayFilters: [ { "elem.session": args.sessionID } ]
-        }
+            arrayFilters: [{ "elem.session": args.sessionID }],
+        };
         // Perform update
         await Schedule.updateOne(
             { _id: args.scheduleID },
-            { $bit: { "draftSessions.$[elem].visible": { xor: parseInt("1") } } },
+            {
+                $bit: {
+                    "draftSessions.$[elem].visible": { xor: parseInt("1") },
+                },
+            },
             options
         );
         // Return schedule
         return await Schedule.findById(args.scheduleID);
-    }
-})
+    },
+});
 
 const ScheduleQuery = {
-    scheduleOne: ScheduleTC.getResolver('findOrCreate', [authMiddleware])
+    scheduleOne: ScheduleTC.getResolver("findOrCreate", [authMiddleware]),
 };
 
 const ScheduleMutation = {
     scheduleToggleSession: ScheduleTC.getResolver("scheduleToggleSession"),
-    scheduleAddSession: ScheduleTC.getResolver('scheduleUpdateDraftSessions').wrapResolve(next => rp => {
+    scheduleAddSession: ScheduleTC.getResolver(
+        "scheduleUpdateDraftSessions"
+    ).wrapResolve((next) => (rp) => {
         rp.args.push = true;
         return next(rp);
     }),
-    scheduleRemoveSession: ScheduleTC.getResolver('scheduleUpdateDraftSessions').wrapResolve(next => rp => {
+    scheduleRemoveSession: ScheduleTC.getResolver(
+        "scheduleUpdateDraftSessions"
+    ).wrapResolve((next) => (rp) => {
         rp.args.push = false;
         return next(rp);
     }),
@@ -161,7 +172,12 @@ async function authMiddleware(resolve, source, args, context, info) {
     let { id } = context.decodedJWT;
 
     // Allows a user to only access THEIR schedules, while still maintaining any other filters from the request
-    return resolve(source, {...args, filter: {...args.filter, user: id } }, context, info);
+    return resolve(
+        source,
+        { ...args, filter: { ...args.filter, user: id } },
+        context,
+        info
+    );
 }
 
 export { ScheduleQuery, ScheduleMutation };

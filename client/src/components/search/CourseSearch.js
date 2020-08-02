@@ -1,83 +1,502 @@
 import React, { useState, useEffect } from "react";
 import Selection from "./Selection";
-import CourseList from "./CourseList";
 import { initGA } from "../../utils/analytics";
 import { useQuery, gql } from "@apollo/client";
-
-const dummy = { label: "", value: "" };
-
-const styles = {
-	filter: {
-		width: "100%",
-	},
-	button: {
-		display: "inline-block",
-		float: "center",
-		margin: 8,
-		padding: 2,
-	},
-};
+import Button from "@material-ui/core/Button";
+import { createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider } from "@material-ui/styles";
+import TextField from "@material-ui/core/TextField";
+import "./CourseSearch.global.css";
+import CompiledLists from "./CompiledLists";
 
 /**
  * TODO: MAKE A FRAGMENT! THIS IS USED IN TWO PLACES
  * Gets the term from local state management
  */
 const GET_TERM = gql`
-	query {
-		term @client
-	}
+    query {
+        term @client
+    }
 `;
 
 const GET_DEPARTMENTS = gql`
-	query GetDepartments($term: Int!) {
-		departments(term: $term)
-	}
+    query GetDepartments($term: Int!) {
+        departments(term: $term)
+    }
 `;
 
-const CourseSearch = ({ scheduleID }) => {
-	const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
-	const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
+const GET_DEPT_COURSES = gql`
+    query GetDeptCourses($subject: String!, $term: Float!) {
+        courseMany(filter: { subject: $subject }, sort: COURSE_NUM_ASC) {
+            _id
+            subject
+            courseNum
+            longTitle
+            sessions(filter: { term: $term }) {
+                _id
+                crn
+                class {
+                    days
+                    startTime
+                    endTime
+                }
+                lab {
+                    days
+                    startTime
+                    endTime
+                }
+                instructors {
+                    firstName
+                    lastName
+                }
+            }
+        }
+    }
+`;
 
-	const {
-		data: { term },
+// new:
+const GET_DIST_COURSES = gql`
+    query CourseQuery($distribution: String!, $term: Float!) {
+        courseMany(
+            filter: { distribution: $distribution }
+            sort: SUBJECT_AND_COURSE_NUM_ASC
+        ) {
+            _id
+            subject
+            courseNum
+            longTitle
+            distribution
+            sessions(filter: { term: $term }) {
+                _id
+                crn
+                class {
+                    days
+                    startTime
+                    endTime
+                }
+                lab {
+                    days
+                    startTime
+                    endTime
+                }
+                instructors {
+                    firstName
+                    lastName
+                }
+            }
+        }
+    }
+`;
+
+const GET_DAYS_COURSES = gql`
+    query GetDaysCourses($days: [String!], $term: Float!) {
+        sessionByDay(days: $days, term: $term) {
+            course {
+                _id
+                subject
+                courseNum
+                longTitle
+                distribution
+                sessions(filter: { term: $term }) {
+                    _id
+                    crn
+                    class {
+                        days
+                        startTime
+                        endTime
+                    }
+                    lab {
+                        days
+                        startTime
+                        endTime
+                    }
+                    instructors {
+                        firstName
+                        lastName
+                    }
+                }
+            }
+        }
+    }
+`;
+
+const GET_TIME_INTERVAL_COURSES = gql`
+    query GetTimeIntervalCourses(
+        $startTime: String!
+        $endTime: String!
+        $term: Float!
+    ) {
+        sessionByTimeInterval(
+            startTime: $startTime
+            endTime: $endTime
+            term: $term
+        ) {
+            course {
+                _id
+                subject
+                courseNum
+                longTitle
+                distribution
+                sessions(filter: { term: $term }) {
+                    _id
+                    crn
+                    class {
+                        days
+                        startTime
+                        endTime
+                    }
+                    lab {
+                        days
+                        startTime
+                        endTime
+                    }
+                    instructors {
+                        firstName
+                        lastName
+                    }
+                }
+            }
+        }
+    }
+`;
+
+//NEWWWWW
+const GET_INSTRUCTORS = gql`
+    query getInstructors {
+        instructorMany {
+            firstName
+            lastName
+        }
+    }
+`;
+const COURSES_BY_INSTRUCTORS = gql`
+    query InstructorQuery(
+        $firstName: String!
+        $lastName: String!
+        $term: Float!
+    ) {
+        instructorOne(filter: { firstName: $firstName, lastName: $lastName }) {
+            sessions(filter: { term: $term }) {
+                _id
+                term
+                course {
+                    subject
+                    courseNum
+                    longTitle
+                }
+                class {
+                    days
+                    startTime
+                    endTime
+                }
+                lab {
+                    days
+                    startTime
+                    endTime
+                }
+                crn
+            }
+        }
+    }
+`;
+
+const formatTime = (time) => {
+    return time.replace(":", "");
+};
+
+const CourseSearch = ({ scheduleID }) => {
+    const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
+    const [getDept, setDept] = useState([]); // Used for selection of a particular department
+    const [getDist, setDist] = useState([]); // Used for selection of a particular distribution
+
+    //INSTRUCTOR SEARCH
+    const [getInstruct, setInstruct] = useState([]); // Used for the entire list of instructors
+    const [getInst, setInst] = useState([]); // Used for selection of a particular instructor
+
+    const allDistributions = [
+        { label: "Distribution I", value: "Distribution I" },
+        { label: "Distribution II", value: "Distribution II" },
+        { label: "Distribution III", value: "Distribution III" },
+    ]; // All distributions
+
+    const allDaysLong = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+    ].map((day, idx) => ({ index: idx, label: day, value: day })); // All days in full name
+
+    const allDaysMap = {
+        Monday: "M",
+        Tuesday: "T",
+        Wednesday: "W",
+        Thursday: "R",
+        Friday: "F",
+        Saturday: "S",
+        Sunday: "U",
+    }; // All days in abbreviation, used for query
+
+    const [getDay, setDay] = useState([]); // store the selected days
+    const [getTime, setTime] = useState([
+        { startTime: "0630", endTime: "2200" },
+    ]); // store the selected time interval
+
+    // Represents which button is currently clicked for styling and returning data
+    const [activeButtonIndex, setButtonIndex] = useState(0);
+
+    const {
+        data: { term },
     } = useQuery(GET_TERM); // Gets the term which we need to request subjects from
-    
+
     const { data: departmentsData } = useQuery(GET_DEPARTMENTS, {
         variables: { term },
     });
 
+    //get instructor data
+    const { data: instructorData } = useQuery(GET_INSTRUCTORS, {
+        variables: { term },
+    });
+
+    //deal with instructor names with different structures (ex. Benjamin C. Kerswell, Maria Fabiola Lopez Duran, Benjamin Fregly)
+    //easier to split into first and last names for query in InstructorList
+    const instructorsToSplit = (instructors) => {
+        let instructorNames = [];
+        for (let instructor of instructors) {
+            let instructorName =
+                instructor.firstName + " " + instructor.lastName;
+            instructorNames.push({
+                fullName: instructorName,
+                firstName: instructor.firstName,
+                lastName: instructor.lastName,
+            });
+        }
+        return instructorNames;
+    };
+
+    // Convert day's longname to its abbreviation
+    const convertDays = (days) => {
+        // We need to first sort the selected array to match the order that is stored
+        // in our database. Otherwise the $eq in SessionSchema will not work correctly
+        // as the order of the elements in the selected array may be different from that
+        // in the database
+        days.sort((a, b) => {
+            return a.index - b.index;
+        });
+        return days.map((day) => allDaysMap[day.value]);
+    };
+
+    // These variables are used in displaySearch function and displayCourseList function:
+    // Department is used as a placeholder for Instructors for now
+    const searchTypes = [
+        "Department",
+        "Distribution",
+        "Instructors",
+        "Course Time",
+        "Course Day",
+    ];
+    const allOptions = [
+        getDepts,
+        allDistributions,
+        getInstruct,
+        getDepts,
+        allDaysLong,
+    ];
+    const allSelected = [getDept, getDist, getInst, getTime, getDay];
+    const setFuncs = [setDept, setDist, setInst, setTime, setDay];
+
+    const variables4Query = [
+        ["subject"],
+        ["distribution"],
+        ["firstName", "lastName"],
+        ["startTime", "endTime"],
+        ["days"], // this is not used in CompiledLists.js
+    ];
+
+    const queryFilters = [
+        ["value"],
+        ["value"],
+        ["firstName", "lastName"],
+        ["startTime", "endTime"],
+        ["value"], // this is not used in CompiledLists.js
+    ];
+
+    const getQuery = [
+        GET_DEPT_COURSES,
+        GET_DIST_COURSES,
+        COURSES_BY_INSTRUCTORS,
+        GET_TIME_INTERVAL_COURSES,
+        GET_DAYS_COURSES,
+    ];
+
     /**
      * We only want this to run when the subjects list data loads
      */
-	useEffect(() => {
+    useEffect(() => {
         if (departmentsData) {
             let { departments } = departmentsData;
             setDepts(departments.map((dept) => ({ label: dept, value: dept })));
         }
     }, [departmentsData]);
 
-	const handleChangeDept = (selectedOption) => {
-		setDept(selectedOption);
-	};
+    //for instructor data
+    useEffect(() => {
+        if (instructorData) {
+            let instructors = instructorData["instructorMany"];
+            let instructorList = instructorsToSplit(instructors);
+            setInstruct(
+                instructorList.map((inst) => ({
+                    label: inst.fullName,
+                    value: inst.fullName,
+                    firstName: inst.firstName,
+                    lastName: inst.lastName,
+                }))
+            );
+        }
+    }, [instructorData]);
 
-	// Initialize Google Analytics
-	initGA();
+    // Set the selected department/distribution/instructor
+    const handleChange = (selectedOption) => {
+        const setFunc = setFuncs[activeButtonIndex];
+        setFunc(selectedOption);
+    };
 
-	return (
-		<div className="Search">
-			<div style={styles.filter}>
-				<p style={styles.button}>Department</p>
-				<Selection
-					title="Department"
-					options={getDepts}
-					selected={getDept}
-					show={true}
-					handleChange={handleChangeDept}
-				/>
-			</div>
-			<CourseList scheduleID={scheduleID} department={getDept.value} />
-		</div>
-	);
+    // Set the selected startTime/EndTime
+    const handleStartTimeTFChange = (event) => {
+        let selectedTime = event.target.value;
+        setTime([{ ...getTime[0], startTime: formatTime(selectedTime) }]);
+    };
+    const handleEndTimeTFChange = (event) => {
+        let selectedTime = event.target.value;
+        setTime([{ ...getTime[0], endTime: formatTime(selectedTime) }]);
+    };
+
+    // Set color theme for the button for clicked and unclicked effect
+    const muiTheme = createMuiTheme({
+        palette: {
+            primary: { main: "#697E99" },
+            secondary: { main: "#FFFFFF" },
+        },
+    });
+
+    const renderSearchOptions = () => {
+        return searchTypes.map((type, index) => {
+            /**
+             * If the current index of the element is the same as the
+             * active button index, then the button color is primary.
+             * Otherwise, the button color is secondary.
+             *
+             */
+            const buttonColor =
+                index === activeButtonIndex ? "primary" : "secondary";
+
+            return (
+                <ThemeProvider
+                    theme={muiTheme}
+                    //replace key with uuid
+                    key={index}
+                >
+                    <Button
+                        style={{
+                            textTransform: "none",
+                            marginRight: "12px",
+                            marginTop: "6px",
+                            marginBottom: "6px",
+                            padding: "1px 24px 1px 24px",
+                            borderRadius: "25px",
+                            fontSize: "12px",
+                        }}
+                        color={buttonColor}
+                        size="small"
+                        variant="contained"
+                        onClick={() => {
+                            setButtonIndex(index);
+                        }}
+                    >
+                        {type}
+                    </Button>
+                </ThemeProvider>
+            );
+        });
+    };
+
+    /**
+     * Display the time textfield for user to select time range for the search
+     */
+    const displayTimeTF = (lbl, defaultVal, onChangeHandler) => {
+        return (
+            <TextField
+                style={{
+                    width: "10vw",
+                }}
+                id="time"
+                label={lbl}
+                type="time"
+                defaultValue={defaultVal}
+                InputLabelProps={{
+                    shrink: true,
+                }}
+                inputProps={{
+                    step: 300, // 5 min
+                }}
+                onChange={onChangeHandler}
+            />
+        );
+    };
+
+    /**
+     * Displays the search component based on the user's search option
+     */
+    const displaySearch = () => {
+        const searchType = searchTypes[activeButtonIndex];
+        const option = allOptions[activeButtonIndex];
+        const selected = allSelected[activeButtonIndex];
+
+        const selection = (
+            <Selection
+                className="filter"
+                title={searchType}
+                options={option}
+                selected={selected}
+                show={true}
+                handleChange={handleChange}
+            />
+        );
+        const time = (
+            <div className="selectTime">
+                {displayTimeTF("From", "06:30", handleStartTimeTFChange)}
+                {displayTimeTF("To", "22:00", handleEndTimeTFChange)}
+            </div>
+        );
+
+        const displayArray = [selection, selection, selection, time, selection];
+
+        return displayArray[activeButtonIndex];
+    };
+
+    // Initialize Google Analytics
+    initGA();
+
+    return (
+        <div className="searchBar">
+            <div className="searchBar-content">
+                <div className="filter">{displaySearch()}</div>
+                <div className="searchTxt">Search By:</div>
+                <div className="buttons">{renderSearchOptions()}</div>
+                <CompiledLists
+                    scheduleID={scheduleID}
+                    selectedOptions={allSelected[activeButtonIndex]}
+                    searchKey={variables4Query[activeButtonIndex]}
+                    query={getQuery[activeButtonIndex]}
+                    queryFilters={queryFilters[activeButtonIndex]}
+                    convertDays={convertDays} // Use to convert days longname to its abbreviation
+                    idx={activeButtonIndex} // need this to identify which field to call on the value returned by the query
+                />
+            </div>
+        </div>
+    );
 };
 
 export default CourseSearch;
