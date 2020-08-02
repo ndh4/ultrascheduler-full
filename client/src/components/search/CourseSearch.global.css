@@ -1,5 +1,4 @@
 .filter {
-    display: inline-block;
     width: 100%;
 }
 
@@ -10,17 +9,22 @@
 
 .searchBar {
     background: #e4e8ee;
-    border: 2px solid #e4e8ee;
     border-radius: 15px 0px 0px 15px;
-    opacity: 1;
-    top: 100vw;
-    left: 20vw;
     width: 30%;
-    height: 100%;
+    box-sizing: border-box; /* If you don't know what this property is definitely do a quick google and read about it*/
+    /* IMO you should make all HTML elements have this property for consistent styling */
 }
 
 .searchBar-content {
     padding: 5%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+.searchBar-content > :last-child {
+    flex: 1 1 auto;
 }
 
 .searchTxt {
@@ -32,4 +36,9 @@
 .selectTime {
     display: flex;
     justify-content: space-around;
+}
+
+.courseListContainer {
+    height: 1px;
+    flex: 1 1 auto;
 }

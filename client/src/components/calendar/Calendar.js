@@ -83,10 +83,13 @@ const convertSectionToEvents = (section, session) => {
             .add(momentEnd.hour(), "hours")
             .add(momentEnd.minute(), "minutes");
 
-        let instructorName =
-            session.instructors[0].firstName +
-            " " +
-            session.instructors[0].lastName;
+        let instructorName = "";
+        if (session.instructors[0]) {
+            instructorName =
+                session.instructors[0].firstName +
+                " " +
+                session.instructors[0].lastName;
+        }
 
         events.push({
             id: id++,

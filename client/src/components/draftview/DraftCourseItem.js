@@ -253,12 +253,12 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                 {createSectionTimeCells(session.class)}
                 {createSectionTimeCells(session.lab)}
                 <TableCell align="right">
-                    {session.instructors.map((instructor) => {
-                        let webId = webIds(instructor);
+                    {session.instructors.map((instructor, index) => {
+                        let webId = webIds(instructor, index);
                         return (
                             <Tooltip
                                 title="View Instructor Evaluation"
-                                key={webId}
+                                key={`${webId}-${index}`}
                             >
                                 <ReactGA.OutboundLink
                                     style={{
