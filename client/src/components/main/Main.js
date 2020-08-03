@@ -14,6 +14,7 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 
 import './Main.global.css';
 
+
 export const GET_USER_SCHEDULE = gql`
     query GetUserSchedule($term: String!) {
         scheduleOne(filter: { term: $term }) {
@@ -178,6 +179,7 @@ const Main = ({ }) => {
             </ButtonGroup>
 
             {renderContent()}
+
         </div>
     );
 };
