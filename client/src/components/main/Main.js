@@ -12,6 +12,8 @@ import ListIcon from "@material-ui/icons/List";
 
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 
+import './Main.global.css';
+
 export const GET_USER_SCHEDULE = gql`
     query GetUserSchedule($term: String!) {
         scheduleOne(filter: { term: $term }) {
@@ -119,6 +121,31 @@ const Main = ({ }) => {
         setClickValue(e.currentTarget.value);
     };
 
+    const renderContent = () => {
+        if (clickValue === "Details") {
+            return (
+                <div className="Container" style={{ paddingLeft: "2%", paddingRight: "2%", paddingTop: "0%" }}>
+                    <div style={{ float: "right", width: "100%" }}>
+                        <CourseSearch scheduleID={schedule._id} />
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div className="Container" style={{ paddingLeft: "2%", paddingRight: "2%", paddingTop: "0%" }}>
+                    <div style={{ float: "left", width: "30%" }}>
+                        <CourseSearch scheduleID={schedule._id} />
+                    </div>
+                    <div style={{ float: "left", width: "70%" }}>
+                        <CourseCalendar
+                            draftSessions={schedule.draftSessions}
+                        />
+                    </div>
+                </div>
+            )
+        }
+    }
+
     return (
         <div className="App" style={{ display: "inline", color: "#272D2D" }}>
             <Header />
@@ -128,52 +155,25 @@ const Main = ({ }) => {
                     draftSessions={schedule.draftSessions}
                 />
             </div>
-            <ButtonGroup style={{ marginLeft: "35px", marginBottom: "10px" }}>
+
+            <ButtonGroup className="buttonGroup" /*style={{ marginLeft: "35px", marginBottom: "10px" }}*/>
                 <IconButton
-                    style={{ border: "1px solid #6C7488", height: "13px", borderRadius: "5px 0px 0px 5px" }}
+                    className="iconButton"
                     onClick={handleClick}
                     value="Calendar"
+                    tabindex="1"
                 >
-                    <DateRangeIcon
-                        style={
-                            clickValue === "Calendar"
-                                ? { color: "#e91e63", width: "17px" }
-                                : { color: "#6C7488", width: "17px" }
-                        }
-                    />
+                    <DateRangeIcon />
                 </IconButton>
-                <IconButton
-                    style={{ border: "1px solid #6C7488", height: "13px", borderRadius: "0px 5px 5px 0px" }}
+                <IconButton className="iconButton"
                     onClick={handleClick}
                     value="Details"
+                    tabindex="2"
                 >
-                    <ListIcon
-                        style={
-                            clickValue === "Details"
-                                ? { color: "#e91e63", width: "17px" }
-                                : { color: "#6C7488", width: "17px" }
-                        }
-                    />
+                    <ListIcon />
                 </IconButton>
             </ButtonGroup>
-            {clickValue === "Details" ? (
-                <div className="Container" style={{ paddingLeft: "2%", paddingRight: "2%", paddingTop: "0%" }}>
-                    <div style={{ float: "right", width: "100%" }}>
-                        <CourseSearch scheduleID={schedule._id} />
-                    </div>
-                </div>
-            ) : (
-                    <div className="Container" style={{ paddingLeft: "2%", paddingRight: "2%", paddingTop: "0%" }}>
-                        <div style={{ float: "left", width: "30%" }}>
-                            <CourseSearch scheduleID={schedule._id} />
-                        </div>
-                        <div style={{ float: "left", width: "70%" }}>
-                            <CourseCalendar
-                                draftSessions={schedule.draftSessions}
-                            />
-                        </div>
-                    </div>
-                )}
+            {renderContent()}
         </div>
     );
 };

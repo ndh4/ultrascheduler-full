@@ -230,26 +230,23 @@ const SessionItem = ({ scheduleID, course, session, draftSessions }) => {
                 }}
                 style={{ alignItems: "left" }}
             />
-            {/* <div style={{ alignItems: "left" }}>{sessionToString(session)}</div> */}
             <div
                 style={{
                     alignItems: "left",
                 }}
             >
-                {
-                    <Table>
-                        <TableBody>
-                            <Detail
-                                style={detailStyle}
-                                session={session}
-                                course={course}
-                                open={true}
-                                classTimeString={classTimeString}
-                                instructorsToNames={instructorsToNames}
-                            />
-                        </TableBody>
-                    </Table>
-                }
+                <Table>
+                    <TableBody>
+                        <Detail
+                            style={detailStyle}
+                            session={session}
+                            course={course}
+                            open={true}
+                            classTimeString={classTimeString}
+                            instructorsToNames={instructorsToNames}
+                        />
+                    </TableBody>
+                </Table>
             </div>
         </div>
     );
