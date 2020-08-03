@@ -6,6 +6,7 @@ import Collapse from "@material-ui/core/Collapse";
 import { Event } from "../../utils/analytics";
 import { classTimeString } from "../../utils/CourseTimeTransforms";
 import Detail from "./Detail";
+import MinimizedDetail from "./MinimizedDetail";
 import { Table, TableBody, TableRow, TableCell, Box } from "@material-ui/core";
 
 import moment from "moment";
@@ -16,6 +17,11 @@ const detailStyle = {
     color: "#6C7488",
     background: "#F7F8FA",
     width: "415px",
+};
+
+const minimizedDetailStyle = {
+    borderStyle: "solid",
+    display: "inline-block"
 };
 
 /**
@@ -166,7 +172,7 @@ const REMOVE_DRAFT_SESSION = gql`
     }
 `;
 
-const SessionItem = ({ scheduleID, course, session, draftSessions }) => {
+const SessionItem = ({ clickValue, scheduleID, course, session, draftSessions }) => {
     let sessionSelected = false;
 
     // Check if this course is in draftSessions
@@ -189,6 +195,31 @@ const SessionItem = ({ scheduleID, course, session, draftSessions }) => {
     ] = useMutation(REMOVE_DRAFT_SESSION, {
         variables: { scheduleID: scheduleID, sessionID: session._id },
     });
+
+    const renderDetail = () => {
+        if (clickValue === "Calendar") {
+            return (
+                <MinimizedDetail
+                    style={minimizedDetailStyle}
+                    session={session}
+                    course={course}
+                    open={true}
+                    classTimeString={classTimeString}
+                    instructorsToNames={instructorsToNames}
+                />
+            )
+        } else {
+            return (
+                <Detail
+                    style={detailStyle}
+                    session={session}
+                    course={course}
+                    open={true}
+                    classTimeString={classTimeString}
+                    instructorsToNames={instructorsToNames}
+                />)
+        }
+    }
 
     return (
         <div
@@ -237,14 +268,17 @@ const SessionItem = ({ scheduleID, course, session, draftSessions }) => {
             >
                 <Table>
                     <TableBody>
-                        <Detail
+
+                        {/* <Detail
                             style={detailStyle}
                             session={session}
                             course={course}
                             open={true}
                             classTimeString={classTimeString}
                             instructorsToNames={instructorsToNames}
-                        />
+                        /> */}
+                        {renderDetail()}
+
                     </TableBody>
                 </Table>
             </div>
@@ -252,7 +286,7 @@ const SessionItem = ({ scheduleID, course, session, draftSessions }) => {
     );
 };
 
-const CourseList = ({ scheduleID, query, searchType }) => {
+const CourseList = ({ clickValue, scheduleID, query, searchType }) => {
     const [courseSelected, setCourseSelected] = useState([]);
 
     // Get term from local state management
@@ -327,6 +361,7 @@ const CourseList = ({ scheduleID, query, searchType }) => {
             return course.sessions.map((session, idx) => (
                 <SessionItem
                     //replace key with uuid
+                    clickValue={clickValue}
                     key={idx}
                     course={course}
                     session={session}
@@ -354,6 +389,7 @@ const CourseList = ({ scheduleID, query, searchType }) => {
                     let id = course._id;
                     return (
                         <div key={id}>
+
                             <ListItem
                                 key={id}
                                 onClick={() =>
@@ -367,6 +403,7 @@ const CourseList = ({ scheduleID, query, searchType }) => {
                                     {courseToLabel(course)}
                                 </div>
                             </ListItem>
+
                             <Collapse
                                 in={courseSelected.includes(id) ? true : false}
                                 timeout="auto"

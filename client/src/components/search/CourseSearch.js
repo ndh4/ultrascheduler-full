@@ -163,7 +163,7 @@ const COURSES_BY_INSTRUCTORS = gql`
     }
 `;
 
-const CourseSearch = ({ scheduleID }) => {
+const CourseSearch = ({ scheduleID, clickValue }) => {
     const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
     const [getDept, setDept] = useState(dummy); // Used for selection of a particular department
 
@@ -337,6 +337,7 @@ const CourseSearch = ({ scheduleID }) => {
     const displayCourseList = () => {
         return (
             <CourseList
+                clickValue={clickValue}
                 scheduleID={scheduleID}
                 query={getQuery[activeButtonIndex]}
                 searchType={variables4Query[activeButtonIndex]}

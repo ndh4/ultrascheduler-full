@@ -85,7 +85,7 @@ const Main = ({ }) => {
     // Check for recent update from cache
     let { data: storeData } = useQuery(GET_LOCAL_DATA);
     let { term, recentUpdate } = storeData;
-    const [clickValue, setClickValue] = useState("");
+    const [clickValue, setClickValue] = useState("Calendar");
 
     // Need to be able to update recentUpdate field on the user when they dismiss
     let [seenRecentUpdate] = useMutation(SEEN_RECENT_UPDATE);
@@ -124,17 +124,17 @@ const Main = ({ }) => {
     const renderContent = () => {
         if (clickValue === "Details") {
             return (
-                <div className="Container" style={{ paddingLeft: "2%", paddingRight: "2%", paddingTop: "0%" }}>
+                <div className="Container">
                     <div style={{ float: "right", width: "100%" }}>
-                        <CourseSearch scheduleID={schedule._id} />
+                        <CourseSearch scheduleID={schedule._id} clickValue={clickValue} />
                     </div>
                 </div>
             )
         } else {
             return (
-                <div className="Container" style={{ paddingLeft: "2%", paddingRight: "2%", paddingTop: "0%" }}>
+                <div className="Container">
                     <div style={{ float: "left", width: "30%" }}>
-                        <CourseSearch scheduleID={schedule._id} />
+                        <CourseSearch scheduleID={schedule._id} clickValue={clickValue} />
                     </div>
                     <div style={{ float: "left", width: "70%" }}>
                         <CourseCalendar
@@ -144,6 +144,23 @@ const Main = ({ }) => {
                 </div>
             )
         }
+    }
+
+    const renderIcons = () => {
+        const icons = [<DateRangeIcon />, <ListIcon />]
+        const values = ["Calendar", "Details"]
+
+        return (
+            icons.map((icon, index) =>
+                <IconButton
+                    className="iconButton"
+                    onClick={handleClick}
+                    value={values[index]}
+                >
+                    {icon}
+                </IconButton>
+            )
+        )
     }
 
     return (
@@ -156,23 +173,10 @@ const Main = ({ }) => {
                 />
             </div>
 
-            <ButtonGroup className="buttonGroup" /*style={{ marginLeft: "35px", marginBottom: "10px" }}*/>
-                <IconButton
-                    className="iconButton"
-                    onClick={handleClick}
-                    value="Calendar"
-                    tabindex="1"
-                >
-                    <DateRangeIcon />
-                </IconButton>
-                <IconButton className="iconButton"
-                    onClick={handleClick}
-                    value="Details"
-                    tabindex="2"
-                >
-                    <ListIcon />
-                </IconButton>
+            <ButtonGroup className="buttonGroup">
+                {renderIcons()}
             </ButtonGroup>
+
             {renderContent()}
         </div>
     );
