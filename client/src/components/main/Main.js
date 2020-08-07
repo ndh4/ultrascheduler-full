@@ -134,10 +134,10 @@ const Main = ({ }) => {
         } else {
             return (
                 <div className="Container">
-                    <div style={{ float: "left", width: "30%" }}>
+                    <div style={{width: "30%" }}>
                         <CourseSearch scheduleID={schedule._id} clickValue={clickValue} />
                     </div>
-                    <div style={{ float: "left", width: "70%" }}>
+                    <div style={{width: "70%"}}>
                         <CourseCalendar
                             draftSessions={schedule.draftSessions}
                         />

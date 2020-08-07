@@ -10,12 +10,20 @@
 .searchBar {
     background: #e4e8ee;
     border-radius: 15px 0px 0px 15px;
-    opacity: 1;
-    top: 100vw;
-    left: 20vw;
-    /* width: 28vw; */
-    height: 43vw;
+    box-sizing: border-box;
+    height: 100%;
+}
 
+.searchBar-content {
+    padding: 5%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+.searchBar-content > :last-child {
+    flex: 1 1 auto;
 }
 
 .searchTxt {

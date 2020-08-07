@@ -113,7 +113,7 @@ const instructorsToNames = (instructors) => {
 
 const styles = {
     slideContainer: {
-        height: 500,
+        height: "100%",
         WebkitOverflowScrolling: "touch", // iOS momentum scrolling
     },
 };
@@ -286,7 +286,7 @@ const SessionItem = ({ clickValue, scheduleID, course, session, draftSessions })
     );
 };
 
-const CourseList = ({ clickValue, scheduleID, query, searchType }) => {
+const CourseList = ({ clickValue, scheduleID, query, searchType, idx}) => {
 
     const [courseSelected, setCourseSelected] = useState([]);
 

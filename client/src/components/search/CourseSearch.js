@@ -483,7 +483,6 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
         const searchType = searchTypes[activeButtonIndex];
         const option = allOptions[activeButtonIndex];
         const selected = allSelected[activeButtonIndex];
-
         const selection = (
             <Selection
                 className="filter"
@@ -494,6 +493,8 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
                 handleChange={handleChange}
             />
         );
+
+        return selection;
     };
 
     /**
@@ -507,6 +508,7 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
                 scheduleID={scheduleID}
                 query={getQuery[activeButtonIndex]}
                 searchType={variables4Query[activeButtonIndex]}
+                idx={activeButtonIndex}
             />
             //<div></div>
 
