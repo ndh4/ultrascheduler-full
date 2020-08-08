@@ -1,4 +1,30 @@
-.container {
+.buttonGroup {
+    margin-left: 35px;
+    margin-bottom: 10px;
+}
+
+.buttonGroup > .iconButton {
+        border: 1px solid;
+        height: 13px;
+        border-radius: 5px 0px 0px 5px;
+}
+
+.iconButton:first-child { 
+    border-radius: 5px 0px 0px 5px;
+} 
+
+.iconButton:last-child {
+    border-radius: 0px 5px 5px 0px;
+} 
+
+.iconButton:hover, .iconButton:focus, .iconButton:active {
+    color:#e91e63 
+}
+
+.Container {
+    padding-left: 2%;
+    padding-right: 2%;
+    padding-top: 0%;
     display: flex;
-    padding: 2%;
+    margin-bottom: 40px;
 }

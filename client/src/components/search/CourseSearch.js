@@ -34,6 +34,7 @@ const GET_DEPT_COURSES = gql`
             longTitle
             sessions(filter: { term: $term }) {
                 _id
+                term
                 crn
                 class {
                     days
@@ -49,6 +50,17 @@ const GET_DEPT_COURSES = gql`
                     firstName
                     lastName
                 }
+                course {
+                    distribution
+                    prereqs
+                    coreqs
+                }
+                enrollment
+                maxEnrollment
+                crossEnrollment
+                maxCrossEnrollment
+                waitlisted
+                maxWaitlisted
             }
         }
     }
@@ -68,6 +80,7 @@ const GET_DIST_COURSES = gql`
             distribution
             sessions(filter: { term: $term }) {
                 _id
+                term
                 crn
                 class {
                     days
@@ -83,6 +96,17 @@ const GET_DIST_COURSES = gql`
                     firstName
                     lastName
                 }
+                course {
+                    distribution
+                    prereqs
+                    coreqs
+                }
+                enrollment
+                maxEnrollment
+                crossEnrollment
+                maxCrossEnrollment
+                waitlisted
+                maxWaitlisted
             }
         }
     }
@@ -183,6 +207,9 @@ const COURSES_BY_INSTRUCTORS = gql`
                     subject
                     courseNum
                     longTitle
+                    distribution
+                    prereqs
+                    coreqs
                 }
                 class {
                     days
@@ -195,16 +222,19 @@ const COURSES_BY_INSTRUCTORS = gql`
                     endTime
                 }
                 crn
+                enrollment
+                maxEnrollment
+                crossEnrollment
+                maxCrossEnrollment
+                waitlisted
+                maxWaitlisted
             }
         }
     }
 `;
 
-const formatTime = (time) => {
-    return time.replace(":", "");
-};
+const CourseSearch = ({ scheduleID, clickValue }) => {
 
-const CourseSearch = ({ scheduleID }) => {
     const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
     const [getDept, setDept] = useState([]); // Used for selection of a particular department
     const [getDist, setDist] = useState([]); // Used for selection of a particular distribution
@@ -453,7 +483,6 @@ const CourseSearch = ({ scheduleID }) => {
         const searchType = searchTypes[activeButtonIndex];
         const option = allOptions[activeButtonIndex];
         const selected = allSelected[activeButtonIndex];
-
         const selection = (
             <Selection
                 className="filter"
@@ -464,11 +493,25 @@ const CourseSearch = ({ scheduleID }) => {
                 handleChange={handleChange}
             />
         );
-        const time = (
-            <div className="selectTime">
-                {displayTimeTF("From", "06:30", handleStartTimeTFChange)}
-                {displayTimeTF("To", "22:00", handleEndTimeTFChange)}
-            </div>
+
+        return selection;
+    };
+
+    /**
+     * Displays the course list component based on whether user is searching
+     * by distribution or by department
+     */
+    const displayCourseList = () => {
+        return (
+            <CourseList
+                clickValue={clickValue}
+                scheduleID={scheduleID}
+                query={getQuery[activeButtonIndex]}
+                searchType={variables4Query[activeButtonIndex]}
+                idx={activeButtonIndex}
+            />
+            //<div></div>
+
         );
 
         const displayArray = [selection, selection, selection, time, selection];

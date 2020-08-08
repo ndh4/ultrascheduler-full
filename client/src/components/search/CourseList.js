@@ -4,9 +4,25 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Collapse from "@material-ui/core/Collapse";
 import { Event } from "../../utils/analytics";
+import { classTimeString } from "../../utils/CourseTimeTransforms";
+import Detail from "./Detail";
+import MinimizedDetail from "./MinimizedDetail";
+import { Table, TableBody, TableRow, TableCell, Box } from "@material-ui/core";
 
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
+
+const detailStyle = {
+    fontSize: "10px",
+    color: "#6C7488",
+    background: "#F7F8FA",
+    width: "415px",
+};
+
+const minimizedDetailStyle = {
+    borderStyle: "solid",
+    display: "inline-block"
+};
 
 /**
  * Gets the term from local state management
@@ -23,10 +39,10 @@ const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
 const courseToLabel = (course) => {
     //distribution and department
     if (course.sessions) {
-        return `${course.subject} ${course.courseNum} || ${course.longTitle}`;
+        return `${course.subject} ${course.courseNum}: ${course.longTitle}`;
     } else {
         //instructors
-        return `${course.course.subject} ${course.course.courseNum} || ${course.course.longTitle}`;
+        return `${course.course.subject} ${course.course.courseNum}: ${course.course.longTitle}`;
     }
 };
 
@@ -44,59 +60,60 @@ const instructorsToNames = (instructors) => {
     return instructorNames;
 };
 
-const sessionToString = (session) => {
-    let courseResult = [];
-    // Find class times
-    if (session.class.days.length > 0) {
-        let classTime = "Class: " + session.class.days.join("");
-        // Convert times
-        let startTime = formatTime(session.class.startTime);
-        let endTime = formatTime(session.class.endTime);
+// const sessionToString = (session) => {
+//     let courseResult = [];
+//     // Find class times
+//     if (session.class.days.length > 0) {
+//         let classTime = "Class: " + session.class.days.join("");
+//         // Convert times
+//         let startTime = formatTime(session.class.startTime);
+//         let endTime = formatTime(session.class.endTime);
 
-        classTime += " " + startTime + " - " + endTime;
-        courseResult.push(
-            //added key here
-            <p style={{ padding: "5px" }} key={session.crn}>
-                {classTime}
-            </p>
-        );
-    }
-    // Find lab times
-    if (session.lab.days.length > 0) {
-        let labTime = "Lab: " + session.lab.days.join("");
+//         classTime += " " + startTime + " - " + endTime;
+//         courseResult.push(
+//             //added key here
+//             <p style={{ padding: "5px" }} key={session.crn}>
+//                 {classTime}
+//             </p>
+//         );
+//     }
+//     // Find lab times
+//     if (session.lab.days.length > 0) {
+//         let labTime = "Lab: " + session.lab.days.join("");
 
-        // Convert times
-        let startTime = formatTime(session.lab.startTime);
-        let endTime = formatTime(session.lab.endTime);
+//         // Convert times
+//         let startTime = formatTime(session.lab.startTime);
+//         let endTime = formatTime(session.lab.endTime);
 
-        labTime += " " + startTime + " - " + endTime;
-        courseResult.push(
-            //added key here
-            <p style={{ padding: "5px" }} key={session._id}>
-                {labTime}
-            </p>
-        );
-    }
-    // Finally find instructors - only for distribution and departments
-    if (session.instructors) {
-        if (session.instructors.length > 0) {
-            let instructorNames = instructorsToNames(session.instructors);
-            courseResult.push(
-                //added key here
-                <p style={{ padding: "5px" }} key={session._id}>
-                    {instructorNames.join(", ")}{" "}
-                </p>
-            );
-        }
-    }
-    return courseResult.length > 0
-        ? courseResult
-        : ["No information found for this session."];
-};
+//         labTime += " " + startTime + " - " + endTime;
+//         courseResult.push(
+//             //added key here
+//             <p style={{ padding: "5px" }} key={session._id}>
+//                 {labTime}
+//             </p>
+//         );
+//     }
+
+// // Finally find instructors - only for distribution and departments
+// if (session.instructors) {
+//     if (session.instructors.length > 0) {
+//         let instructorNames = instructorsToNames(session.instructors);
+//         courseResult.push(
+//             //added key here
+//             <p style={{ padding: "5px" }} key={session._id}>
+//                 {instructorNames.join(", ")}{" "}
+//             </p>
+//         );
+//     }
+// }
+// return courseResult.length > 0
+//     ? courseResult
+//     : ["No information found for this session."];
+// };
 
 const styles = {
     slideContainer: {
-        height: 500,
+        height: "100%",
         WebkitOverflowScrolling: "touch", // iOS momentum scrolling
     },
 };
@@ -155,7 +172,7 @@ const REMOVE_DRAFT_SESSION = gql`
     }
 `;
 
-const SessionItem = ({ scheduleID, session, draftSessions }) => {
+const SessionItem = ({ clickValue, scheduleID, course, session, draftSessions }) => {
     let sessionSelected = false;
 
     // Check if this course is in draftSessions
@@ -179,9 +196,34 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
         variables: { scheduleID: scheduleID, sessionID: session._id },
     });
 
+    const renderDetail = () => {
+        if (clickValue === "Calendar") {
+            return (
+                <MinimizedDetail
+                    style={minimizedDetailStyle}
+                    session={session}
+                    course={course}
+                    open={true}
+                    classTimeString={classTimeString}
+                    instructorsToNames={instructorsToNames}
+                />
+            )
+        } else {
+            return (
+                <Detail
+                    style={detailStyle}
+                    session={session}
+                    course={course}
+                    open={true}
+                    classTimeString={classTimeString}
+                    instructorsToNames={instructorsToNames}
+                />)
+        }
+    }
+
     return (
         <div
-            style={{ borderStyle: "solid", display: "inline-block" }}
+            // style={{ borderStyle: "solid", display: "inline-block" }}
             key={session.crn}
         >
             <input
@@ -219,12 +261,33 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
                 }}
                 style={{ alignItems: "left" }}
             />
-            <div style={{ alignItems: "left" }}>{sessionToString(session)}</div>
+            <div
+                style={{
+                    alignItems: "left",
+                }}
+            >
+                <Table>
+                    <TableBody>
+
+                        {/* <Detail
+                            style={detailStyle}
+                            session={session}
+                            course={course}
+                            open={true}
+                            classTimeString={classTimeString}
+                            instructorsToNames={instructorsToNames}
+                        /> */}
+                        {renderDetail()}
+
+                    </TableBody>
+                </Table>
+            </div>
         </div>
     );
 };
 
-const CourseList = ({ scheduleID, query, searchType, idx }) => {
+const CourseList = ({ clickValue, scheduleID, query, searchType, idx}) => {
+
     const [courseSelected, setCourseSelected] = useState([]);
 
     // Get term from local state management
@@ -310,9 +373,11 @@ const CourseList = ({ scheduleID, query, searchType, idx }) => {
     const collapseItem = (course) => {
         //distribution, department, day, time interval
         if (course.sessions) {
+            // return <Detail course={course} classTimeString={classTimeString} />;
             return course.sessions.map((session, idx) => (
                 <SessionItem
                     //replace key with uuid
+                    clickValue={clickValue}
                     key={idx}
                     course={course}
                     session={session}
@@ -334,36 +399,42 @@ const CourseList = ({ scheduleID, query, searchType, idx }) => {
     };
 
     return (
-        <List component="nav" aria-labelledby="nested-list-subheader">
-            {courseResults.map((course, idx) => {
-                let id = course._id;
-                let key = `${id}-${idx}`;
-                return (
-                    <div key={key}>
-                        <ListItem
-                            key={key}
-                            onClick={() =>
-                                courseSelected.includes(id)
-                                    ? removeFromCoursesSelected(id)
-                                    : addToCoursesSelected(id)
-                            }
-                            button
-                        >
-                            {courseToLabel(course)}
-                        </ListItem>
-                        <Collapse
-                            in={courseSelected.includes(id) ? true : false}
-                            timeout="auto"
-                            unmountOnExit
-                        >
-                            <List component="div" disablePadding>
-                                {collapseItem(course)}
-                            </List>
-                        </Collapse>
-                    </div>
-                );
-            })}
-        </List>
+        <SwipeableViews containerStyle={styles.slideContainer}>
+            <List component="nav" aria-labelledby="nested-list-subheader">
+                {courseResults.map((course) => {
+                    let id = course._id;
+                    return (
+                        <div key={id}>
+
+                            <ListItem
+                                key={id}
+                                onClick={() =>
+                                    courseSelected.includes(id)
+                                        ? removeFromCoursesSelected(id)
+                                        : addToCoursesSelected(id)
+                                }
+                                button
+                            >
+                                <div style={{ uppercase: "none" }}>
+                                    {courseToLabel(course)}
+                                </div>
+                            </ListItem>
+
+                            <Collapse
+                                in={courseSelected.includes(id) ? true : false}
+                                timeout="auto"
+                                unmountOnExit
+                            >
+                                <List component="div" disablePadding>
+                                    {collapseItem(course)}
+                                </List>
+                            </Collapse>
+                        </div>
+                    );
+                })}
+            </List>
+        </SwipeableViews>
+
     );
 };
 

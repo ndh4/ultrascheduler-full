@@ -3,11 +3,17 @@ import Header from "../header/Header";
 import CourseCalendar from "../calendar/Calendar";
 import ClassSelector from "../draftview/ClassSelector";
 import CourseSearch from "../search/CourseSearch";
-import InstructorSearch from "../search/InstructorSearch";
 import { useToasts } from "react-toast-notifications";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import LoadingScreen from "../LoadingScreen";
-import "./Main.global.css";
+import IconButton from "@material-ui/core/IconButton";
+import DateRangeIcon from "@material-ui/icons/DateRange";
+import ListIcon from "@material-ui/icons/List";
+
+import ButtonGroup from "@material-ui/core/ButtonGroup";
+
+import './Main.global.css';
+
 
 export const GET_USER_SCHEDULE = gql`
     query GetUserSchedule($term: String!) {
@@ -76,10 +82,11 @@ const SEEN_RECENT_UPDATE = gql`
 `;
 
 // Toast for notifications
-const Main = ({}) => {
+const Main = ({ }) => {
     // Check for recent update from cache
     let { data: storeData } = useQuery(GET_LOCAL_DATA);
     let { term, recentUpdate } = storeData;
+    const [clickValue, setClickValue] = useState("Calendar");
 
     // Need to be able to update recentUpdate field on the user when they dismiss
     let [seenRecentUpdate] = useMutation(SEEN_RECENT_UPDATE);
@@ -111,6 +118,52 @@ const Main = ({}) => {
 
     const schedule = data.scheduleOne;
 
+    const handleClick = (e) => {
+        setClickValue(e.currentTarget.value);
+    };
+
+    const renderContent = () => {
+        if (clickValue === "Details") {
+            return (
+                <div className="Container">
+                    <div style={{ float: "right", width: "100%" }}>
+                        <CourseSearch scheduleID={schedule._id} clickValue={clickValue} />
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div className="Container">
+                    <div style={{width: "30%" }}>
+                        <CourseSearch scheduleID={schedule._id} clickValue={clickValue} />
+                    </div>
+                    <div style={{width: "70%"}}>
+                        <CourseCalendar
+                            draftSessions={schedule.draftSessions}
+                        />
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    const renderIcons = () => {
+        const icons = [<DateRangeIcon />, <ListIcon />]
+        const values = ["Calendar", "Details"]
+
+        return (
+            icons.map((icon, index) =>
+                <IconButton
+                    className="iconButton"
+                    onClick={handleClick}
+                    value={values[index]}
+                >
+                    {icon}
+                </IconButton>
+            )
+        )
+    }
+
     return (
         <div className="App" style={{ display: "inline", color: "#272D2D" }}>
             <Header />
@@ -120,10 +173,13 @@ const Main = ({}) => {
                     draftSessions={schedule.draftSessions}
                 />
             </div>
-            <div className="container">
-                <CourseSearch scheduleID={schedule._id} />
-                <CourseCalendar draftSessions={schedule.draftSessions} />
-            </div>
+
+            <ButtonGroup className="buttonGroup">
+                {renderIcons()}
+            </ButtonGroup>
+
+            {renderContent()}
+
         </div>
     );
 };

@@ -10,9 +10,8 @@
 .searchBar {
     background: #e4e8ee;
     border-radius: 15px 0px 0px 15px;
-    width: 30%;
-    box-sizing: border-box; /* If you don't know what this property is definitely do a quick google and read about it*/
-    /* IMO you should make all HTML elements have this property for consistent styling */
+    box-sizing: border-box;
+    height: 100%;
 }
 
 .searchBar-content {
@@ -41,4 +40,4 @@
 .courseListContainer {
     height: 1px;
     flex: 1 1 auto;
-}
+} 

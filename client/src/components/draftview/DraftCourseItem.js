@@ -19,6 +19,13 @@ import URLTypes from "../../constants/URLTypes";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { TableBody } from "@material-ui/core";
 import CourseDetail from "./CourseDetail";
+import Detail from "../search/Detail";
+import { graphqlSync } from "graphql";
+
+const detailStyle = {
+    background: "#F6F8FC",
+    color: "#6C7488",
+}
 
 const createURL = (termcode, crn, type = URLTypes.DETAIL) => {
     switch (type) {
@@ -241,8 +248,8 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                         {open ? (
                             <KeyboardArrowUpIcon />
                         ) : (
-                            <KeyboardArrowDownIcon />
-                        )}
+                                <KeyboardArrowDownIcon />
+                            )}
                     </IconButton>
                 </TableCell>
                 <TableCell align="right">{session.crn}</TableCell>
@@ -289,7 +296,16 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                     </Tooltip>
                 </TableCell>
             </TableRow>
-            <CourseDetail
+            {/* <CourseDetail
+                key={idx}
+                course={course}
+                session={session}
+                instructorsToNames={instructorsToNames}
+                open={open}
+                classTimeString={classTimeString}
+            /> */}
+            <Detail
+                style={detailStyle}
                 key={idx}
                 course={course}
                 session={session}
