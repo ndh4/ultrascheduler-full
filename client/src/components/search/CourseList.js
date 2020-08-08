@@ -249,7 +249,7 @@ const CourseList = ({ scheduleID, query, searchType, idx }) => {
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
-    if (!courseData) return <p>No Data...</p>;
+    if (!courseData || !scheduleData) return <p>No Data...</p>;
 
     // Once the data has loaded, we want to extract the course results
     // We need to filter out any courses which have 0 sessions

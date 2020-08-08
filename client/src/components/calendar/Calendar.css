@@ -29,6 +29,9 @@
     font: Medium 16px/15px Avenir Next;
     letter-spacing: 0px;
     opacity: 1;
+
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .courseEventBar {
