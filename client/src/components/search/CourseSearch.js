@@ -377,7 +377,7 @@ const CourseSearch = ({ scheduleID }) => {
     // Set color theme for the button for clicked and unclicked effect
     const muiTheme = createMuiTheme({
         palette: {
-            primary: { main: "#697E99" },
+            primary: { main: "#E4E8EE" },
             secondary: { main: "#FFFFFF" },
         },
     });
@@ -391,7 +391,7 @@ const CourseSearch = ({ scheduleID }) => {
              *
              */
             const buttonColor =
-                index === activeButtonIndex ? "primary" : "secondary";
+                index === activeButtonIndex ? "#ADBCCE" : "#FFFFFF";
 
             return (
                 <ThemeProvider
@@ -408,8 +408,9 @@ const CourseSearch = ({ scheduleID }) => {
                             padding: "1px 24px 1px 24px",
                             borderRadius: "25px",
                             fontSize: "12px",
+                            backgroundColor: buttonColor
                         }}
-                        color={buttonColor}
+                        // color={buttonColor}
                         size="small"
                         variant="contained"
                         onClick={() => {
