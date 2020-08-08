@@ -32,6 +32,7 @@ const GET_DEPT_COURSES = gql`
             subject
             courseNum
             longTitle
+            distribution
             sessions(filter: { term: $term }) {
                 _id
                 crn

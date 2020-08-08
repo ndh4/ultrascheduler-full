@@ -8,6 +8,8 @@ import { Event } from "../../utils/analytics";
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
+import "./CourseList.global.css";
+
 /**
  * Gets the term from local state management
  */
@@ -23,10 +25,10 @@ const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
 const courseToLabel = (course) => {
     //distribution and department
     if (course.sessions) {
-        return `${course.subject} ${course.courseNum} || ${course.longTitle}`;
+        return `${course.subject} ${course.courseNum}: ${course.longTitle}`;
     } else {
         //instructors
-        return `${course.course.subject} ${course.course.courseNum} || ${course.course.longTitle}`;
+        return `${course.course.subject} ${course.course.courseNum}: ${course.course.longTitle}`;
     }
 };
 
@@ -44,11 +46,11 @@ const instructorsToNames = (instructors) => {
     return instructorNames;
 };
 
-const sessionToString = (session) => {
+const sessionToString = (session, course) => {
     let courseResult = [];
     // Find class times
     if (session.class.days.length > 0) {
-        let classTime = "Class: " + session.class.days.join("");
+        let classTime = session.class.days.join("") + ", ";
         // Convert times
         let startTime = formatTime(session.class.startTime);
         let endTime = formatTime(session.class.endTime);
@@ -56,14 +58,15 @@ const sessionToString = (session) => {
         classTime += " " + startTime + " - " + endTime;
         courseResult.push(
             //added key here
-            <p style={{ padding: "5px" }} key={session.crn}>
+            <p className="sessionInfoText" key={session.crn}>
+                <strong>Class Time: </strong>
                 {classTime}
             </p>
         );
     }
     // Find lab times
     if (session.lab.days.length > 0) {
-        let labTime = "Lab: " + session.lab.days.join("");
+        let labTime = session.lab.days.join("") + ", ";
 
         // Convert times
         let startTime = formatTime(session.lab.startTime);
@@ -72,7 +75,8 @@ const sessionToString = (session) => {
         labTime += " " + startTime + " - " + endTime;
         courseResult.push(
             //added key here
-            <p style={{ padding: "5px" }} key={session._id}>
+            <p className="sessionInfoText" key={session._id}>
+                <strong>Lab Time: </strong>
                 {labTime}
             </p>
         );
@@ -83,12 +87,34 @@ const sessionToString = (session) => {
             let instructorNames = instructorsToNames(session.instructors);
             courseResult.push(
                 //added key here
-                <p style={{ padding: "5px" }} key={session._id}>
-                    {instructorNames.join(", ")}{" "}
+                <p className="sessionInfoText" key={session._id}>
+                    <strong>Instructor: </strong>
+                    <span style={{ textDecoration: "underline" }}>
+                        {instructorNames.join(", ")}{" "}
+                    </span>
                 </p>
             );
         }
     }
+
+    // Distribution
+    courseResult.push(
+        <p className="sessionInfoText">
+            <strong>Distribution: </strong>
+            {course.distribution ? course.distribution : "N/A"}
+        </p>
+    );
+
+    // CRN
+    if (session.crn) {
+        courseResult.push(
+            <p className="sessionInfoText">
+                <strong>CRN: </strong>
+                {session.crn}
+            </p>
+        );
+    }
+
     return courseResult.length > 0
         ? courseResult
         : ["No information found for this session."];
@@ -155,7 +181,7 @@ const REMOVE_DRAFT_SESSION = gql`
     }
 `;
 
-const SessionItem = ({ scheduleID, session, draftSessions }) => {
+const SessionItem = ({ scheduleID, session, course, draftSessions }) => {
     let sessionSelected = false;
 
     // Check if this course is in draftSessions
@@ -180,10 +206,7 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
     });
 
     return (
-        <div
-            style={{ borderStyle: "solid", display: "inline-block" }}
-            key={session.crn}
-        >
+        <div className="sessionInfo" key={session.crn}>
             <input
                 type="checkbox"
                 checked={sessionSelected}
@@ -219,7 +242,9 @@ const SessionItem = ({ scheduleID, session, draftSessions }) => {
                 }}
                 style={{ alignItems: "left" }}
             />
-            <div style={{ alignItems: "left" }}>{sessionToString(session)}</div>
+            <div style={{ alignItems: "left" }}>
+                {sessionToString(session, course)}
+            </div>
         </div>
     );
 };
@@ -324,6 +349,7 @@ const CourseList = ({ scheduleID, query, searchType, idx }) => {
             //instructors
             return (
                 <SessionItem
+                    key={idx}
                     course={course}
                     session={course}
                     draftSessions={draftSessions}
@@ -342,6 +368,7 @@ const CourseList = ({ scheduleID, query, searchType, idx }) => {
                     <div key={key}>
                         <ListItem
                             key={key}
+                            className="courseTitle"
                             onClick={() =>
                                 courseSelected.includes(id)
                                     ? removeFromCoursesSelected(id)
@@ -352,13 +379,12 @@ const CourseList = ({ scheduleID, query, searchType, idx }) => {
                             {courseToLabel(course)}
                         </ListItem>
                         <Collapse
+                            className="collapseBox"
                             in={courseSelected.includes(id) ? true : false}
                             timeout="auto"
                             unmountOnExit
                         >
-                            <List component="div" disablePadding>
-                                {collapseItem(course)}
-                            </List>
+                            {collapseItem(course)}
                         </Collapse>
                     </div>
                 );
