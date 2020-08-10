@@ -305,6 +305,15 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                     </IconButton>
                 </Tooltip>
             </p>
+            <Detail
+                style={detailStyle}
+                key={idx}
+                course={course}
+                session={session}
+                instructorsToNames={instructorsToNames}
+                open={open}
+                classTimeString={classTimeString}
+            />
         </div>
     );
 

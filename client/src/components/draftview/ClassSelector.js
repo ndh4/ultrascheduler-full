@@ -30,9 +30,9 @@ const styles = {
         // WebkitOverflowScrolling: "touch", // iOS momentum scrolling
     },
     slide: {
-        position: 'sticky',
-        top: 0
-    }
+        position: "sticky",
+        top: 0,
+    },
 };
 
 // Styled rows
@@ -88,25 +88,23 @@ const ClassSelector = ({ draftSessions, scheduleID }) => {
 
     return (
         <Fragment>
-            <SwipeableViews containerStyle={styles.slideContainer}>
-                {/* <div className="tableBody"> */}
-                    <div style={styles.slide} className="tableHeader">
-                        {Object.keys(headers).map((headerKey) => (
-                            <p>{headers[headerKey] ? headerKey : null}</p>
-                        ))}
-                    </div>
-                    {draftSessions.map((draftSession, idx) => (
-                        <DraftCourseItem
-                            //replace key with uuid
-                            key={idx}
-                            visible={draftSession.visible}
-                            session={draftSession.session}
-                            course={draftSession.session.course}
-                            scheduleID={scheduleID}
-                        />
+            <div className="tableRowContainer">
+                <div className="tableHeader">
+                    {Object.keys(headers).map((headerKey) => (
+                        <p>{headers[headerKey] ? headerKey : null}</p>
                     ))}
-                {/* </div> */}
-            </SwipeableViews>
+                </div>
+                {draftSessions.map((draftSession, idx) => (
+                    <DraftCourseItem
+                        //replace key with uuid
+                        key={idx}
+                        visible={draftSession.visible}
+                        session={draftSession.session}
+                        course={draftSession.session.course}
+                        scheduleID={scheduleID}
+                    />
+                ))}
+            </div>
         </Fragment>
     );
 
