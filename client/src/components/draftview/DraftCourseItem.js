@@ -4,7 +4,8 @@ import TableRow from "@material-ui/core/TableRow";
 // Course evals
 import QuestionAnswerIcon from "@material-ui/icons/QuestionAnswer";
 // Course visible
-import Checkbox from "@material-ui/core/Checkbox";
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 // Delete course
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
@@ -235,10 +236,13 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
 
     return (
         <div className="tableRow">
-            <Checkbox
+            {/* <Checkbox
                 checked={boolVisible}
                 onClick={() => toggleVisibility()}
-            />
+            /> */}
+            <IconButton className="visibilityOn" disableFocusRipple disableRipple style={{ backgroundColor: 'transparent' }} onClick={() => toggleVisibility()}>
+                {boolVisible ? <VisibilityIcon className="visibilityOn" /> : <VisibilityOffIcon className="visibilityOff" />}
+            </IconButton>
             <div>
                 <Tooltip title="View Course Details">
                     <a
@@ -246,7 +250,7 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                         href={createURL("202110", session.crn, URLTypes.DETAIL)}
                         target="_blank"
                     >
-                        {course.longTitle}
+                        {course.subject} {course.courseNum}
                     </a>
                 </Tooltip>
                 <Tooltip title="View Evaluations">
@@ -296,7 +300,7 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                 {/* {instructorsToNames(session.instructors).join(", ")} */}
             </p>
             <p>
-                <Tooltip title="Delete">
+                <Tooltip className="iconButton" title="Delete">
                     <IconButton
                         aria-label="delete"
                         onClick={() => removeDraftSession()}
