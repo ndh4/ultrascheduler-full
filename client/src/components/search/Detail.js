@@ -1,7 +1,25 @@
 import React, { Fragment, useState } from "react";
-import { Table, TableBody, TableRow, TableCell, Box } from "@material-ui/core";
+import { Table, TableBody, TableRow, TableCell, Box, withStyles } from "@material-ui/core";
 import Collapse from "@material-ui/core/Collapse";
 import "./Detail.global.css";
+
+const StyledTableBody = withStyles((theme) => ({
+    root: {
+        backgroundColor: "#F7FAFC",
+        borderRadius: "15px",
+        borderBottom: 'none',
+        opacity: 1,
+    },
+}))(TableBody);
+
+const StyledTableRow = withStyles((theme) => ({
+    root: {
+        backgroundColor: "#F7FAFC",
+        borderRadius: "15px",
+        opacity: 1,
+        borderBottom: 'none',
+    },
+}))(TableRow);
 
 /* Return a div for each row */
 const formatDiv = (bold, normalTxt) => {
@@ -62,8 +80,8 @@ const Detail = ({
     };
 
     return (
-        <TableRow>
-            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
+        <StyledTableRow>
+            <TableCell style={{ paddingBottom: 0, paddingTop: 0, borderBottom: "none" }} colSpan={12}>
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     <Table>
                         <TableBody>
@@ -140,7 +158,7 @@ const Detail = ({
                     </Table>
                 </Collapse>
             </TableCell>
-        </TableRow>
+        </StyledTableRow>
     );
 };
 
