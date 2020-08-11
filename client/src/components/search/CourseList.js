@@ -1,20 +1,54 @@
 import React, { useState, useEffect } from "react";
-import {connect} from 'react-redux';
 import SwipeableViews from "react-swipeable-views";
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Collapse from '@material-ui/core/Collapse';
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import Collapse from "@material-ui/core/Collapse";
 import { Event } from "../../utils/analytics";
-import { sessionToDraftCourse } from "../../utils/SessionUtils";
-import {addCourseRequest, removeCourseRequest} from '../../actions/CoursesActions';
+import { classTimeString } from "../../utils/CourseTimeTransforms";
+import Detail from "./Detail";
+import MinimizedDetail from "./MinimizedDetail";
+import { Table, TableBody, TableRow, TableCell, Box } from "@material-ui/core";
 
 import moment from "moment";
+import { useQuery, gql, useMutation } from "@apollo/client";
 
-const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
+const detailStyle = {
+    fontSize: "10px",
+    color: "#6C7488",
+    background: "#F7F8FA",
+    width: "415px",
+};
+
+const minimizedDetailStyle = {
+    borderStyle: "solid",
+    display: "inline-block"
+};
 
 /**
- * 
- * @param {instructor} instructors 
+ * Gets the term from local state management
+ */
+const GET_TERM = gql`
+    query {
+        term @client
+    }
+`;
+
+// These should go to utils
+const formatTime = (time) => moment(time, "HHmm").format("hh:mm a");
+
+const courseToLabel = (course) => {
+    //distribution and department
+    if (course.sessions) {
+        return `${course.subject} ${course.courseNum}: ${course.longTitle}`;
+    } else {
+        //instructors
+        return `${course.course.subject} ${course.course.courseNum}: ${course.course.longTitle}`;
+    }
+};
+
+/**
+ *
+ * @param {instructor} instructors
  * {id: xxx, firstName: xxx, lastName: xxx}
  */
 const instructorsToNames = (instructors) => {
@@ -24,146 +58,384 @@ const instructorsToNames = (instructors) => {
         instructorNames.push(instructorName);
     }
     return instructorNames;
-}
+};
 
-const sessionToString = (session) => {
-    let result = [];
-    // Find class times
-    if (session.class.days.length > 0) {
-        let classTime = "Class: " + session.class.days.join("")
-        // Convert times
-        let startTime = formatTime(session.class.startTime);
-        let endTime = formatTime(session.class.endTime);
+// const sessionToString = (session) => {
+//     let courseResult = [];
+//     // Find class times
+//     if (session.class.days.length > 0) {
+//         let classTime = "Class: " + session.class.days.join("");
+//         // Convert times
+//         let startTime = formatTime(session.class.startTime);
+//         let endTime = formatTime(session.class.endTime);
 
-        classTime += " " + startTime + " - " + endTime
-        result.push(<p style={{ padding: "5px" }}>{classTime}</p>);
-    }
-    // Find lab times
-    if (session.lab.days.length > 0) {
-        let labTime = "Lab: " + session.lab.days.join("")
+//         classTime += " " + startTime + " - " + endTime;
+//         courseResult.push(
+//             //added key here
+//             <p style={{ padding: "5px" }} key={session.crn}>
+//                 {classTime}
+//             </p>
+//         );
+//     }
+//     // Find lab times
+//     if (session.lab.days.length > 0) {
+//         let labTime = "Lab: " + session.lab.days.join("");
 
-        // Convert times
-        let startTime = formatTime(session.lab.startTime);
-        let endTime = formatTime(session.lab.endTime);
+//         // Convert times
+//         let startTime = formatTime(session.lab.startTime);
+//         let endTime = formatTime(session.lab.endTime);
 
-        labTime += " " + startTime + " - " + endTime
-        result.push(<p style={{ padding: "5px" }}>{labTime}</p>);
-    }
-    // Finally find instructors
-    if (session.instructors.length > 0) {
-        let instructorNames = instructorsToNames(session.instructors);
-        result.push(<p style={{ padding: "5px" }}>{instructorNames.join(", ")}</p>)
-    }
-    return ((result.length > 0) ? result : ["No information found for this session."]);
-}
+//         labTime += " " + startTime + " - " + endTime;
+//         courseResult.push(
+//             //added key here
+//             <p style={{ padding: "5px" }} key={session._id}>
+//                 {labTime}
+//             </p>
+//         );
+//     }
+
+// // Finally find instructors - only for distribution and departments
+// if (session.instructors) {
+//     if (session.instructors.length > 0) {
+//         let instructorNames = instructorsToNames(session.instructors);
+//         courseResult.push(
+//             //added key here
+//             <p style={{ padding: "5px" }} key={session._id}>
+//                 {instructorNames.join(", ")}{" "}
+//             </p>
+//         );
+//     }
+// }
+// return courseResult.length > 0
+//     ? courseResult
+//     : ["No information found for this session."];
+// };
 
 const styles = {
     slideContainer: {
-      height: 500,
-      WebkitOverflowScrolling: 'touch', // iOS momentum scrolling
+        height: "100%",
+        WebkitOverflowScrolling: "touch", // iOS momentum scrolling
     },
-  };
+};
 
-const SessionItem = ({res, session, draftCourses, addCourseRequest, removeCourseRequest }) => {
-    // Check if this course is in draftCourses
-    let courseSelected = -1;
-    for (let idx in draftCourses) {
-        let course = draftCourses[idx];
-        if (course.crn == session.crn) {
-            courseSelected = idx;
+const ADD_DRAFT_SESSION = gql`
+    mutation AddDraftSession($scheduleID: ID!, $sessionID: ID!) {
+        scheduleAddSession(scheduleID: $scheduleID, sessionID: $sessionID) {
+            _id
+            term
+            draftSessions {
+                _id
+                session {
+                    _id
+                }
+                visible
+            }
         }
     }
-    return (
-    <div key={session.crn} style={{ borderStyle: 'solid', display: "inline-block" }}>
-        <input 
-            type="checkbox" 
-            checked={courseSelected > -1}
-            onClick={() => {
-                let crnString = String.toString(session.crn);
-                if (courseSelected > -1) {
-                    // Track remove
-                    Event("COURSE_LIST", "Remove Course from Schedule: " + crnString, crnString);
-                    removeCourseRequest(draftCourses[courseSelected]);
-                } else {
-                    // Track add
-                    Event("COURSE_LIST", "Add Course to Schedule: " + crnString, crnString);
-                    addCourseRequest(sessionToDraftCourse(session, res.detail, res.detail.term));
+`;
+
+const QUERY_DRAFT_SESSIONS = gql`
+    query GetDraftSession($term: String!) {
+        scheduleOne(filter: { term: $term }) {
+            _id
+            __typename
+            draftSessions {
+                _id
+                __typename
+                visible
+                session {
+                    _id
                 }
-            }} 
-            style={{ alignItems: "left" }} 
-        />
-        <div style={{ alignItems: "left" }}>
-            {sessionToString(session)}
-        </div>
-    </div>
-    );
-}
+            }
+        }
+    }
+`;
 
-const CourseList = ({ searchResults, draftCourses, addCourseRequest, removeCourseRequest }) => {
-    const [courseSelected, setCourseSelected] = useState([]);
+/**
+ * This is found in DraftCourseItem.js too; should be in utils
+ */
+const REMOVE_DRAFT_SESSION = gql`
+    mutation RemoveDraftSession($scheduleID: ID!, $sessionID: ID!) {
+        scheduleRemoveSession(scheduleID: $scheduleID, sessionID: $sessionID) {
+            _id
+            __typename
+            term
+            draftSessions {
+                _id
+                __typename
+                session {
+                    _id
+                }
+                visible
+            }
+        }
+    }
+`;
 
-    if (searchResults == []) {
-        return (<br />);
+const SessionItem = ({ clickValue, scheduleID, course, session, draftSessions }) => {
+    let sessionSelected = false;
+
+    // Check if this course is in draftSessions
+    for (let draftSession of draftSessions) {
+        if (draftSession.session._id == session._id) {
+            sessionSelected = true;
+        }
     }
 
-    const courseSelectedAdd = (courseLabel) => {
+    let [addDraftSession, { data, loading, error }] = useMutation(
+        ADD_DRAFT_SESSION,
+        {
+            variables: { scheduleID: scheduleID, sessionID: session._id },
+        }
+    );
+
+    let [
+        removeDraftSession,
+        { dataOnRemove, loadingOnRemove, errorOnRemove },
+    ] = useMutation(REMOVE_DRAFT_SESSION, {
+        variables: { scheduleID: scheduleID, sessionID: session._id },
+    });
+
+    const renderDetail = () => {
+        if (clickValue === "Calendar") {
+            return (
+                <MinimizedDetail
+                    style={minimizedDetailStyle}
+                    session={session}
+                    course={course}
+                    open={true}
+                    classTimeString={classTimeString}
+                    instructorsToNames={instructorsToNames}
+                />
+            )
+        } else {
+            return (
+                <Detail
+                    style={detailStyle}
+                    session={session}
+                    course={course}
+                    open={true}
+                    classTimeString={classTimeString}
+                    instructorsToNames={instructorsToNames}
+                />)
+        }
+    }
+
+    return (
+        <div
+            // style={{ borderStyle: "solid", display: "inline-block" }}
+            key={session.crn}
+        >
+            <input
+                type="checkbox"
+                checked={sessionSelected}
+                onChange={() => {
+                    // Simple transformation of CRN to a string
+                    let crnString = String.toString(session.crn);
+
+                    if (sessionSelected) {
+                        // Track remove with GA
+                        Event(
+                            "COURSE_LIST",
+                            "Remove Course from Schedule: " + crnString,
+                            crnString
+                        );
+
+                        console.log("Boom.");
+
+                        // Execute mutation to remove this session of the course from user's draftsessions
+                        removeDraftSession();
+
+                        console.log("No errors...?");
+                    } else {
+                        // Track add with GA
+                        Event(
+                            "COURSE_LIST",
+                            "Add Course to Schedule: " + crnString,
+                            crnString
+                        );
+
+                        // Execute mutation to add this session of the course to the user's draftsessions
+                        addDraftSession();
+                    }
+                }}
+                style={{ alignItems: "left" }}
+            />
+            <div
+                style={{
+                    alignItems: "left",
+                }}
+            >
+                <Table>
+                    <TableBody>
+
+                        {/* <Detail
+                            style={detailStyle}
+                            session={session}
+                            course={course}
+                            open={true}
+                            classTimeString={classTimeString}
+                            instructorsToNames={instructorsToNames}
+                        /> */}
+                        {renderDetail()}
+
+                    </TableBody>
+                </Table>
+            </div>
+        </div>
+    );
+};
+
+const CourseList = ({ clickValue, scheduleID, query, searchType, idx}) => {
+
+    const [courseSelected, setCourseSelected] = useState([]);
+
+    // Get term from local state management
+    const { data: termData } = useQuery(GET_TERM);
+    let { term } = termData;
+
+    let courseResults;
+    let draftSessions;
+
+    // We also want to fetch(from our cache, so this does NOT call the backend) the user's draftSessions
+    let { data: scheduleData } = useQuery(QUERY_DRAFT_SESSIONS, {
+        variables: { term: term.toString() },
+    });
+
+    // Fetch data required
+    const { data: courseData, loading, error } = useQuery(query, {
+        variables: { ...searchType, term: term },
+    });
+    // Since searchType is passed in as an object with the value as the query returned value,
+    // we need to check the object's value instead of directly checking searchType === ""
+    if (Object.values(searchType)[0] === "") return <br />;
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+    if (!courseData) return <p>No Data...</p>;
+
+    // Once the data has loaded, we want to extract the course results
+    // We need to filter out any courses which have 0 sessions
+    // or we get the session's course field for days and time interval selection
+    switch (idx) {
+        case 2:
+            courseResults = courseData.instructorOne.sessions;
+            break;
+        case 3:
+            courseResults = courseData.sessionByTimeInterval;
+            courseResults = courseResults
+                .map((session) => session.course)
+                .filter((course) => course.sessions.length > 0);
+            break;
+        case 4:
+            courseResults = courseData.sessionByDay;
+            courseResults = courseResults
+                .map((session) => session.course)
+                .filter((course) => course.sessions.length > 0);
+            break;
+        default:
+            courseResults = courseData.courseMany;
+            courseResults = courseResults.filter(
+                (course) => course.sessions.length > 0
+            );
+    }
+
+    if (courseResults.length === 0)
+        return <p>No Available Course In This Range</p>;
+
+    // We also want to extract the user's draftSessions, nested inside their schedule
+    draftSessions = scheduleData.scheduleOne.draftSessions;
+
+    /**
+     * Adds course to list of courses with their collapsibles open in the search menu,
+     * effectively opening its collapsible
+     */
+    const addToCoursesSelected = (courseLabel) => {
         let copy = courseSelected.slice();
-        
+
         // Add course with this label
         copy.push(courseLabel);
         setCourseSelected(copy);
-    }
+    };
 
-    const courseSelectedRemove = (courseLabel) => {
+    /**
+     * Removes course from list of courses with their collapsibles open in the search menu,
+     * effectively closing its collapsible
+     */
+    const removeFromCoursesSelected = (courseLabel) => {
         let copy = courseSelected.slice();
 
         // Filter out all courses with this label
-        copy = copy.filter(label => label != courseLabel)
+        copy = copy.filter((label) => label != courseLabel);
         setCourseSelected(copy);
-    }
+    };
+
+    const collapseItem = (course) => {
+        //distribution, department, day, time interval
+        if (course.sessions) {
+            // return <Detail course={course} classTimeString={classTimeString} />;
+            return course.sessions.map((session, idx) => (
+                <SessionItem
+                    //replace key with uuid
+                    clickValue={clickValue}
+                    key={idx}
+                    course={course}
+                    session={session}
+                    draftSessions={draftSessions}
+                    scheduleID={scheduleID}
+                />
+            ));
+        } else {
+            //instructors
+            return (
+                <SessionItem
+                    course={course}
+                    session={course}
+                    draftSessions={draftSessions}
+                    scheduleID={scheduleID}
+                />
+            );
+        }
+    };
 
     return (
         <SwipeableViews containerStyle={styles.slideContainer}>
-            <List
-            component="nav"
-            aria-labelledby="nested-list-subheader"
-            >
-                {searchResults.map(res => {
+            <List component="nav" aria-labelledby="nested-list-subheader">
+                {courseResults.map((course) => {
+                    let id = course._id;
                     return (
-                        <div>
-                            <ListItem 
-                            key={res.label} 
-                            onClick={() => (courseSelected.includes(res.label)) ? courseSelectedRemove(res.label) : courseSelectedAdd(res.label)}
-                            button>
-                                {res.label}
+                        <div key={id}>
+
+                            <ListItem
+                                key={id}
+                                onClick={() =>
+                                    courseSelected.includes(id)
+                                        ? removeFromCoursesSelected(id)
+                                        : addToCoursesSelected(id)
+                                }
+                                button
+                            >
+                                <div style={{ uppercase: "none" }}>
+                                    {courseToLabel(course)}
+                                </div>
                             </ListItem>
-                            <Collapse in={(courseSelected.includes(res.label)) ? true : false} timeout="auto" unmountOnExit>
+
+                            <Collapse
+                                in={courseSelected.includes(id) ? true : false}
+                                timeout="auto"
+                                unmountOnExit
+                            >
                                 <List component="div" disablePadding>
-                                {res.sessions.map(session => (
-                                    <SessionItem 
-                                    res={res} 
-                                    session={session} 
-                                    draftCourses={draftCourses} 
-                                    addCourseRequest={addCourseRequest} 
-                                    removeCourseRequest={removeCourseRequest} />
-                                ))}
+                                    {collapseItem(course)}
                                 </List>
                             </Collapse>
                         </div>
-                    )
+                    );
                 })}
             </List>
         </SwipeableViews>
-    )
 
-}
+    );
+};
 
-export default connect(
-    (state) => ({
-        draftCourses: state.courses.draftCourses
-    }),
-    (dispatch) => ({
-        addCourseRequest: (course) => dispatch(addCourseRequest(course)),
-        removeCourseRequest: (course) => dispatch(removeCourseRequest(course))
-    }),
-)(CourseList);
+export default CourseList;

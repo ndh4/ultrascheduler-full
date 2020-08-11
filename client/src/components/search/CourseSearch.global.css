@@ -1,0 +1,43 @@
+.filter {
+    width: 100%;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.searchBar {
+    background: #e4e8ee;
+    border-radius: 15px 0px 0px 15px;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+.searchBar-content {
+    padding: 5%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+.searchBar-content > :last-child {
+    flex: 1 1 auto;
+}
+
+.searchTxt {
+    font-size: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.selectTime {
+    display: flex;
+    justify-content: space-around;
+}
+
+.courseListContainer {
+    height: 1px;
+    flex: 1 1 auto;
+} 
