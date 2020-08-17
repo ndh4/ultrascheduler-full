@@ -21,7 +21,7 @@ const detailStyle = {
 
 const minimizedDetailStyle = {
     borderStyle: "solid",
-    display: "inline-block"
+    display: "inline-block",
 };
 
 /**
@@ -172,7 +172,13 @@ const REMOVE_DRAFT_SESSION = gql`
     }
 `;
 
-const SessionItem = ({ clickValue, scheduleID, course, session, draftSessions }) => {
+const SessionItem = ({
+    clickValue,
+    scheduleID,
+    course,
+    session,
+    draftSessions,
+}) => {
     let sessionSelected = false;
 
     // Check if this course is in draftSessions
@@ -207,7 +213,7 @@ const SessionItem = ({ clickValue, scheduleID, course, session, draftSessions })
                     classTimeString={classTimeString}
                     instructorsToNames={instructorsToNames}
                 />
-            )
+            );
         } else {
             return (
                 <Detail
@@ -217,9 +223,10 @@ const SessionItem = ({ clickValue, scheduleID, course, session, draftSessions })
                     open={true}
                     classTimeString={classTimeString}
                     instructorsToNames={instructorsToNames}
-                />)
+                />
+            );
         }
-    }
+    };
 
     return (
         <div
@@ -268,7 +275,6 @@ const SessionItem = ({ clickValue, scheduleID, course, session, draftSessions })
             >
                 <Table>
                     <TableBody>
-
                         {/* <Detail
                             style={detailStyle}
                             session={session}
@@ -278,7 +284,6 @@ const SessionItem = ({ clickValue, scheduleID, course, session, draftSessions })
                             instructorsToNames={instructorsToNames}
                         /> */}
                         {renderDetail()}
-
                     </TableBody>
                 </Table>
             </div>
@@ -286,8 +291,7 @@ const SessionItem = ({ clickValue, scheduleID, course, session, draftSessions })
     );
 };
 
-const CourseList = ({ clickValue, scheduleID, query, searchType, idx}) => {
-
+const CourseList = ({ clickValue, scheduleID, query, searchType, idx }) => {
     const [courseSelected, setCourseSelected] = useState([]);
 
     // Get term from local state management
@@ -401,11 +405,10 @@ const CourseList = ({ clickValue, scheduleID, query, searchType, idx}) => {
     return (
         <SwipeableViews containerStyle={styles.slideContainer}>
             <List component="nav" aria-labelledby="nested-list-subheader">
-                {courseResults.map((course) => {
+                {courseResults.map((course, idx) => {
                     let id = course._id;
                     return (
-                        <div key={id}>
-
+                        <div key={idx}>
                             <ListItem
                                 key={id}
                                 onClick={() =>
@@ -434,7 +437,6 @@ const CourseList = ({ clickValue, scheduleID, query, searchType, idx}) => {
                 })}
             </List>
         </SwipeableViews>
-
     );
 };
 

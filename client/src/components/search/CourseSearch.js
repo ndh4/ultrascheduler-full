@@ -138,6 +138,11 @@ const GET_DAYS_COURSES = gql`
                         firstName
                         lastName
                     }
+                    course {
+                        distribution
+                        prereqs
+                        coreqs
+                    }
                 }
             }
         }
@@ -177,6 +182,11 @@ const GET_TIME_INTERVAL_COURSES = gql`
                     instructors {
                         firstName
                         lastName
+                    }
+                    course {
+                        distribution
+                        prereqs
+                        coreqs
                     }
                 }
             }
@@ -234,7 +244,6 @@ const COURSES_BY_INSTRUCTORS = gql`
 `;
 
 const CourseSearch = ({ scheduleID, clickValue }) => {
-
     const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
     const [getDept, setDept] = useState([]); // Used for selection of a particular department
     const [getDist, setDist] = useState([]); // Used for selection of a particular distribution
@@ -242,6 +251,9 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
     //INSTRUCTOR SEARCH
     const [getInstruct, setInstruct] = useState([]); // Used for the entire list of instructors
     const [getInst, setInst] = useState([]); // Used for selection of a particular instructor
+    const formatTime = (time) => {
+        return time.replace(":", "");
+    };
 
     const allDistributions = [
         { label: "Distribution I", value: "Distribution I" },
@@ -494,7 +506,16 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
             />
         );
 
-        return selection;
+        const time = (
+            <div className="selectTime">
+                {displayTimeTF("From", "06:30", handleStartTimeTFChange)}
+                {displayTimeTF("To", "22:00", handleEndTimeTFChange)}
+            </div>
+        );
+
+        const displayArray = [selection, selection, selection, time, selection];
+
+        return displayArray[activeButtonIndex];
     };
 
     /**
@@ -511,7 +532,6 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
                 idx={activeButtonIndex}
             />
             //<div></div>
-
         );
 
         const displayArray = [selection, selection, selection, time, selection];
