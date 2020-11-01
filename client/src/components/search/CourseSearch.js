@@ -243,6 +243,9 @@ const COURSES_BY_INSTRUCTORS = gql`
     }
 `;
 
+const initialStartTime = "11:00"
+const initialEndTime = "12:00"
+
 const CourseSearch = ({ scheduleID, clickValue }) => {
     const [getDepts, setDepts] = useState([]); // Used for the entire list of departments
     const [getDept, setDept] = useState([]); // Used for selection of a particular department
@@ -283,7 +286,7 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
 
     const [getDay, setDay] = useState([]); // store the selected days
     const [getTime, setTime] = useState([
-        { startTime: "0630", endTime: "2200" },
+        { startTime: initialStartTime, endTime: initialEndTime },
     ]); // store the selected time interval
 
     // Represents which button is currently clicked for styling and returning data
@@ -508,8 +511,8 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
 
         const time = (
             <div className="selectTime">
-                {displayTimeTF("From", "06:30", handleStartTimeTFChange)}
-                {displayTimeTF("To", "22:00", handleEndTimeTFChange)}
+                {displayTimeTF("From", initialStartTime, handleStartTimeTFChange)}
+                {displayTimeTF("To", initialEndTime, handleEndTimeTFChange)}
             </div>
         );
 
