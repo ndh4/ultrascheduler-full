@@ -78,12 +78,16 @@ const ClassSelector = ({ draftSessions, scheduleID }) => {
     };
 
     // Calculate total credit hours
-    let creditTotal = draftSessions.reduce((totalCredits, draftSession) => {
+    let visibleCreditTotal = draftSessions.reduce((totalCredits, draftSession) => {
         if (draftSession.visible) {
             return totalCredits + draftSession.session.course.creditsMin;
         } else {
             return totalCredits;
         }
+    }, 0);
+
+    let absoluteCreditTotal = draftSessions.reduce((totalCredits, draftSession) => {
+        return totalCredits + draftSession.session.course.creditsMin
     }, 0);
 
     return (
@@ -104,6 +108,11 @@ const ClassSelector = ({ draftSessions, scheduleID }) => {
                         scheduleID={scheduleID}
                     />
                 ))}
+                <div className="tableFooter">
+                    Visible Credit Hours: {visibleCreditTotal}
+                    <hr /> 
+                    Total Credit Hours: {absoluteCreditTotal}
+                </div>
             </div>
         </Fragment>
     );
@@ -158,7 +167,7 @@ const ClassSelector = ({ draftSessions, scheduleID }) => {
                 <TableBody>
                     <TableRow>
                         <TableCell align="left">
-                            Total Visible Hours: {creditTotal}
+                            Total Visible Hours: {visibleCreditTotal}
                         </TableCell>
                     </TableRow>
                 </TableBody>
