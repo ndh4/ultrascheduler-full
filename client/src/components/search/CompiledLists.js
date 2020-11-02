@@ -46,7 +46,7 @@ const displayDaysCourseList = (
         let searchType = { days: daysArray };
         return (
             <SwipeableViews containerStyle={styles.slideContainerNoHeight}>
-                <div className="courseListContainer">
+                <div className="courseListsContainer">
                     <CourseList
                         scheduleID={scheduleID}
                         query={query}
