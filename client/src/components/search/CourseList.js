@@ -186,9 +186,11 @@ const SessionItem = ({
     session,
     draftSessions,
 }) => {
+    console.log("1");
     let sessionSelected = false;
 
     const bottomModeContext = useContext(BottomModeContext);
+    console.log("2");
 
     // Check if this course is in draftSessions
     for (let draftSession of draftSessions) {
@@ -196,6 +198,7 @@ const SessionItem = ({
             sessionSelected = true;
         }
     }
+    console.log("3");
 
     let [addDraftSession, { data, loading, error }] = useMutation(
         ADD_DRAFT_SESSION,
@@ -210,6 +213,8 @@ const SessionItem = ({
     ] = useMutation(REMOVE_DRAFT_SESSION, {
         variables: { scheduleID: scheduleID, sessionID: session._id },
     });
+
+    console.log("Course list render detail still");
 
     const renderDetail = () => {
         if (bottomModeContext === "Calendar") {
@@ -404,10 +409,13 @@ const CourseList = ({ clickValue, scheduleID, query, searchType, idx }) => {
             ));
         } else {
             //instructors
+            let session = course;
+            // renamed course to session for purpose of legibility & understanding
             return (
                 <SessionItem
-                    course={course}
-                    session={course}
+                    key={session.crn}
+                    course={session.course}
+                    session={session}
                     draftSessions={draftSessions}
                     scheduleID={scheduleID}
                 />
@@ -425,7 +433,17 @@ const CourseList = ({ clickValue, scheduleID, query, searchType, idx }) => {
             <div className="courseListContainer">
                 {courseResults.map((course, idx) => {
                     let id = course._id;
-                    console.log(course);
+
+                    let courseCode, longTitle;
+                    if (course.sessions) {
+                        courseCode = course.subject + " " + course.courseNum;
+                        longTitle = course.longTitle;
+                    } else {
+                        // Instructors
+                        courseCode = course.course.subject + " " + course.course.courseNum;
+                        longTitle = course.course.longTitle;
+                    }
+
                     return (
                         <div className="courseRow">
                             <IconButton
@@ -442,9 +460,9 @@ const CourseList = ({ clickValue, scheduleID, query, searchType, idx }) => {
                             </IconButton>
                             <p className="courseName" onClick={() => toggleCourseInfo(id)}>
                                 <b className="courseCode">
-                                    {course.subject} {course.courseNum}:
+                                    {courseCode}
                                 </b>{" "}
-                                {course.longTitle}
+                                {longTitle}
                             </p>
                             <Collapse
                                 className="collapsible"

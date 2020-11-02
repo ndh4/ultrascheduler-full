@@ -89,6 +89,10 @@ const Detail = ({
         }
     };
 
+    console.log("In min detail");
+    console.log(course);
+    console.log(session);
+
     return (
         <div className="minimizedDetailContainer">
             {formatDiv("Class Time:", Times(session.class))}
