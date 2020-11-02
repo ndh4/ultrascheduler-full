@@ -4,7 +4,8 @@ import TableRow from "@material-ui/core/TableRow";
 // Course evals
 import QuestionAnswerIcon from "@material-ui/icons/QuestionAnswer";
 // Course visible
-import Checkbox from "@material-ui/core/Checkbox";
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 // Delete course
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
@@ -17,7 +18,7 @@ import ReactGA from "react-ga";
 import { classTimeString } from "../../utils/CourseTimeTransforms";
 import URLTypes from "../../constants/URLTypes";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { TableBody } from "@material-ui/core";
+import { TableBody, withStyles } from "@material-ui/core";
 import CourseDetail from "./CourseDetail";
 import Detail from "../search/Detail";
 import { graphqlSync } from "graphql";
@@ -25,7 +26,37 @@ import { graphqlSync } from "graphql";
 const detailStyle = {
     background: "#F6F8FC",
     color: "#6C7488",
-}
+};
+
+// Styled rows
+const StyledTableBody = withStyles((theme) => ({
+    root: {
+        backgroundColor: "#F7FAFC",
+        borderRadius: "15px",
+        borderBottom: "none",
+        opacity: 1,
+        height: "50px",
+    },
+}))(TableBody);
+
+const StyledTableRow = withStyles((theme) => ({
+    root: {
+        backgroundColor: "#F7FAFC",
+        borderRadius: "15px",
+        opacity: 1,
+        borderBottom: "none",
+        height: "25px",
+    },
+}))(TableRow);
+
+const StyledTableCell = withStyles((theme) => ({
+    root: {
+        color: "#E35F49",
+        backgroundColor: "#F7FAFC",
+        borderBottom: "none",
+        borderSpacing: "0 1em",
+    },
+}))(TableCell);
 
 const createURL = (termcode, crn, type = URLTypes.DETAIL) => {
     switch (type) {
@@ -141,7 +172,9 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
         let cells = [];
         for (let i = 0; i < count; i++) {
             //added key here
-            cells.push(<TableCell align="right" key={i}></TableCell>);
+            cells.push(
+                <p key={i}></p>
+            );
         }
         return cells;
     };
@@ -151,12 +184,10 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
             return <Fragment>{emptyCellGenerator(1)}</Fragment>;
         } else {
             return (
-                <Fragment>
-                    <TableCell align="right">
-                        {section.days}{" "}
-                        {classTimeString(section.startTime, section.endTime)}
-                    </TableCell>
-                </Fragment>
+                <p>
+                    {section.days}{" "}
+                    {classTimeString(section.startTime, section.endTime)}
+                </p>
             );
         }
     };
@@ -204,30 +235,114 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
     const boolVisible = visible ? true : false;
 
     return (
-        <TableBody>
-            <TableRow key={session.crn}>
-                <TableCell padding="checkbox">
+        <div className="tableRow">
+            {/* <Checkbox
+                checked={boolVisible}
+                onClick={() => toggleVisibility()}
+            /> */}
+            <IconButton className="visibilityOn" disableFocusRipple disableRipple style={{ backgroundColor: 'transparent' }} onClick={() => toggleVisibility()}>
+                {boolVisible ? <VisibilityIcon className="visibilityOn" /> : <VisibilityOffIcon className="visibilityOff" />}
+            </IconButton>
+            <div>
+                <Tooltip title="View Course Details">
+                    <a
+                        style={{ color: "#E35F49", textDecoration: "none" }}
+                        href={createURL("202110", session.crn, URLTypes.DETAIL)}
+                        target="_blank"
+                    >
+                        {course.subject} {course.courseNum}
+                    </a>
+                </Tooltip>
+                <Tooltip title="View Evaluations">
+                    <ReactGA.OutboundLink
+                        eventLabel="course_evaluation"
+                        to={createURL("202110", session.crn, URLTypes.EVAL)}
+                        target="_blank"
+                    >
+                        <IconButton aria-label="evaluations">
+                            <QuestionAnswerIcon />
+                        </IconButton>
+                    </ReactGA.OutboundLink>
+                </Tooltip>
+                <IconButton
+                    aria-label="expand row"
+                    size="small"
+                    onClick={togglePrereq}
+                >
+                    {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                </IconButton>
+            </div>
+            <p>{session.crn}</p>
+            <p>{creditsDisplay(course.creditsMin, course.creditsMax)}</p>
+            <p>{course.distribution}</p>
+            {createSectionTimeCells(session.class)}
+            {createSectionTimeCells(session.lab)}
+            <p>
+                {session.instructors.map((instructor, index) => {
+                    let webId = webIds(instructor, index);
+                    return (
+                        <Tooltip
+                            title="View Instructor Evaluation"
+                            key={`${webId}-${index}`}
+                        >
+                            <a
+                                style={{
+                                    textDecoration: "none",
+                                }}
+                                href={createInstructorURL("202110", webId)}
+                                target="_blank"
+                            >
+                                    {instructorToName(instructor)}
+                            </a>
+                        </Tooltip>
+                    );
+                })}
+                {/* {instructorsToNames(session.instructors).join(", ")} */}
+            </p>
+            <p>
+                <Tooltip className="iconButton" title="Delete">
+                    <IconButton
+                        aria-label="delete"
+                        onClick={() => removeDraftSession()}
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
+            </p>
+            <Detail
+                style={detailStyle}
+                key={idx}
+                course={course}
+                session={session}
+                instructorsToNames={instructorsToNames}
+                open={open}
+                classTimeString={classTimeString}
+            />
+        </div>
+    );
+
+    return (
+        <StyledTableBody>
+            <StyledTableRow key={session.crn}>
+                <StyledTableCell padding="checkbox">
                     <Checkbox
                         checked={boolVisible}
                         onClick={() => toggleVisibility()}
                     />
-                </TableCell>
-                <TableCell align="right" component="th" scope="row">
+                </StyledTableCell>
+                <StyledTableCell align="right" component="th" scope="row">
                     <Tooltip title="View Course Details">
-                        <ReactGA.OutboundLink
-                            style={{ color: "#272D2D", textDecoration: "none" }}
-                            eventLabel="course_description"
-                            to={createURL(
+                        <a
+                            style={{ color: "#E35F49", textDecoration: "none" }}
+                            href={createURL(
                                 "202110",
                                 session.crn,
                                 URLTypes.DETAIL
                             )}
                             target="_blank"
                         >
-                            <span style={{ color: "272D2D" }}>
-                                {course.longTitle}
-                            </span>
-                        </ReactGA.OutboundLink>
+                            {course.longTitle}
+                        </a>
                     </Tooltip>
                     <Tooltip title="View Evaluations">
                         <ReactGA.OutboundLink
@@ -248,18 +363,20 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                         {open ? (
                             <KeyboardArrowUpIcon />
                         ) : (
-                                <KeyboardArrowDownIcon />
-                            )}
+                            <KeyboardArrowDownIcon />
+                        )}
                     </IconButton>
-                </TableCell>
-                <TableCell align="right">{session.crn}</TableCell>
-                <TableCell align="right">
+                </StyledTableCell>
+                <StyledTableCell align="right">{session.crn}</StyledTableCell>
+                <StyledTableCell align="right">
                     {creditsDisplay(course.creditsMin, course.creditsMax)}
-                </TableCell>
-                <TableCell align="right">{course.distribution}</TableCell>
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                    {course.distribution}
+                </StyledTableCell>
                 {createSectionTimeCells(session.class)}
                 {createSectionTimeCells(session.lab)}
-                <TableCell align="right">
+                <StyledTableCell align="right">
                     {session.instructors.map((instructor, index) => {
                         let webId = webIds(instructor, index);
                         return (
@@ -284,8 +401,8 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                         );
                     })}
                     {/* {instructorsToNames(session.instructors).join(", ")} */}
-                </TableCell>
-                <TableCell align="right">
+                </StyledTableCell>
+                <StyledTableCell align="right">
                     <Tooltip title="Delete">
                         <IconButton
                             aria-label="delete"
@@ -294,8 +411,8 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                             <DeleteIcon />
                         </IconButton>
                     </Tooltip>
-                </TableCell>
-            </TableRow>
+                </StyledTableCell>
+            </StyledTableRow>
             {/* <CourseDetail
                 key={idx}
                 course={course}
@@ -304,7 +421,7 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                 open={open}
                 classTimeString={classTimeString}
             /> */}
-            <Detail
+            {/* <Detail
                 style={detailStyle}
                 key={idx}
                 course={course}
@@ -312,8 +429,8 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                 instructorsToNames={instructorsToNames}
                 open={open}
                 classTimeString={classTimeString}
-            />
-        </TableBody>
+            /> */}
+        </StyledTableBody>
     );
 };
 
