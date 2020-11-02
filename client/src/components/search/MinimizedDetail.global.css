@@ -1,0 +1,16 @@
+
+.minimizedDetailContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: hidden;
+}
+
+.sessionMoreInfo {
+    align-self: center;
+}
+
+.sessionInfoText {
+    margin: 0;
+}

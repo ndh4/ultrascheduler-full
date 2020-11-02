@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import Header from "../header/Header";
 import CourseCalendar from "../calendar/Calendar";
 import ClassSelector from "../draftview/ClassSelector";
@@ -14,6 +14,7 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 
 import './Main.global.css';
 
+export const BottomModeContext = createContext("Calendar");
 
 export const GET_USER_SCHEDULE = gql`
     query GetUserSchedule($term: String!) {
@@ -86,7 +87,7 @@ const Main = ({ }) => {
     // Check for recent update from cache
     let { data: storeData } = useQuery(GET_LOCAL_DATA);
     let { term, recentUpdate } = storeData;
-    const [clickValue, setClickValue] = useState("Calendar");
+    const [bottomMode, setBottomMode] = useState("Calendar");
 
     // Need to be able to update recentUpdate field on the user when they dismiss
     let [seenRecentUpdate] = useMutation(SEEN_RECENT_UPDATE);
@@ -119,15 +120,15 @@ const Main = ({ }) => {
     const schedule = data.scheduleOne;
 
     const handleClick = (e) => {
-        setClickValue(e.currentTarget.value);
+        setBottomMode(e.currentTarget.value);
     };
 
     const renderContent = () => {
-        if (clickValue === "Details") {
+        if (bottomMode === "Details") {
             return (
                 <div className="Container">
                     <div style={{ float: "right", width: "100%" }}>
-                        <CourseSearch scheduleID={schedule._id} clickValue={clickValue} />
+                        <CourseSearch scheduleID={schedule._id} clickValue={bottomMode} />
                     </div>
                 </div>
             )
@@ -135,7 +136,7 @@ const Main = ({ }) => {
             return (
                 <div className="Container">
                     <div style={{width: "30%" }}>
-                        <CourseSearch scheduleID={schedule._id} clickValue={clickValue} />
+                        <CourseSearch scheduleID={schedule._id} clickValue={bottomMode} />
                     </div>
                     <div style={{width: "70%"}}>
                         <CourseCalendar
@@ -157,7 +158,9 @@ const Main = ({ }) => {
                     className="iconButton"
                     onClick={handleClick}
                     value={values[index]}
+                    style={{ backgroundColor: bottomMode == values[index] ? "#697e99" : ""}}
                 >
+                    {console.log(bottomMode)}
                     {icon}
                 </IconButton>
             )
@@ -178,7 +181,9 @@ const Main = ({ }) => {
                 {renderIcons()}
             </ButtonGroup>
 
-            {renderContent()}
+            <BottomModeContext.Provider value={bottomMode}>
+                {renderContent()}
+            </BottomModeContext.Provider>
 
         </div>
     );

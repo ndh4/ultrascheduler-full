@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment, useContext } from "react";
 import SwipeableViews from "react-swipeable-views";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -9,8 +9,15 @@ import Detail from "./Detail";
 import MinimizedDetail from "./MinimizedDetail";
 import { Table, TableBody, TableRow, TableCell, Box } from "@material-ui/core";
 
+import IconButton from "@material-ui/core/IconButton";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+
 import moment from "moment";
 import { useQuery, gql, useMutation } from "@apollo/client";
+
+import "./CourseList.global.css";
+import { BottomModeContext } from "../main/Main";
 
 const detailStyle = {
     fontSize: "10px",
@@ -181,6 +188,8 @@ const SessionItem = ({
 }) => {
     let sessionSelected = false;
 
+    const bottomModeContext = useContext(BottomModeContext);
+
     // Check if this course is in draftSessions
     for (let draftSession of draftSessions) {
         if (draftSession.session._id == session._id) {
@@ -203,16 +212,18 @@ const SessionItem = ({
     });
 
     const renderDetail = () => {
-        if (clickValue === "Calendar") {
+        if (bottomModeContext === "Calendar") {
             return (
-                <MinimizedDetail
-                    style={minimizedDetailStyle}
-                    session={session}
-                    course={course}
-                    open={true}
-                    classTimeString={classTimeString}
-                    instructorsToNames={instructorsToNames}
-                />
+                <Fragment>
+                    <MinimizedDetail
+                        style={minimizedDetailStyle}
+                        session={session}
+                        course={course}
+                        open={true}
+                        classTimeString={classTimeString}
+                        instructorsToNames={instructorsToNames}
+                    />
+                </Fragment>
             );
         } else {
             return (
@@ -230,6 +241,7 @@ const SessionItem = ({
 
     return (
         <div
+            className="detailBox"
             // style={{ borderStyle: "solid", display: "inline-block" }}
             key={session.crn}
         >
@@ -268,25 +280,26 @@ const SessionItem = ({
                 }}
                 style={{ alignItems: "left" }}
             />
-            <div
+            {renderDetail()}
+            {/* <div
                 style={{
                     alignItems: "left",
                 }}
             >
                 <Table>
                     <TableBody>
-                        {/* <Detail
+                        <Detail
                             style={detailStyle}
                             session={session}
                             course={course}
                             open={true}
                             classTimeString={classTimeString}
                             instructorsToNames={instructorsToNames}
-                        /> */}
+                        />
                         {renderDetail()}
                     </TableBody>
                 </Table>
-            </div>
+            </div> */}
         </div>
     );
 };
@@ -402,41 +415,84 @@ const CourseList = ({ clickValue, scheduleID, query, searchType, idx }) => {
         }
     };
 
+    const toggleCourseInfo = (id) =>
+        courseSelected.includes(id)
+            ? removeFromCoursesSelected(id)
+            : addToCoursesSelected(id);
+
     return (
-        <SwipeableViews containerStyle={styles.slideContainer}>
-            <List component="nav" aria-labelledby="nested-list-subheader">
+        <Fragment>
+            <div className="courseListContainer">
                 {courseResults.map((course, idx) => {
                     let id = course._id;
+                    console.log(course);
                     return (
-                        <div key={idx}>
-                            <ListItem
-                                key={id}
-                                onClick={() =>
-                                    courseSelected.includes(id)
-                                        ? removeFromCoursesSelected(id)
-                                        : addToCoursesSelected(id)
-                                }
-                                button
+                        <div className="courseRow">
+                            <IconButton
+                                className="courseMoreInfo"
+                                aria-label="expand row"
+                                size="small"
+                                onClick={() => toggleCourseInfo(id)}
                             >
-                                <div style={{ uppercase: "none" }}>
-                                    {courseToLabel(course)}
-                                </div>
-                            </ListItem>
-
+                                {courseSelected.includes(id) ? (
+                                    <KeyboardArrowUpIcon />
+                                ) : (
+                                    <KeyboardArrowDownIcon />
+                                )}
+                            </IconButton>
+                            <p className="courseName" onClick={() => toggleCourseInfo(id)}>
+                                <b className="courseCode">
+                                    {course.subject} {course.courseNum}:
+                                </b>{" "}
+                                {course.longTitle}
+                            </p>
                             <Collapse
+                                className="collapsible"
                                 in={courseSelected.includes(id) ? true : false}
                                 timeout="auto"
                                 unmountOnExit
                             >
-                                <List component="div" disablePadding>
-                                    {collapseItem(course)}
-                                </List>
+                                {collapseItem(course)}
                             </Collapse>
                         </div>
                     );
                 })}
-            </List>
-        </SwipeableViews>
+            </div>
+        </Fragment>
+        // <SwipeableViews containerStyle={styles.slideContainer}>
+        //     <List component="nav" aria-labelledby="nested-list-subheader">
+        //         {courseResults.map((course, idx) => {
+        //             let id = course._id;
+        //             return (
+        //                 <div key={idx}>
+        //                     <ListItem
+        //                         key={id}
+        //                         onClick={() =>
+        //                             courseSelected.includes(id)
+        //                                 ? removeFromCoursesSelected(id)
+        //                                 : addToCoursesSelected(id)
+        //                         }
+        //                         button
+        //                     >
+        //                         <div style={{ uppercase: "none" }}>
+        //                             {courseToLabel(course)}
+        //                         </div>
+        //                     </ListItem>
+
+        //                     <Collapse
+        //                         in={courseSelected.includes(id) ? true : false}
+        //                         timeout="auto"
+        //                         unmountOnExit
+        //                     >
+        //                         <List component="div" disablePadding>
+        //                             {collapseItem(course)}
+        //                         </List>
+        //                     </Collapse>
+        //                 </div>
+        //             );
+        //         })}
+        //     </List>
+        // </SwipeableViews>
     );
 };
 

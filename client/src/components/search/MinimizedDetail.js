@@ -1,16 +1,22 @@
 import React, { Fragment, useState } from "react";
 import { Table, TableBody, TableRow, TableCell, Box } from "@material-ui/core";
 import Collapse from "@material-ui/core/Collapse";
-import "./Detail.global.css";
+
+import IconButton from "@material-ui/core/IconButton";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+
+import "./MinimizedDetail.global.css";
 
 /* Return a div for each row */
 const formatDiv = (bold, normalTxt) => {
     return (
-        <div>
-            <b>{bold}</b> {normalTxt}
-        </div>
+        <Fragment>
+            <p className="sessionInfoText"><b>{bold}</b> {normalTxt}</p>
+        </Fragment>
     );
 };
+
 /* Replace undefined or null value to N/A */
 const replaceNull = (text) => {
     switch (text) {
@@ -33,6 +39,8 @@ const Detail = ({
     classTimeString,
     style,
 }) => {
+    const [getOpen, setOpen] = useState(false);
+
     const Times = (section) => {
         if (!section.startTime || !section.endTime) {
             return "None";
@@ -60,6 +68,44 @@ const Detail = ({
             return formatDiv("Long Title:", course.longTitle);
         }
     };
+
+    const toggleMoreInfo = () => setOpen(!getOpen);
+
+    const showAdditionalInfo = () => {
+        if (getOpen) {
+            return (
+                <Fragment>
+                    {formatDiv("Lab Time:", Times(session.lab))}
+                    {formatDiv("Course Type:", "Lecture/Laboratory")}
+                    {formatDiv(
+                        "Distribution Group:",
+                        replaceNull(session.course.distribution)
+                    )}
+                    {formatDiv("CRN:", replaceNull(session.crn))}
+                </Fragment>
+            );
+        } else {
+            return null;
+        }
+    };
+
+    return (
+        <div className="minimizedDetailContainer">
+            {formatDiv("Class Time:", Times(session.class))}
+            {Instructors(session)}
+            <Collapse in={getOpen} timeout={500} unmountOnExit>
+            {showAdditionalInfo()}
+            </Collapse>
+            <IconButton
+                className="sessionMoreInfo"
+                aria-label="expand row"
+                size="small"
+                onClick={toggleMoreInfo}
+            >
+                {getOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+        </div>
+    );
 
     return (
         <TableRow>
