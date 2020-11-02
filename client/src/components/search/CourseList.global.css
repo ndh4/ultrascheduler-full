@@ -7,10 +7,15 @@
 .courseListContainer {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
+    width: 100%;
+    flex: 1;
 
     overflow-y: scroll;
     background-color: #e4e8ee;
+
+    border-bottom: 1px solid var(--main-bg-color);
+    padding-bottom: 25px;
 }
 
 .courseRow {

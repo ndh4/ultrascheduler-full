@@ -90,7 +90,7 @@ const CompiledLists = ({
 
     return (
         <SwipeableViews containerStyle={styles.slideContainerNoHeight}>
-            <div className="courseListContainer">
+            <div className="courseListsContainer">
                 {
                     // return a CourseList for each of the selected options
                     optionValues.map((option) => {
