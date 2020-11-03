@@ -180,17 +180,14 @@ const REMOVE_DRAFT_SESSION = gql`
 `;
 
 const SessionItem = ({
-    clickValue,
     scheduleID,
     course,
     session,
     draftSessions,
 }) => {
-    console.log("1");
     let sessionSelected = false;
 
     const bottomModeContext = useContext(BottomModeContext);
-    console.log("2");
 
     // Check if this course is in draftSessions
     for (let draftSession of draftSessions) {
@@ -198,7 +195,6 @@ const SessionItem = ({
             sessionSelected = true;
         }
     }
-    console.log("3");
 
     let [addDraftSession, { data, loading, error }] = useMutation(
         ADD_DRAFT_SESSION,
@@ -213,8 +209,6 @@ const SessionItem = ({
     ] = useMutation(REMOVE_DRAFT_SESSION, {
         variables: { scheduleID: scheduleID, sessionID: session._id },
     });
-
-    console.log("Course list render detail still");
 
     const renderDetail = () => {
         if (bottomModeContext === "Calendar") {
@@ -399,7 +393,6 @@ const CourseList = ({ clickValue, scheduleID, query, searchType, idx }) => {
             return course.sessions.map((session, idx) => (
                 <SessionItem
                     //replace key with uuid
-                    clickValue={clickValue}
                     key={idx}
                     course={course}
                     session={session}
