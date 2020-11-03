@@ -7,9 +7,31 @@ import { useMediaQuery } from "react-responsive";
 import RiceAppsLogo from "../../riceappslogo.png";
 import { initGA, OutboundLink } from "../../utils/analytics";
 import { useHistory } from "react-router";
+import { gql, useApolloClient, useQuery } from "@apollo/client";
+import Select from "react-select";
+
+import "./Header.global.css";
+
+const GET_LOCAL_DATA = gql`
+    query GetLocalData {
+        term @client
+    }
+`;
+
+const termOptions = [
+    { label: "Fall 2020", value: 202110 },
+    { label: "Spring 2021", value: 202120 },
+];
+
+const formatTerm = (term) => termOptions.filter(termOption => termOption.value == term)[0];
 
 function Header() {
     const history = useHistory();
+    const client = useApolloClient();
+
+    // Get the term
+    let { data: storeData } = useQuery(GET_LOCAL_DATA);
+    let { term } = storeData;
 
     // Where we collect feedback
 
@@ -35,45 +57,59 @@ function Header() {
         window.open(logoutURL, "_self");
     };
     const handleAboutClick = () => history.push("/about");
+    const handleTermChange = (newTermObject) =>
+        client.writeQuery({
+            query: GET_LOCAL_DATA,
+            data: { term: newTermObject.value },
+        });
 
     return (
-        <div>
-            <div style={{ textAlign: "center" }}>
-                <Title />
+        <div className="headerContainer">
+            <div className="logoContainer">
                 <img
                     src={RiceAppsLogo}
-                    style={styles.logo}
+                    // style={styles.logo}
                     onClick={() => handleLogoClick()}
                 />
-                <div style={styles.wrapper}>
-                    <Button
-                        variant="outlined"
-                        style={
-                            isDesktopOrLaptop
-                                ? styles.logoutButton
-                                : styles.logoutMobile
-                        }
-                        onClick={handleAboutClick}
-                    >
-                        About
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        style={
-                            isDesktopOrLaptop
-                                ? styles.logoutButton
-                                : styles.logoutMobile
-                        }
-                        onClick={() => handleLogoutClick()}
-                    >
-                        Log Out
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        onClick={() => window.open(feedbackURL, "_blank")}
-                    >
-                        Feedback?
-                    </Button>
+            </div>
+            <div className="titleContainer">
+                <Title />
+            </div>
+            <div className="buttonsContainer">
+                <Button
+                    variant="outlined"
+                    style={
+                        isDesktopOrLaptop
+                            ? styles.logoutButton
+                            : styles.logoutMobile
+                    }
+                    onClick={handleAboutClick}
+                >
+                    About
+                </Button>
+                <Button
+                    variant="outlined"
+                    style={
+                        isDesktopOrLaptop
+                            ? styles.logoutButton
+                            : styles.logoutMobile
+                    }
+                    onClick={() => handleLogoutClick()}
+                >
+                    Log Out
+                </Button>
+                <Button
+                    variant="outlined"
+                    onClick={() => window.open(feedbackURL, "_blank")}
+                >
+                    Feedback?
+                </Button>
+                <div className="select">
+                    <Select
+                        value={formatTerm(term)}
+                        onChange={handleTermChange}
+                        options={termOptions}
+                    />
                 </div>
             </div>
         </div>

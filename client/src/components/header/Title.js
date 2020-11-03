@@ -7,9 +7,7 @@ function Title() {
     const handleClick = () => history.push("/schedule");
 
     return (
-        <div>
-            <h1 style={{ cursor: "pointer" }} onClick={handleClick}>hatch.</h1>
-        </div>
+        <h1 style={{ cursor: "pointer" }} onClick={handleClick}>hatch.</h1>
     );
 }
 
