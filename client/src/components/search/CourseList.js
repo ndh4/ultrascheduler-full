@@ -191,45 +191,19 @@ const SessionItem = ({ scheduleID, course, session, draftSessions }) => {
         }
     }
 
-    let [addDraftSession, { data, loading, error }] = useMutation(
+    const [addDraftSession, { data, loading, error }] = useMutation(
         ADD_DRAFT_SESSION,
         {
             variables: { scheduleID: scheduleID, sessionID: session._id },
         }
     );
 
-    let [
+    const [
         removeDraftSession,
         { dataOnRemove, loadingOnRemove, errorOnRemove },
     ] = useMutation(REMOVE_DRAFT_SESSION, {
         variables: { scheduleID: scheduleID, sessionID: session._id },
     });
-
-    const renderDetail = () => {
-        if (bottomModeContext === "Calendar") {
-            return (
-                <MinimizedDetail
-                    style={minimizedDetailStyle}
-                    session={session}
-                    course={course}
-                    open={true}
-                    classTimeString={classTimeString}
-                    instructorsToNames={instructorsToNames}
-                />
-            );
-        } else {
-            return (
-                <Detail
-                    style={detailStyle}
-                    session={session}
-                    course={course}
-                    open={true}
-                    classTimeString={classTimeString}
-                    instructorsToNames={instructorsToNames}
-                />
-            );
-        }
-    };
 
     return (
         <div
@@ -272,26 +246,25 @@ const SessionItem = ({ scheduleID, course, session, draftSessions }) => {
                 }}
                 style={{ alignItems: "left" }}
             />
-            {renderDetail()}
-            {/* <div
-                style={{
-                    alignItems: "left",
-                }}
-            >
-                <Table>
-                    <TableBody>
-                        <Detail
-                            style={detailStyle}
-                            session={session}
-                            course={course}
-                            open={true}
-                            classTimeString={classTimeString}
-                            instructorsToNames={instructorsToNames}
-                        />
-                        {renderDetail()}
-                    </TableBody>
-                </Table>
-            </div> */}
+            {bottomModeContext === "Calendar" ? (
+                <MinimizedDetail
+                    style={minimizedDetailStyle}
+                    session={session}
+                    course={course}
+                    open={true}
+                    classTimeString={classTimeString}
+                    instructorsToNames={instructorsToNames}
+                />
+            ) : (
+                <Detail
+                    style={detailStyle}
+                    session={session}
+                    course={course}
+                    open={true}
+                    classTimeString={classTimeString}
+                    instructorsToNames={instructorsToNames}
+                />
+            )}
         </div>
     );
 };
