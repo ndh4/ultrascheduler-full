@@ -179,12 +179,7 @@ const REMOVE_DRAFT_SESSION = gql`
     }
 `;
 
-const SessionItem = ({
-    scheduleID,
-    course,
-    session,
-    draftSessions,
-}) => {
+const SessionItem = ({ scheduleID, course, session, draftSessions }) => {
     let sessionSelected = false;
 
     const bottomModeContext = useContext(BottomModeContext);
@@ -213,16 +208,14 @@ const SessionItem = ({
     const renderDetail = () => {
         if (bottomModeContext === "Calendar") {
             return (
-                <Fragment>
-                    <MinimizedDetail
-                        style={minimizedDetailStyle}
-                        session={session}
-                        course={course}
-                        open={true}
-                        classTimeString={classTimeString}
-                        instructorsToNames={instructorsToNames}
-                    />
-                </Fragment>
+                <MinimizedDetail
+                    style={minimizedDetailStyle}
+                    session={session}
+                    course={course}
+                    open={true}
+                    classTimeString={classTimeString}
+                    instructorsToNames={instructorsToNames}
+                />
             );
         } else {
             return (
@@ -433,7 +426,10 @@ const CourseList = ({ clickValue, scheduleID, query, searchType, idx }) => {
                         longTitle = course.longTitle;
                     } else {
                         // Instructors
-                        courseCode = course.course.subject + " " + course.course.courseNum;
+                        courseCode =
+                            course.course.subject +
+                            " " +
+                            course.course.courseNum;
                         longTitle = course.course.longTitle;
                     }
 
@@ -451,10 +447,11 @@ const CourseList = ({ clickValue, scheduleID, query, searchType, idx }) => {
                                     <KeyboardArrowDownIcon />
                                 )}
                             </IconButton>
-                            <p className="courseName" onClick={() => toggleCourseInfo(id)}>
-                                <b className="courseCode">
-                                    {courseCode}
-                                </b>{" "}
+                            <p
+                                className="courseName"
+                                onClick={() => toggleCourseInfo(id)}
+                            >
+                                <b className="courseCode">{courseCode}</b>{" "}
                                 {longTitle}
                             </p>
                             <Collapse
