@@ -5,6 +5,7 @@ import Login from "./login/Login";
 import Main from "./main/Main";
 import { gql, useQuery, useApolloClient } from "@apollo/client";
 import LoadingScreen from "./LoadingScreen";
+import About from "./about/About";
 
 /**
  * Requests to verify the user's token on the backend
@@ -94,6 +95,9 @@ const Routes = ({}) => {
             </Route>
             <Route path="/login">
                 <Login />
+            </Route>
+            <Route path="/about">
+                <About />
             </Route>
             <PrivateRoute path="/schedule">
                 <Main />
