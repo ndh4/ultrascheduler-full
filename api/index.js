@@ -17,6 +17,10 @@ import { PORT } from './config';
 // Apollo Imports
 import Schema from './schema';
 
+// Firebase Imports
+import './firebase';
+import { verifyToken } from './utils/authenticationUtils';
+
 var coursesRouter = require('./routes/courses');
 var deployRouter = require('./routes/deploy');
 var syncRouter = require('./routes/sync');
@@ -25,9 +29,18 @@ var syncRouter = require('./routes/sync');
 const server = new ApolloServer({ 
     schema: Schema,
     context: async ({ req }) => {
+      // Get the JWT from the headers
+      const jwt = req.headers.authorization || null;
+
+      let decodedJWT = null;
+
+      if (jwt) {
+        const [_, token] = jwt.split(" ");
+        decodedJWT = await verifyToken(token);
+      }
       // Gets the decoded jwt object which our exjwt (below) creates for us as req.user
       // Inspiration from: https://www.apollographql.com/blog/setting-up-authentication-and-authorization-with-apollo-federation
-      const decodedJWT = req.user || null;
+      // const decodedJWT = req.user || null;
       // const user = await getUserFromToken(token);
       return { decodedJWT };
     }
@@ -43,10 +56,10 @@ var app = express();
 
 // Add JWT so that it is AVAILABLE; does NOT protect all routes (nor do we want it to)
 // Inspiration from: https://www.apollographql.com/blog/setting-up-authentication-and-authorization-with-apollo-federation
-app.use(exjwt({
-  secret: 'testsec',
-  credentialsRequired: false
-}));
+// app.use(exjwt({
+//   secret: 'testsec',
+//   credentialsRequired: false
+// }));
 
 // Connect apollo with express
 server.applyMiddleware({ app });

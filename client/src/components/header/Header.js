@@ -8,6 +8,12 @@ import RiceAppsLogo from "../../riceappslogo.png";
 import { initGA, OutboundLink } from "../../utils/analytics";
 import { useHistory } from "react-router";
 
+// This import loads the firebase namespace along with all its type information.
+import firebase from "firebase/app";
+
+// These imports load individual services into the firebase namespace.
+import "firebase/auth";
+
 function Header() {
     const history = useHistory();
 
@@ -30,8 +36,10 @@ function Header() {
             window.open("https://medium.com/riceapps", "_blank")
         );
     };
-    const handleLogoutClick = () => {
-        localStorage.removeItem("token");
+    const handleLogoutClick = async () => {
+        // Sign out of firebase first
+        await firebase.auth().signOut();
+        // Sign out of IDP too
         window.open(logoutURL, "_self");
     };
     const handleAboutClick = () => history.push("/about");

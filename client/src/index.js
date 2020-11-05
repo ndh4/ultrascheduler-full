@@ -16,6 +16,9 @@ import { ToastProvider } from 'react-toast-notifications'
 import { client } from './apollo';
 import { ApolloProvider } from '@apollo/client'
 
+// Setup firebase for SAML
+import './firebase'
+
 render(
     <ApolloProvider client={client}>
         <Router history={history}>
