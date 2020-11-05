@@ -1,8 +1,11 @@
 import * as admin from "firebase-admin";
-
-const serviceAccount = require("./hedwig-279117-firebase-adminsdk-kwvqm-13fadb29d6");
+import { FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY, FIREBASE_PROJECT_ID } from "./config";
 
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert({
+        projectId: FIREBASE_PROJECT_ID,
+        clientEmail: FIREBASE_CLIENT_EMAIL,
+        privateKey: FIREBASE_PRIVATE_KEY,
+    }),
     databaseURL: "https://hedwig-279117.firebaseio.com",
 });
