@@ -10,7 +10,7 @@ var UserSchema = new Schema({
     firstName: { type: String },
     lastName: { type: String },
     netid: { type: String },
-    majors: [{ type: String, maxlength: 4 }],
+    majors: [{ type: String }],
     college: { type: String },
     affiliation: { type: String },
     phone: { type: String },
