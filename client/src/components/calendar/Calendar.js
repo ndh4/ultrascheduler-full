@@ -26,7 +26,7 @@ const colorCombos = [
     ["#FFFFF2", "#F5D581B3"], // light yellow
     ["#FFFCFB", "#E35F4980"], // light orange
     ["#FDFFFE", "#76C5AFBF"], // light green
-    ["#FFFFFF", "#000000FF"], // light green
+    ["#FFFFFF", "#000000FF"], // white / black
 ];
 
 const courseToCourseLabel = (course) => {

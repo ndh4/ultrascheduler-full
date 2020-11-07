@@ -235,7 +235,7 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
     const boolVisible = visible ? true : false;
 
     return (
-        <div className="tableRow">
+        <div className={`tableRow ${boolVisible ? "selected" : ""}`}>
             {/* <Checkbox
                 checked={boolVisible}
                 onClick={() => toggleVisibility()}
@@ -246,7 +246,7 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
             <div>
                 <Tooltip title="View Course Details">
                     <a
-                        style={{ color: "#E35F49", textDecoration: "none" }}
+                        style={{ textDecoration: "none" }}
                         href={createURL("202110", session.crn, URLTypes.DETAIL)}
                         target="_blank"
                     >

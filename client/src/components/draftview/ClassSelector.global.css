@@ -1,6 +1,6 @@
 :root {
-    --main-text-color: #E35F49;
-    --main-bg-color: #697e99;
+    --main-text-color:#485888;
+    --main-bg-color: #485888;
     --secondary-bg-color: #f7fafc;
 }
 
@@ -50,6 +50,10 @@
     letter-spacing: 0px;
     color: var(--main-text-color);
     opacity: 1;
+}
+
+.selected p, .selected a {
+    font-weight: 600;
 }
 
 .tableFooter {
