@@ -19,6 +19,7 @@ const GET_LOCAL_DATA = gql`
 `;
 
 const termOptions = [
+    { label: "Summer 2020", value: 202030 },
     { label: "Fall 2020", value: 202110 },
     { label: "Spring 2021", value: 202120 },
 ];
