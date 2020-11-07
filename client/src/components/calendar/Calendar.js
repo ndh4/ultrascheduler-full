@@ -26,6 +26,7 @@ const colorCombos = [
     ["#FFFFF2", "#F5D581B3"], // light yellow
     ["#FFFCFB", "#E35F4980"], // light orange
     ["#FDFFFE", "#76C5AFBF"], // light green
+    ["#FFFFFF", "#000000FF"], // light green
 ];
 
 const courseToCourseLabel = (course) => {
@@ -175,7 +176,7 @@ const dayStyleGetter = (date) => {
 };
 
 const eventStyleGetter = (event) => {
-    let moduloValue = event.hexId % 4;
+    let moduloValue = event.hexId % colorCombos.length;
 
     var backgroundColor = colorCombos[moduloValue][0];
     var borderColor = colorCombos[moduloValue][1];
@@ -196,7 +197,7 @@ const eventStyleGetter = (event) => {
 };
 
 const CustomClassEvent = ({ event }) => {
-    let moduloValue = event.hexId % 4;
+    let moduloValue = event.hexId % colorCombos.length;
 
     var sidebarColor = colorCombos[moduloValue][1];
 
