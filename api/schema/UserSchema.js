@@ -3,7 +3,9 @@ import {
     authenticateTicket,
     verifyToken,
     createToken,
+    extractAuthenticationDetails,
 } from "../utils/authenticationUtils";
+
 import mongoose from "mongoose";
 
 // Create a field NOT on the mongoose model; easy way to fetch schedule for a user in one trip
@@ -87,6 +89,28 @@ UserTC.addResolver({
     },
 });
 
+UserTC.addResolver({
+    name: "verifyToken",
+    type: UserTC,
+    args: {},
+    resolve: async ({ source, args, context, info }) => {
+        const profile = extractAuthenticationDetails(context.decodedJWT);
+        
+        let exists = await User.exists({ netid: profile.netid });
+        
+        let user;
+        if (!exists) {
+            // Create user with profile
+            user = await User.create(profile);
+        } else {
+            // Find user and update their profile with most recent info
+            user = await User.findOneAndUpdate({ netid: profile.netid }, profile, { useFindAndModify: false });
+        }
+
+        return user;
+    }
+})
+
 // Using auth middleware for sensitive info: https://github.com/graphql-compose/graphql-compose-mongoose/issues/158
 const UserQuery = {
     userOne: UserTC.getResolver("findOne", [authMiddleware]),
@@ -102,10 +126,11 @@ async function authMiddleware(resolve, source, args, context, info) {
         throw new Error("You need to be logged in.");
     }
 
-    let { id } = context.decodedJWT;
+    const profile = extractAuthenticationDetails(context.decodedJWT);
+    const { netid } = profile;
 
     // Allows a user to only access THEIR user object
-    return resolve(source, { ...args, filter: { _id: id } }, context, info);
+    return resolve(source, { ...args, filter: { netid: netid } }, context, info);
 }
 
 export { UserQuery, UserMutation };

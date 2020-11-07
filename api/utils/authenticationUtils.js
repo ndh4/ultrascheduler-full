@@ -9,6 +9,8 @@ var stripPrefix = require('xml2js').processors.stripPrefix;
 import { SERVICE_URL } from '../config';
 import { User } from '../models';
 
+import * as admin from "firebase-admin";
+
 /**
  * Parser used for XML response by CAS
  */
@@ -51,6 +53,8 @@ export const getUserFromToken = async (token) => {
  * Given a token, verifies that it is still valid.
  */
 export const verifyToken = async (token) => {
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    return { ...decodedToken };
     try {
         // In the future, we may need the other properties...
         let { id, netid, iat, exp } = await jwt.verify(token, config.secret);
@@ -58,6 +62,20 @@ export const verifyToken = async (token) => {
     } catch (e) {
         return failureResponse;
     }
+}
+
+export const extractAuthenticationDetails = (decodedToken) => {
+    const uid = decodedToken.uid;
+    const samlProfile = decodedToken.firebase.sign_in_attributes;
+    return {
+        uid: uid,
+        firstName: samlProfile["urn:oid:2.5.4.42"],
+        lastName: samlProfile["urn:oid:2.5.4.4"],
+        netid: samlProfile["urn:oid:0.9.2342.19200300.100.1.1"],
+        majors: samlProfile["urn:oid:1.3.6.1.4.1.134.1.1.1.1.4"].split(", "),
+        college: samlProfile["urn:oid:1.3.6.1.4.1.134.1.1.1.1.15"],
+        affiliation: samlProfile["urn:oid:1.3.6.1.4.1.5923.1.1.1.5"],
+    };
 }
 
 /**

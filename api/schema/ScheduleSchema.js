@@ -1,4 +1,4 @@
-import { Schedule, ScheduleTC, UserTC, SessionTC } from "../models";
+import { Schedule, ScheduleTC, UserTC, SessionTC, User } from "../models";
 import { checkScheduleUserMatch } from "../utils/authorizationUtils";
 
 /**
@@ -169,12 +169,15 @@ async function authMiddleware(resolve, source, args, context, info) {
         throw new Error("You need to be logged in.");
     }
 
-    let { id } = context.decodedJWT;
+    let { uid } = context.decodedJWT;
+
+    // Use the uid from the JWT to extract the user's _id
+    const { _id } = await User.findOne({ uid });
 
     // Allows a user to only access THEIR schedules, while still maintaining any other filters from the request
     return resolve(
         source,
-        { ...args, filter: { ...args.filter, user: id } },
+        { ...args, filter: { ...args.filter, user: _id } },
         context,
         info
     );

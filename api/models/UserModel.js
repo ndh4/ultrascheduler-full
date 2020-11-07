@@ -6,10 +6,13 @@ var mongoose = require("mongoose"),
 require("../db");
 
 var UserSchema = new Schema({
-    netid: { type: String },
+    uid: { type: String, unique: true },
     firstName: { type: String },
     lastName: { type: String },
-    majors: [{ type: String, maxlength: 4 }],
+    netid: { type: String },
+    majors: [{ type: String }],
+    college: { type: String },
+    affiliation: { type: String },
     phone: { type: String },
     token: { type: String },
     recentUpdate: { type: Boolean }, // this field used for displaying banners/modals on version updates

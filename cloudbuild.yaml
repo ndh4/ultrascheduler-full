@@ -7,6 +7,9 @@ steps:
   env:
     - 'MONGODB_CONNECTION_STRING=${_MONGODB_CONNECTION_STRING}'
     - 'SERVICE_URL=${_SERVICE_URL}'
+    - 'FIREBASE_PROJECT_ID=${_FIREBASE_PROJECT_ID}'
+    - 'FIREBASE_CLIENT_EMAIL=${_FIREBASE_CLIENT_EMAIL}'
+    - 'FIREBASE_PRIVATE_KEY=${_FIREBASE_PRIVATE_KEY}'
   dir: 'api/'
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy", "api/api.yaml", "-v", "$_GAE_VERSION"]

@@ -15,6 +15,12 @@ module.exports = {
             "process.env.REACT_APP_GRAPHQL_WS_URL": JSON.stringify(
                 "wss://api-develop-dot-ultrascheduler.uc.r.appspot.com/graphql"
             ),
+            "process.env.REACT_APP_FIREBASE_API_KEY": JSON.stringify(
+                "AIzaSyAypp303rGgCWixsMl3ln-X0sibZ4vwcwY"
+            ),
+            "process.env.REACT_APP_AUTH_DOMAIN": JSON.stringify(
+                "hedwig-279117.firebaseapp.com"
+            )
         },
         aliases: {
             cldr$: "cldrjs",

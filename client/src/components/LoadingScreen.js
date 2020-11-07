@@ -29,8 +29,8 @@ const LoadingScreen = () => {
 
     return (
         <Backdrop className={classes.backdrop} open={true}>
-            <div style={{ display: "block", justifyContent: "center" }}>
-                <div style={{ width: "25%", margin: "0 auto" }}>
+            <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+                <div>
                     <CircularProgress color="inherit" />
                 </div>
                 <h4>{loadingText}</h4>
