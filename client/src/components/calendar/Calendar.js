@@ -56,6 +56,9 @@ const convertSectionToEvents = (section, session) => {
         return events;
     }
 
+    // Get hexId of session
+    let hexId = session.hexId;
+
     // Necessary for event title
     let courseLabel = courseToCourseLabel(session.course);
 
@@ -105,7 +108,6 @@ const convertSectionToEvents = (section, session) => {
             tooltip: tooltipLabel,
         });
     }
-    hexId++;
     return events;
 };
 
@@ -126,7 +128,8 @@ const draftSessionsToEvents = (draftSessions) => {
     for (let draftSession of draftSessions) {
         // Check that session is visible. If not, don't show on calendar
         if (draftSession.visible) {
-            let session = draftSession.session;
+            // Also add hexId to object for consistent color
+            let session = {...draftSession.session, hexId: hexId };
             // First convert classes
             events = events.concat(
                 convertSectionToEvents(session.class, session)
@@ -136,6 +139,7 @@ const draftSessionsToEvents = (draftSessions) => {
                 convertSectionToEvents(session.lab, session)
             );
         }
+        hexId++;
     }
 
     return events;
