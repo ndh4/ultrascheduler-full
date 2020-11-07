@@ -6,7 +6,7 @@ import Main from "./main/Main";
 import { gql, useQuery, useApolloClient } from "@apollo/client";
 import LoadingScreen from "./LoadingScreen";
 import About from "./about/About";
-import NewAuth from "./auth/NewAuth";
+import NewAuth from "./auth/Auth";
 
 // This import loads the firebase namespace along with all its type information.
 import firebase from "firebase/app";
@@ -60,11 +60,11 @@ const PrivateRoute = ({ children, ...rest }) => {
         });
     }, []);
 
-    if (isWaiting) return <h2>Loading...</h2>;
+    if (isWaiting) return <LoadingScreen />;
     if (getLoggedIn) return <Route {...rest} render={(props) => children} />
     if (!getLoggedIn) return <Redirect to="login" />
 
-    return <h2>Loading...</h2>;
+    return <LoadingScreen />;
 };
 
 /**
@@ -76,9 +76,6 @@ const Routes = ({}) => {
         <Switch>
             <Route path="/auth">
                 <Auth />
-            </Route>
-            <Route path="/handleSignIn">
-                <NewAuth />
             </Route>
             <Route path="/login">
                 <Login />
