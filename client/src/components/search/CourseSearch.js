@@ -418,14 +418,6 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
         setTime([{ ...getTime[0], endTime: formatTime(selectedTime) }]);
     };
 
-    // Set color theme for the button for clicked and unclicked effect
-    const muiTheme = createMuiTheme({
-        palette: {
-            primary: { main: "#697E99" },
-            secondary: { main: "#FFFFFF" },
-        },
-    });
-
     const renderSearchOptions = () => {
         return searchTypes.map((type, index) => {
             /**
@@ -434,36 +426,14 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
              * Otherwise, the button color is secondary.
              *
              */
-            const buttonColor =
-                index === activeButtonIndex ? "primary" : "secondary";
+            const selected =
+                index === activeButtonIndex ? "selected" : "";
 
             return (
-                <ThemeProvider
-                    theme={muiTheme}
-                    //replace key with uuid
-                    key={index}
-                >
-                    <Button
-                        style={{
-                            textTransform: "none",
-                            marginRight: "12px",
-                            marginTop: "6px",
-                            marginBottom: "6px",
-                            padding: "1px 24px 1px 24px",
-                            borderRadius: "25px",
-                            fontSize: "12px",
-                        }}
-                        color={buttonColor}
-                        size="small"
-                        variant="contained"
-                        onClick={() => {
-                            setButtonIndex(index);
-                        }}
-                    >
-                        {type}
-                    </Button>
-                </ThemeProvider>
-            );
+                <div onClick={() => setButtonIndex(index)} className={`searchButton ${selected}`}>
+                    {type}
+                </div>
+            )
         });
     };
 
@@ -549,7 +519,7 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
         <div className="searchBar">
             <div className="searchBar-content">
                 <div className="filter">{displaySearch()}</div>
-                <div className="searchTxt">Search By:</div>
+                <div className="searchText">Search By:</div>
                 <div className="buttons">{renderSearchOptions()}</div>
                 <CompiledLists
                     scheduleID={scheduleID}

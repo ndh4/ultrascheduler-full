@@ -12,11 +12,24 @@
     flex: 1;
 
     overflow-y: scroll;
-    background-color: #e4e8ee;
+    background-color: var(--main-bg-color);
 
-    border-bottom: 1px solid var(--main-bg-color);
+    border-bottom: 1px solid var(--secondary-bg-color);
     padding-bottom: 25px;
 }
+
+/* .courseListContainer::-webkit-scrollbar {
+    width: 8px; 
+}
+.courseListContainer::-webkit-scrollbar-track {
+    background: #ffffff; 
+}
+
+.courseListContainer::-webkit-scrollbar-thumb {
+    background: var(--main-bg-color) 0% 0% no-repeat padding-box;
+    border-radius: 20px;
+    opacity: 1;
+} */
 
 .courseRow {
     display: grid;
@@ -42,7 +55,7 @@
 
 .courseRow > .courseName {
     text-align: left;
-    color: var(--main-text-color);
+    color: var(--bold-text-color);
     /* text-decoration: underline; */
     font: normal normal medium 23px/27px Acari Sans;
     letter-spacing: 0px;
