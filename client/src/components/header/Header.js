@@ -6,7 +6,7 @@ import { useMediaQuery } from "react-responsive";
 
 import RiceAppsLogo from "../../riceappslogo.png";
 import { initGA, OutboundLink } from "../../utils/analytics";
-import { useHistory } from "react-router";
+import { useHistory, useLocation } from "react-router";
 import { gql, useApolloClient, useQuery } from "@apollo/client";
 import Select from "react-select";
 
@@ -35,6 +35,7 @@ import "firebase/auth";
 function Header() {
     const history = useHistory();
     const client = useApolloClient();
+    const location = useLocation();
 
     // Get the term
     let { data: storeData } = useQuery(GET_LOCAL_DATA);
@@ -65,7 +66,6 @@ function Header() {
         // Sign out of IDP too
         window.open(logoutURL, "_self");
     };
-    const handleAboutClick = () => history.push("/about");
     const handleTermChange = (newTermObject) =>
         client.writeQuery({
             query: GET_LOCAL_DATA,
@@ -92,9 +92,9 @@ function Header() {
                             ? styles.logoutButton
                             : styles.logoutMobile
                     }
-                    onClick={handleAboutClick}
+                    onClick={() => location.pathname == "/about" ? history.push("/schedule") : history.push("/about") }
                 >
-                    About
+                    {location.pathname == "/about" ? "Schedule" : "About" }
                 </Button>
                 <Button
                     variant="outlined"
