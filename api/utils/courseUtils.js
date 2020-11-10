@@ -56,8 +56,8 @@ export const getSubjects = async (term) => {
 	})
 }
 
-export const getPreviousTermCourses = async () => {
-	const { data } = await axios.get("https://esther.rice.edu/selfserve/!swkscmp.ajax?p_data=COURSES&p_term=202020");
+export const getPreviousTermCourses = async (term) => {
+	const { data } = await axios.get("https://esther.rice.edu/selfserve/!swkscmp.ajax?p_data=COURSES&p_term=" + String(term - 100));
 	const parsed = await parser.parseStringPromise(data);
 	let courses = parsed["COURSES"]["COURSE"];
 	courses = courses.map(course => course["$"]);

@@ -70,8 +70,8 @@ const StyledHeaderTableCell = withStyles((theme) => ({
  * Fetch the previous term's courses
  */
 const GET_PREVIOUS_TERM_COURSES = gql`
-    query GetPreviousTermCourses {
-        prevTermCourses
+    query GetPreviousTermCourses($term: Int!) {
+        prevTermCourses(term: $term)
     }
 `;
 
@@ -102,17 +102,18 @@ const GET_LOCAL_DATA = gql`
 const ClassSelector = ({ draftSessions, scheduleID }) => {
     const classes = useStyles();
 
-    /**
-     * Get last semester's courses for the purposes of course evaluations
-     */
-    const { data: prevTermCourses, loading } = useQuery(
-        GET_PREVIOUS_TERM_COURSES
-    );
-
     // Get the current term
     const {
         data: { term },
     } = useQuery(GET_LOCAL_DATA);
+
+    /**
+     * Get last semester's courses for the purposes of course evaluations
+     */
+    const {
+        data: prevTermCourses,
+        loading,
+    } = useQuery(GET_PREVIOUS_TERM_COURSES, { variables: { term: term } });
 
     const { data: instructorsList } = useQuery(FETCH_INSTRUCTORS, {
         variables: { termcode: String(term) },

@@ -45,9 +45,9 @@ CourseTC.addFields({
 CourseTC.addResolver({
     name: "findPreviousTermCourses",
     type: "JSON",
-    args: {},
+    args: { term: "Int!" },
     resolve: async ({ source, args, context, info }) => {
-        const prevTermCourses = await getPreviousTermCourses();
+        const prevTermCourses = await getPreviousTermCourses(args.term);
         return prevTermCourses;
     }
 })
