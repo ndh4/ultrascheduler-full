@@ -1,11 +1,11 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 // Course evals
 import QuestionAnswerIcon from "@material-ui/icons/QuestionAnswer";
 // Course visible
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 // Delete course
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
@@ -63,7 +63,9 @@ const createURL = (termcode, crn, type = URLTypes.DETAIL) => {
         case URLTypes.DETAIL:
             return `https://courses.rice.edu/courses/!SWKSCAT.cat?p_action=COURSE&p_term=${termcode}&p_crn=${crn}`;
         case URLTypes.EVAL:
-            return `https://esther.rice.edu/selfserve/swkscmt.main?p_term=${termcode}&p_crn=${crn}&p_commentid=&p_confirm=1&p_type=Course`;
+            return `https://esther.rice.edu/selfserve/swkscmt.main?p_term=${
+                termcode - 100
+            }&p_crn=${crn}&p_commentid=&p_confirm=1&p_type=Course`;
         default:
             console.log(`Uknown URL type: ${type}`);
             return "https://rice.edu/";
@@ -71,7 +73,9 @@ const createURL = (termcode, crn, type = URLTypes.DETAIL) => {
 };
 
 const createInstructorURL = (termcode, webID) => {
-    return `https://esther.rice.edu/selfserve/swkscmt.main?p_term=${termcode}&p_instr=${webID}&p_commentid=&p_confirm=1&p_type=Instructor`;
+    return `https://esther.rice.edu/selfserve/swkscmt.main?p_term=${
+        termcode - 100
+    }&p_instr=${webID}&p_commentid=&p_confirm=1&p_type=Instructor`;
 };
 
 /**
@@ -106,6 +110,19 @@ const instructorsToNames = (instructors) => {
 
 const instructorToName = (instructor) => {
     return instructor.firstName + " " + instructor.lastName;
+};
+
+const getPreviousCourseCRN = (course, prevTermCourses) => {
+    const filtered = prevTermCourses.filter((prevCourse) => {
+        return (
+            course.subject == prevCourse.SUBJ &&
+            course.courseNum == prevCourse.NUMB
+        );
+    });
+    if (filtered.length > 0) {
+        return filtered[0].CRN;
+    }
+    return null;
 };
 
 /**
@@ -155,26 +172,30 @@ const REMOVE_DRAFT_SESSION = gql`
  */
 
 /**
- * Fetch the instructors along with their webIds
+ * This simply fetches from our cache whether a recent update has occurred
+ * TODO: CREATE FRAGMENTS / PLACE TO STORE ALL OF THESE SINCE THIS ONE IS ALSO IN ROUTES.JS
  */
-const FETCH_INSTRUCTORS = gql`
-    query WebIDs($termcode: String!) {
-        instructorList(termcode: $termcode) {
-            firstName
-            lastName
-            webId
-        }
+const GET_LOCAL_DATA = gql`
+    query GetLocalData {
+        term @client
+        recentUpdate @client
     }
 `;
 
-const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
+const DraftCourseItem = ({
+    scheduleID,
+    visible,
+    session,
+    course,
+    prevTermCourses,
+    instructorsList,
+    idx,
+}) => {
     const emptyCellGenerator = (count) => {
         let cells = [];
         for (let i = 0; i < count; i++) {
             //added key here
-            cells.push(
-                <p key={i}></p>
-            );
+            cells.push(<p key={i}></p>);
         }
         return cells;
     };
@@ -192,6 +213,11 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
         }
     };
 
+    // Get the current term
+    const {
+        data: { term },
+    } = useQuery(GET_LOCAL_DATA);
+
     let [toggleVisibility] = useMutation(TOGGLE_DRAFT_SESSION_VISIBILITY, {
         variables: { scheduleID: scheduleID, sessionID: session._id },
     });
@@ -199,13 +225,6 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
     let [removeDraftSession] = useMutation(REMOVE_DRAFT_SESSION, {
         variables: { scheduleID: scheduleID, sessionID: session._id },
     });
-
-    const { data: instructorsList, loading, error } = useQuery(
-        FETCH_INSTRUCTORS,
-        {
-            variables: { termcode: "202020" },
-        }
-    );
 
     /**
      * Get the webId of the instructor
@@ -222,13 +241,21 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
             }
         }
         // If instructor not in current instructor list, return a random webId
-        return "281";
+        return null;
     };
 
     /**
      * Toggle function for toggling the collapsible display of prerequisites and corequisites
      */
     const [open, setOpen] = useState(false);
+
+    const [getPrevTermCRN, setPrevTermCRN] = useState(null);
+
+    useEffect(() => {
+        if (prevTermCourses) {
+            setPrevTermCRN(getPreviousCourseCRN(course, prevTermCourses));
+        }
+    }, [prevTermCourses]);
 
     const togglePrereq = () => setOpen(!open);
 
@@ -240,14 +267,28 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                 checked={boolVisible}
                 onClick={() => toggleVisibility()}
             /> */}
-            <IconButton className="visibilityOn" disableFocusRipple disableRipple style={{ backgroundColor: 'transparent' }} onClick={() => toggleVisibility()}>
-                {boolVisible ? <VisibilityIcon className="visibilityOn" /> : <VisibilityOffIcon className="visibilityOff" />}
+            <IconButton
+                className="visibilityOn"
+                disableFocusRipple
+                disableRipple
+                style={{ backgroundColor: "transparent" }}
+                onClick={() => toggleVisibility()}
+            >
+                {boolVisible ? (
+                    <VisibilityIcon className="visibilityOn" />
+                ) : (
+                    <VisibilityOffIcon className="visibilityOff" />
+                )}
             </IconButton>
             <div>
                 <Tooltip title="View Course Details">
                     <a
                         style={{ textDecoration: "none" }}
-                        href={createURL("202110", session.crn, URLTypes.DETAIL)}
+                        href={createURL(
+                            String(term),
+                            session.crn,
+                            URLTypes.DETAIL
+                        )}
                         target="_blank"
                     >
                         {course.subject} {course.courseNum}
@@ -256,7 +297,11 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                 <Tooltip title="View Evaluations">
                     <ReactGA.OutboundLink
                         eventLabel="course_evaluation"
-                        to={createURL("202110", session.crn, URLTypes.EVAL)}
+                        to={createURL(
+                            String(term),
+                            getPrevTermCRN,
+                            URLTypes.EVAL
+                        )}
                         target="_blank"
                     >
                         <IconButton aria-label="evaluations">
@@ -273,7 +318,7 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                 </IconButton>
             </div>
             <p>{session.crn}</p>
-            <p>{creditsDisplay(course.creditsMin, course.creditsMax)}</p>
+            {creditsDisplay(course.creditsMin, course.creditsMax)}
             <p>{course.distribution}</p>
             {createSectionTimeCells(session.class)}
             {createSectionTimeCells(session.lab)}
@@ -281,20 +326,26 @@ const DraftCourseItem = ({ scheduleID, visible, session, course, idx }) => {
                 {session.instructors.map((instructor, index) => {
                     let webId = webIds(instructor, index);
                     return (
-                        <Tooltip
-                            title="View Instructor Evaluation"
-                            key={`${webId}-${index}`}
-                        >
-                            <a
-                                style={{
-                                    textDecoration: "none",
-                                }}
-                                href={createInstructorURL("202110", webId)}
-                                target="_blank"
-                            >
-                                    {instructorToName(instructor)}
-                            </a>
-                        </Tooltip>
+                        <React.Fragment>
+                            {webId ? (
+                                <Tooltip
+                                    title="View Instructor Evaluation"
+                                    key={`${webId}-${index}`}
+                                >
+                                    <a
+                                        style={{
+                                            textDecoration: "none",
+                                        }}
+                                        href={createInstructorURL(term, webId)}
+                                        target="_blank"
+                                    >
+                                        {instructorToName(instructor)}
+                                    </a>
+                                </Tooltip>
+                            ) : (
+                                instructorToName(instructor)
+                            )}
+                        </React.Fragment>
                     );
                 })}
                 {/* {instructorsToNames(session.instructors).join(", ")} */}

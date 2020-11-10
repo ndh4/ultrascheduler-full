@@ -1,5 +1,17 @@
 import { Session } from '../models/index';
 
+var xml2js = require('xml2js');
+var stripPrefix = require('xml2js').processors.stripPrefix;
+import axios from 'axios';
+
+/**
+ * Parser used for XML response by CAS
+ */
+const parser = new xml2js.Parser({
+    tagNameProcessors: [stripPrefix],
+    explicitArray: false
+});
+
 const _sortSubjects = (subjects) => {
 	return subjects.sort((a, b) => {
 		if (a > b) {
@@ -42,4 +54,12 @@ export const getSubjects = async (term) => {
 		result = _sortSubjects(result);
 		return result;
 	})
+}
+
+export const getPreviousTermCourses = async () => {
+	const { data } = await axios.get("https://esther.rice.edu/selfserve/!swkscmp.ajax?p_data=COURSES&p_term=202020");
+	const parsed = await parser.parseStringPromise(data);
+	let courses = parsed["COURSES"]["COURSE"];
+	courses = courses.map(course => course["$"]);
+	return courses;
 }

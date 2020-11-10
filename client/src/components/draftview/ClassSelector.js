@@ -12,6 +12,7 @@ import DraftCourseItem from "./DraftCourseItem";
 import { TableBody } from "@material-ui/core";
 
 import "./ClassSelector.global.css";
+import { gql, useQuery } from "@apollo/client";
 
 const useStyles = makeStyles({
     table: {
@@ -61,10 +62,63 @@ const StyledHeaderTableCell = withStyles((theme) => ({
     },
 }))(TableCell);
 
+/**
+ * GraphQL Queries
+ */
+
+/**
+ * Fetch the previous term's courses
+ */
+const GET_PREVIOUS_TERM_COURSES = gql`
+    query GetPreviousTermCourses {
+        prevTermCourses
+    }
+`;
+
+/**
+ * Fetch the instructors along with their webIds
+ */
+const FETCH_INSTRUCTORS = gql`
+    query WebIDs($termcode: String!) {
+        instructorList(termcode: $termcode) {
+            firstName
+            lastName
+            webId
+        }
+    }
+`;
+
+/**
+ * This simply fetches from our cache whether a recent update has occurred
+ * TODO: CREATE FRAGMENTS / PLACE TO STORE ALL OF THESE SINCE THIS ONE IS ALSO IN ROUTES.JS
+ */
+const GET_LOCAL_DATA = gql`
+    query GetLocalData {
+        term @client
+        recentUpdate @client
+    }
+`;
+
 const ClassSelector = ({ draftSessions, scheduleID }) => {
     const classes = useStyles();
-    // Get headers
 
+    /**
+     * Get last semester's courses for the purposes of course evaluations
+     */
+    const { data: prevTermCourses, loading } = useQuery(
+        GET_PREVIOUS_TERM_COURSES
+    );
+
+    // Get the current term
+    const {
+        data: { term },
+    } = useQuery(GET_LOCAL_DATA);
+
+    const { data: instructorsList } = useQuery(FETCH_INSTRUCTORS, {
+        variables: { termcode: String(term) },
+    });
+
+    // Get headers
     const headers = {
         Visible: false,
         "Course Code": true,
@@ -77,18 +131,25 @@ const ClassSelector = ({ draftSessions, scheduleID }) => {
         Remove: false,
     };
 
-    // Calculate total credit hours
-    let visibleCreditTotal = draftSessions.reduce((totalCredits, draftSession) => {
-        if (draftSession.visible) {
-            return totalCredits + draftSession.session.course.creditsMin;
-        } else {
-            return totalCredits;
-        }
-    }, 0);
+    // Calculate total credit hours visible
+    let visibleCreditTotal = draftSessions.reduce(
+        (totalCredits, draftSession) => {
+            if (draftSession.visible) {
+                return totalCredits + draftSession.session.course.creditsMin;
+            } else {
+                return totalCredits;
+            }
+        },
+        0
+    );
 
-    let absoluteCreditTotal = draftSessions.reduce((totalCredits, draftSession) => {
-        return totalCredits + draftSession.session.course.creditsMin
-    }, 0);
+    // Calculate absolute total credit hours
+    let absoluteCreditTotal = draftSessions.reduce(
+        (totalCredits, draftSession) => {
+            return totalCredits + draftSession.session.course.creditsMin;
+        },
+        0
+    );
 
     return (
         <Fragment>
@@ -98,19 +159,23 @@ const ClassSelector = ({ draftSessions, scheduleID }) => {
                         <p>{headers[headerKey] ? headerKey : null}</p>
                     ))}
                 </div>
-                {draftSessions.map((draftSession, idx) => (
-                    <DraftCourseItem
-                        //replace key with uuid
-                        key={idx}
-                        visible={draftSession.visible}
-                        session={draftSession.session}
-                        course={draftSession.session.course}
-                        scheduleID={scheduleID}
-                    />
-                ))}
+                {loading
+                    ? "Loading..."
+                    : draftSessions.map((draftSession, idx) => (
+                          <DraftCourseItem
+                              //replace key with uuid
+                              key={idx}
+                              visible={draftSession.visible}
+                              session={draftSession.session}
+                              course={draftSession.session.course}
+                              prevTermCourses={prevTermCourses.prevTermCourses}
+                              instructorsList={instructorsList}
+                              scheduleID={scheduleID}
+                          />
+                      ))}
                 <div className="tableFooter">
                     Visible Credit Hours: {visibleCreditTotal}
-                    <hr /> 
+                    <hr />
                     Total Credit Hours: {absoluteCreditTotal}
                 </div>
             </div>

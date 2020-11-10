@@ -1,5 +1,5 @@
 import { Course, CourseTC, Session, SessionTC } from "../models";
-import { getSubjects } from "../utils/courseUtils";
+import { getPreviousTermCourses, getSubjects } from "../utils/courseUtils";
 
 /**
  * THIS IS THE MOST IMPORTANT LINE HERE - IT TOOK ALMOST 2 WEEKS TO GET THIS RIGHT
@@ -41,6 +41,16 @@ CourseTC.addFields({
 //         return await Course.find({ subject: args.subject }).sort(sortParam);
 //     }
 // })
+
+CourseTC.addResolver({
+    name: "findPreviousTermCourses",
+    type: "JSON",
+    args: {},
+    resolve: async ({ source, args, context, info }) => {
+        const prevTermCourses = await getPreviousTermCourses();
+        return prevTermCourses;
+    }
+})
 
 CourseTC.addResolver({
     name: "findManyInDistribution",
@@ -137,6 +147,7 @@ const CourseQuery = {
             return await getSubjects(args.term);
         },
     },
+    prevTermCourses: CourseTC.getResolver("findPreviousTermCourses")
 };
 
 const CourseMutation = {

@@ -3,14 +3,9 @@ import {
     ApolloClient,
     HttpLink,
     InMemoryCache,
-    split,
     gql,
 } from "@apollo/client";
-import { getMainDefinition } from "@apollo/client/utilities";
 import { setContext } from "@apollo/link-context";
-
-// Apollo Subscriptions Setup
-import { WebSocketLink } from "@apollo/link-ws";
 
 // Need firebase for token authentication
 import firebase from "firebase/app";
@@ -71,7 +66,7 @@ export const client = new ApolloClient({
 const initialState = {
     service: process.env.REACT_APP_SERVICE_URL,
     recentUpdate: false,
-    term: 202110,
+    term: 202120,
 };
 
 // Initialize cache with a state

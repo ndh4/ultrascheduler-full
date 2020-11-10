@@ -1,6 +1,7 @@
 import { InstructorTC, SessionTC } from "../models";
 import axios from "axios";
 import { GraphQLString } from "graphql";
+
 const xml2js = require("xml2js");
 const parser = new xml2js.Parser();
 
@@ -13,7 +14,7 @@ InstructorTC.addResolver({
         return await axios
             .get(
                 "https://esther.rice.edu/selfserve/!swkscmp.ajax?p_data=INSTRUCTORS&p_term=" +
-                    args.termcode
+                    (parseInt(args.termcode) - 100) // using -100 in order to get the previous year's reviews (from the same term ~ fall/spring/summer) (ex: 202120 - 100 = 202020)
             )
             .then(async (response) => {
                 // Parse xml to json

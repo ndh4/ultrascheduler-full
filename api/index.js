@@ -80,7 +80,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/courses', coursesRouter);
 app.use('/api/deploy', deployRouter);
-app.use('/api/sync', syncRouter);
+// app.use('/api/sync', syncRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
