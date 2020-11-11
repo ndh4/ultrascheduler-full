@@ -1,6 +1,7 @@
 .headerContainer {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    width: 100%;
 }
 
 .logoContainer {
@@ -8,6 +9,7 @@
     height: 75px;
     margin-left: 25px;
     margin-top: 10px;
+    cursor: pointer;
 }
 
 .logoContainer > img {
@@ -16,17 +18,25 @@
 }
 
 .titleContainer {
+    align-self: center;
     text-align: center;
 }
 
 .buttonsContainer {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
 }
 
-.buttonsContainer > .select {
-    width: 125px;
+.buttonsContainer > button {
+    width: 100px;
     z-index: 2;
+    margin: 10px;
+}
+
+.buttonsContainer > .select {
+    width: 150px;
+    margin: 10px;
 }

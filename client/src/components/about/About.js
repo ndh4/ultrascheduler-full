@@ -107,7 +107,7 @@ function About() {
         <div className="aboutContainer">
             <Header />
             <h2>about us</h2>
-            <p>an ambitious team of students from <a>riceapps</a> that set out to build a course scheduler for the students, by the students.</p>
+            <p>an ambitious team of students from <b>riceapps</b> that set out to build a course scheduler for the students, by the students.</p>
             <div className="aboutProfiles">
                 {students.sort((studentA, studentB) => studentA.position - studentB.position).map(student => (
                     <div className="profile">

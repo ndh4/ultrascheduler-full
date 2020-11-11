@@ -24,7 +24,8 @@ const termOptions = [
     { label: "Spring 2021", value: 202120 },
 ];
 
-const formatTerm = (term) => termOptions.filter(termOption => termOption.value == term)[0];
+const formatTerm = (term) =>
+    termOptions.filter((termOption) => termOption.value == term)[0];
 
 // This import loads the firebase namespace along with all its type information.
 import firebase from "firebase/app";
@@ -87,24 +88,15 @@ function Header() {
             <div className="buttonsContainer">
                 <Button
                     variant="outlined"
-                    style={
-                        isDesktopOrLaptop
-                            ? styles.logoutButton
-                            : styles.logoutMobile
+                    onClick={() =>
+                        location.pathname == "/about"
+                            ? history.push("/schedule")
+                            : history.push("/about")
                     }
-                    onClick={() => location.pathname == "/about" ? history.push("/schedule") : history.push("/about") }
                 >
-                    {location.pathname == "/about" ? "Schedule" : "About" }
+                    {location.pathname == "/about" ? "Schedule" : "About"}
                 </Button>
-                <Button
-                    variant="outlined"
-                    style={
-                        isDesktopOrLaptop
-                            ? styles.logoutButton
-                            : styles.logoutMobile
-                    }
-                    onClick={() => handleLogoutClick()}
-                >
+                <Button variant="outlined" onClick={() => handleLogoutClick()}>
                     Log Out
                 </Button>
                 <Button
@@ -113,39 +105,18 @@ function Header() {
                 >
                     Feedback?
                 </Button>
-                <div className="select">
-                    <Select
-                        value={formatTerm(term)}
-                        onChange={handleTermChange}
-                        options={termOptions}
-                    />
-                </div>
+                {location.pathname == "/schedule" ? (
+                    <div className="select">
+                        <Select
+                            value={formatTerm(term)}
+                            onChange={handleTermChange}
+                            options={termOptions}
+                        />
+                    </div>
+                ) : null}
             </div>
         </div>
     );
 }
-
-const styles = {
-    logo: {
-        float: "left",
-        marginTop: "-70px",
-        marginLeft: "2vw",
-        width: "5%",
-        height: "5%",
-    },
-    logoutButton: {
-        marginRight: ".5vw",
-    },
-    wrapper: {
-        textAlign: "right",
-        width: "95%",
-        marginTop: "-50px",
-    },
-    logoutMobile: {
-        float: "left",
-        marginLeft: "12vw",
-        marginTop: "-50px",
-    },
-};
 
 export default Header;
