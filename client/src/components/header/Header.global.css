@@ -28,11 +28,11 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    z-index: 2;
 }
 
 .buttonsContainer > button {
     width: 100px;
-    z-index: 2;
     margin: 10px;
 }
 
