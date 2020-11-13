@@ -1,6 +1,7 @@
 import { InstructorTC, SessionTC } from "../models";
 import axios from "axios";
 import { GraphQLString } from "graphql";
+import { getInstructors } from "../utils/courseUtils";
 
 const xml2js = require("xml2js");
 const parser = new xml2js.Parser();
@@ -78,6 +79,14 @@ InstructorTC.addFields({
 
 const InstructorQuery = {
     instructorList: InstructorTC.getResolver("fetchInstructors"),
+    instructors: {
+        name: "instructors",
+        type: [InstructorTC],
+        args: { term: "Int!" },
+        resolve: async (_, args) => {
+            return await getInstructors(args.term);
+        }
+    },
     instructorMany: InstructorTC.getResolver("findMany"),
     instructorOne: InstructorTC.getResolver("findOne")
         .addFilterArg({

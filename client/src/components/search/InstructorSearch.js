@@ -24,8 +24,8 @@ const GET_TERM = gql`
 `;
 
 const GET_INSTRUCTORS = gql`
-    query getInstructors {
-        instructorMany {
+    query getInstructors($term:Int!) {
+        instructors(term:$term) {
             firstName
             lastName
         }
@@ -62,7 +62,8 @@ const InstructorSearch = ({ scheduleID }) => {
 
     useEffect(() => {
         if (instructorData) {
-            let instructors = instructorData["instructorMany"];
+            console.log(instructorData);
+            let instructors = instructorData["instructors"];
             let instructorList = instructorsToNames(instructors);
             setInstruct(
                 instructorList.map((inst) => ({

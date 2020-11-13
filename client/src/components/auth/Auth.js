@@ -2,6 +2,7 @@ import React from "react";
 import LoadingScreen from "../LoadingScreen";
 import { gql, useQuery } from "@apollo/client";
 import { Redirect, useHistory, useLocation } from "react-router";
+import Error from "../error/Error";
 
 const VERIFY_TOKEN = gql`
     query VerifyToken {
@@ -30,12 +31,14 @@ const Auth = () => {
 
     const { data, loading, error } = useQuery(VERIFY_TOKEN);
 
-    if (error) return <h2>Error.</h2>;
+    if (error) return <Error />;
     if (loading) return <LoadingScreen />;
     if (!data) return <h2>No data returned...</h2>;
 
     // Redirect to schedule
-    return <Redirect to="/schedule" />;
+    history.replace("/schedule");
+
+    return null;
 };
 
 export default Auth;

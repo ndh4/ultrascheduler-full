@@ -292,9 +292,11 @@ const CourseList = ({ clickValue, scheduleID, query, searchType, idx }) => {
     // we need to check the object's value instead of directly checking searchType === ""
     if (Object.values(searchType)[0] === "") return <br />;
 
+    const errorMessage = (<p>Something went wrong. Please refresh the page and try again 🥺</p>);
+
     if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-    if (!courseData) return <p>No Data...</p>;
+    if (error) return errorMessage;
+    if (!courseData) return errorMessage;
 
     // Once the data has loaded, we want to extract the course results
     // We need to filter out any courses which have 0 sessions

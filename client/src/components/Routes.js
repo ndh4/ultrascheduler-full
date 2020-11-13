@@ -13,6 +13,7 @@ import firebase from "firebase/app";
 
 // These imports load individual services into the firebase namespace.
 import "firebase/auth";
+import Error from "./error/Error";
 
 /**
  * Requests to verify the user's token on the backend
@@ -86,9 +87,12 @@ const Routes = ({}) => {
             <PrivateRoute path="/schedule">
                 <Main />
             </PrivateRoute>
-            <PrivateRoute path="/">
+            <PrivateRoute exact path="/">
                 <Redirect to="/schedule" />
             </PrivateRoute>
+            <Route>
+                <Error />
+            </Route>
         </Switch>
     );
 };

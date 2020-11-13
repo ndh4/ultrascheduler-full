@@ -13,6 +13,7 @@ import ListIcon from "@material-ui/icons/List";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 
 import './Main.global.css';
+import Error from "../error/Error";
 
 export const BottomModeContext = createContext("Calendar");
 
@@ -114,8 +115,8 @@ const Main = ({ }) => {
     });
 
     if (loading) return <LoadingScreen />;
-    if (error) return <p>Error :(</p>;
-    if (!data) return <p>No Data...</p>;
+    if (error) return <Error />;
+    if (!data) return <Error />;
 
     const schedule = data.scheduleOne;
 

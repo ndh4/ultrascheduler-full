@@ -249,9 +249,12 @@ const InstructorList = ({ scheduleID, instructor, firstName, lastName }) => {
         return <br />;
     }
 
+    // TODO: Move to shared folder; this is duplicated
+    const errorMessage = (<p>Something went wrong. Please refresh the page and try again 🥺</p>); 
+
     if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-    if (!instCourseData) return <p>No Data...</p>;
+    if (error) return errorMessage;
+    if (!instCourseData) return errorMessage;
 
     // Once the data has loaded, we want to extract the course results for the department
     let courseResults = instCourseData.instructorOne.sessions;

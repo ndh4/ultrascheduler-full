@@ -196,8 +196,8 @@ const GET_TIME_INTERVAL_COURSES = gql`
 
 //NEWWWWW
 const GET_INSTRUCTORS = gql`
-    query getInstructors {
-        instructorMany {
+    query getInstructors($term:Int!) {
+        instructors(term:$term) {
             firstName
             lastName
         }
@@ -296,7 +296,7 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
         data: { term },
     } = useQuery(GET_TERM); // Gets the term which we need to request subjects from
 
-    const { data: departmentsData } = useQuery(GET_DEPARTMENTS, {
+    const { data: departmentsData, loading: departmentsLoading, error: departmentsError } = useQuery(GET_DEPARTMENTS, {
         variables: { term },
     });
 
@@ -389,7 +389,7 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
     //for instructor data
     useEffect(() => {
         if (instructorData) {
-            let instructors = instructorData["instructorMany"];
+            let instructors = instructorData["instructors"];
             let instructorList = instructorsToSplit(instructors);
             setInstruct(
                 instructorList.map((inst) => ({
