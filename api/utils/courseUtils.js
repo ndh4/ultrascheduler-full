@@ -54,9 +54,11 @@ export const getInstructors = async (term) => {
 
     let instructors = parsed["INSTRUCTORS"]["INSTRUCTOR"];
 
+    console.log(instructors);
+
     instructors = instructors.map((instructor) => {
-        const firstName = instructor["$"]["first-name"];
-        const lastName = instructor["$"]["last-name"];
+        const fullName = instructor["_"];
+        const [lastName, firstName] = fullName.split(", ");
         return {
             firstName,
             lastName,
