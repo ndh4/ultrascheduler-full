@@ -8,6 +8,7 @@ import { ThemeProvider } from "@material-ui/styles";
 import TextField from "@material-ui/core/TextField";
 import "./CourseSearch.global.css";
 import CompiledLists from "./CompiledLists";
+import { CircularProgress } from "@material-ui/core";
 
 /**
  * TODO: MAKE A FRAGMENT! THIS IS USED IN TWO PLACES
@@ -301,7 +302,7 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
     });
 
     //get instructor data
-    const { data: instructorData } = useQuery(GET_INSTRUCTORS, {
+    const { data: instructorData, loading: instructorsLoading, error: instructorsError } = useQuery(GET_INSTRUCTORS, {
         variables: { term },
     });
 
@@ -514,6 +515,11 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
 
     // Initialize Google Analytics
     initGA();
+
+    // Don't show anything until departments & instructors are finished loading
+    const errorMessage = (<p>Something went wrong. Please refresh the page and try again 🥺</p>);
+    if (departmentsLoading || instructorsLoading) return <div className="loadingMessage"><CircularProgress color="inherit" /></div>;
+    if (departmentsError || instructorsError) return errorMessage;
 
     return (
         <div className="searchBar">

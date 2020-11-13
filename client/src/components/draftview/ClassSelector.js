@@ -9,7 +9,7 @@ import Paper from "@material-ui/core/Paper";
 import SwipeableViews from "react-swipeable-views";
 
 import DraftCourseItem from "./DraftCourseItem";
-import { TableBody } from "@material-ui/core";
+import { CircularProgress, TableBody } from "@material-ui/core";
 
 import "./ClassSelector.global.css";
 import { gql, useQuery } from "@apollo/client";
@@ -161,7 +161,7 @@ const ClassSelector = ({ draftSessions, scheduleID }) => {
                     ))}
                 </div>
                 {loading
-                    ? "Loading..."
+                    ? <div className="loadingMessage"><CircularProgress color="inherit" /></div>
                     : draftSessions.map((draftSession, idx) => (
                           <DraftCourseItem
                               //replace key with uuid

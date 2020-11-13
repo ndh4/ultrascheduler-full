@@ -69,3 +69,10 @@
     height: 1px;
     flex: 1 1 auto;
 }
+
+.loadingMessage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
