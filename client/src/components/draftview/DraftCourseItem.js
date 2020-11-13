@@ -257,6 +257,37 @@ const DraftCourseItem = ({
         }
     }, [prevTermCourses]);
 
+    /**
+     * Create a tooltip or the name of each instructor
+     */
+    const instructorsToTooltips = (instructors) => {
+        return instructors.map((instructor, index) => {
+            let webId = webIds(instructor, index);
+            return (
+                <React.Fragment>
+                    {webId ? (
+                        <Tooltip
+                            title="View Instructor Evaluation"
+                            key={`${webId}-${index}`}
+                        >
+                            <a
+                                style={{
+                                    textDecoration: "none",
+                                }}
+                                href={createInstructorURL(term, webId)}
+                                target="_blank"
+                            >
+                                {instructorToName(instructor)}
+                            </a>
+                        </Tooltip>
+                    ) : (
+                        instructorToName(instructor)
+                    )}
+                </React.Fragment>
+            );
+        });
+    };
+
     const togglePrereq = () => setOpen(!open);
 
     const boolVisible = visible ? true : false;
@@ -323,31 +354,7 @@ const DraftCourseItem = ({
             {createSectionTimeCells(session.class)}
             {createSectionTimeCells(session.lab)}
             <p>
-                {session.instructors.map((instructor, index) => {
-                    let webId = webIds(instructor, index);
-                    return (
-                        <React.Fragment>
-                            {webId ? (
-                                <Tooltip
-                                    title="View Instructor Evaluation"
-                                    key={`${webId}-${index}`}
-                                >
-                                    <a
-                                        style={{
-                                            textDecoration: "none",
-                                        }}
-                                        href={createInstructorURL(term, webId)}
-                                        target="_blank"
-                                    >
-                                        {instructorToName(instructor)}
-                                    </a>
-                                </Tooltip>
-                            ) : (
-                                instructorToName(instructor)
-                            )}
-                        </React.Fragment>
-                    );
-                })}
+                {instructorsToTooltips(session.instructors).reduce((acc, newInstructor) => <React.Fragment>{acc}, {newInstructor}</React.Fragment>)}
                 {/* {instructorsToNames(session.instructors).join(", ")} */}
             </p>
             <p>
