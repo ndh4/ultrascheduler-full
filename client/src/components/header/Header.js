@@ -19,8 +19,6 @@ const GET_LOCAL_DATA = gql`
 `;
 
 const termOptions = [
-    { label: "Summer 2020", value: 202030 },
-    { label: "Fall 2020", value: 202110 },
     { label: "Spring 2021", value: 202120 },
 ];
 
@@ -48,7 +46,7 @@ function Header() {
         query: "(min-device-width: 608px)",
     });
 
-    let feedbackURL = "https://forms.gle/6uyRuTxKgP3n53vB6";
+    let feedbackURL = "https://forms.gle/gSJp5Dy9a2WH7Nk1A";
     let logoutURL = "https://idp.rice.edu/idp/profile/cas/logout";
 
     // This initializes Google Analytics
