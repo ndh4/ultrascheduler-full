@@ -31,13 +31,13 @@ export const getSubjects = async (term) => {
     }
 
     const { data } = await axios.get(
-        "https://courses.rice.edu/courses/!SWKSCAT.info?action=DEPARTMENTS&term=" +
+        "https://courses.rice.edu/courses/!SWKSCAT.info?action=SUBJECTS&term=" +
             String(term)
     );
     const parsed = await parser.parseStringPromise(data);
-    let departments = parsed["DEPARTMENTS"]["DEPARTMENT"];
-    departments = departments.map((department) => department["$"].code);
-    return departments;
+    let subjects = parsed["SUBJECTS"]["SUBJECT"];
+    subjects = subjects.map((subject) => subject["$"].code);
+    return subjects;
 };
 
 export const getInstructors = async (term) => {
