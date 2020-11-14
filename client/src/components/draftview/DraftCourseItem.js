@@ -292,6 +292,8 @@ const DraftCourseItem = ({
 
     const boolVisible = visible ? true : false;
 
+    const instructorTooltips = instructorsToTooltips(session.instructors);
+
     return (
         <div className={`tableRow ${boolVisible ? "selected" : ""}`}>
             {/* <Checkbox
@@ -354,8 +356,7 @@ const DraftCourseItem = ({
             {createSectionTimeCells(session.class)}
             {createSectionTimeCells(session.lab)}
             <p>
-                {instructorsToTooltips(session.instructors).reduce((acc, newInstructor) => <React.Fragment>{acc}, {newInstructor}</React.Fragment>)}
-                {/* {instructorsToNames(session.instructors).join(", ")} */}
+                {instructorTooltips.length != 0 ? instructorTooltips.reduce((acc, newInstructor) => <React.Fragment>{acc}, {newInstructor}</React.Fragment>) : null}
             </p>
             <p>
                 <Tooltip className="iconButton" title="Delete">
