@@ -34,6 +34,7 @@ var SessionSchema = new Schema({
     maxWaitlisted: Number,
     course: { type: Schema.Types.ObjectID, ref: Course },
     instructors: [{ type: Schema.Types.ObjectID, ref: Instructor }],
+    instructionMethod: String,
 });
 
 export const Session = mongoose.model("sessions", SessionSchema);

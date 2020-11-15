@@ -1,8 +1,8 @@
-const Course = require("../models/coursesModel").course;
-const Instructor = require("../models/instructorsModel").instructor;
-const Session = require("../models/coursesModel").session;
+const Course = require("../models/CourseModel").Course;
+const Instructor = require("../models/InstructorModel").Instructor;
+const Session = require("../models/SessionModel").Session;
 
-var BIGJSON = require("../python_scripts/output11.json");
+var BIGJSON = require("../../spring.json");
 
 const splitCourseCode = (courseCode) => {
     let courseArr = courseCode.split(" ");
@@ -124,7 +124,8 @@ var jsonToSchema = async (jsonObj) => {
                 "waitlisted": session["cur_wait"],
                 "maxWaitlisted": session["max_wait"],
                 "crossEnrollment": session["cur_cross_enroll"],
-                "maxCrossEnrollment": session["max_cross_enroll"]
+                "maxCrossEnrollment": session["max_cross_enroll"],
+                "instructionMethod": session["instructional_method"]
             }
 
             // TODO: confirm these are the invariants
