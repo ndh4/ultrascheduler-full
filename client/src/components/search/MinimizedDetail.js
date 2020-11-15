@@ -60,6 +60,14 @@ const MinimizedDetail = ({
             );
         }
     };
+    const InstructionMethod = (session) => {
+        if (session.instructionMethod) {
+            return formatDiv(
+                "Instructional Method:",
+                replaceNull(session.instructionMethod)
+            )
+        }
+    }
     const longTitle = (course) => {
         if (course.course) {
             return formatDiv("Long Title:", course.course.longTitle);
@@ -92,6 +100,7 @@ const MinimizedDetail = ({
         <div className="minimizedMinimizedDetailContainer">
             {formatDiv("Class Time:", Times(session.class))}
             {Instructors(session)}
+            {InstructionMethod(session)}
             <Collapse in={getOpen} timeout={500} unmountOnExit>
             {showAdditionalInfo()}
             </Collapse>

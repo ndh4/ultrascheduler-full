@@ -87,7 +87,12 @@ const Detail = ({
     };
 
     return (
-        <Collapse className="detailCollapsible" in={open} timeout="auto" unmountOnExit>
+        <Collapse
+            className="detailCollapsible"
+            in={open}
+            timeout="auto"
+            unmountOnExit
+        >
             <div className="detail">
                 <div className="column">
                     {formatDiv("Class Time:", Times(session.class))}
@@ -116,6 +121,10 @@ const Detail = ({
                     {formatDiv(
                         "Total Cross-list Enrolled:",
                         replaceNull(session.crossEnrollment)
+                    )}
+                    {formatDiv(
+                        "Instructional Method:",
+                        session.instructionMethod
                     )}
                     {/*look at queries again*/}
                     {/* {formatDiv(

@@ -122,6 +122,10 @@ const CourseDetail = ({
                                         "Grade Mode:",
                                         "Standard Letter"
                                     )}
+                                    {formatDiv(
+                                        "Instructional Method:",
+                                        session.instructionMethod
+                                    )}
                                 </TableCell>
                             </TableRow>
                         </TableBody>

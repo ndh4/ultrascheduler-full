@@ -41,6 +41,7 @@ export const GET_USER_SCHEDULE = gql`
                     maxEnrollment
                     waitlisted
                     maxWaitlisted
+                    instructionMethod
                     instructors {
                         firstName
                         lastName

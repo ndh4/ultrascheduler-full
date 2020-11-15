@@ -62,6 +62,7 @@ const GET_DEPT_COURSES = gql`
                 maxCrossEnrollment
                 waitlisted
                 maxWaitlisted
+                instructionMethod
             }
         }
     }
@@ -108,6 +109,7 @@ const GET_DIST_COURSES = gql`
                 maxCrossEnrollment
                 waitlisted
                 maxWaitlisted
+                instructionMethod
             }
         }
     }
@@ -125,6 +127,7 @@ const GET_DAYS_COURSES = gql`
                 sessions(filter: { term: $term }) {
                     _id
                     crn
+                    instructionMethod
                     class {
                         days
                         startTime
@@ -170,6 +173,7 @@ const GET_TIME_INTERVAL_COURSES = gql`
                 sessions(filter: { term: $term }) {
                     _id
                     crn
+                    instructionMethod
                     class {
                         days
                         startTime
@@ -239,6 +243,7 @@ const COURSES_BY_INSTRUCTORS = gql`
                 maxCrossEnrollment
                 waitlisted
                 maxWaitlisted
+                instructionMethod
             }
         }
     }
