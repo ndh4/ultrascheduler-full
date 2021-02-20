@@ -2,9 +2,12 @@
  * @todo: What TypeComposers do we need to import?
  */
 
+ import { ScheduleTC, StudyGroup, StudyGroupTC } from "../models";
+
 /**
  * @todo: What utils do we need to import?
  */
+ import { createGroup } from "../utils/invitelinksUtils"
 
 /* Some imports you'll need */
 import fetch from "node-fetch";
@@ -37,26 +40,45 @@ StudyGroupTC.addRelation("relationOne", {
  *
  * @todo: What resolvers do we need here?
  */
+
+
+ //look for link if there is one and give it 
+ //if no link then create 
+ // call on Groupme API to create the group and look for existing group 
+
+ //query database for this course , check if there is a link 
+ //if no link create then store in data base, then return 
 StudyGroupTC.addResolver({
     name: "findOrCreate",
-    type: /** @todo: Fill in type of object this resolver will return */ null,
-    args: {
-        /** @todo: Fill in list of arguments needed for this resolver */
-    },
+    type: StudyGroupTC,  
+    args: StudyGroupTC.getResolver("findOne").getArgs(),
     resolve: async ({ source, args, context, info }) => {
         /**
          * @todo: Fill in what fields we need to extract from args
          */
-        const {} = args;
+        let  { term, course } = args.filter;
+
+        let studygroup = await StudyGroup.findone({
+            term: term,
+            course: course
+        }).exec();
+
+        //const {} = args;
 
         /**
          * @todo: Fill in the logic necessary for this resolver
          */
 
-        /**
-         * @todo: Change return type to correct type
-         */
-        return null;
+        // query database for course and link
+        // Return if it exists
+        if (studygroup) return studygroup;
+
+        link = await createGroup(course, term);
+
+        return await StudyGroup.create({ term: term, course: course, groupMeId: link});
+
+        //Create if it doesnt exist --> store link in db --> return 
+
     },
 });
 
@@ -86,8 +108,9 @@ StudyGroupTC.addResolver({
 /**
  * @todo: What queries do we need for Study Groups?
  */
-const StudyGroupQuery = {};
-
+const StudyGroupQuery = {
+    findOrCreateGroupMe: StudyGroupTC.getResolver("findOrCreate")
+};
 /**
  * @todo: What mutations do we need for Study Groups?
  */
