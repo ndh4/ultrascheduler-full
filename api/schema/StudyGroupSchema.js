@@ -38,7 +38,30 @@ StudyGroupTC.addRelation("relationOne", {
  * @todo: What resolvers do we need here?
  */
 StudyGroupTC.addResolver({
-    name: "",
+    name: "findOrCreate",
+    type: /** @todo: Fill in type of object this resolver will return */ null,
+    args: {
+        /** @todo: Fill in list of arguments needed for this resolver */
+    },
+    resolve: async ({ source, args, context, info }) => {
+        /**
+         * @todo: Fill in what fields we need to extract from args
+         */
+        const {} = args;
+
+        /**
+         * @todo: Fill in the logic necessary for this resolver
+         */
+
+        /**
+         * @todo: Change return type to correct type
+         */
+        return null;
+    },
+});
+
+StudyGroupTC.addResolver({
+    name: "fetchGroupInfo",
     type: /** @todo: Fill in type of object this resolver will return */ null,
     args: {
         /** @todo: Fill in list of arguments needed for this resolver */
