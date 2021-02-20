@@ -3,8 +3,6 @@
  */
 import { StudyGroup, StudyGroupTC } from "../models"
 
- import { ScheduleTC, StudyGroup, StudyGroupTC } from "../models";
-
 /**
  * @todo: What utils do we need to import?
  */
@@ -107,7 +105,7 @@ StudyGroupTC.addResolver({
          */
         let  { term, course } = args.filter;
 
-        let studygroup = await StudyGroup.findone({
+        let studygroup = await StudyGroup.findOne({
             term: term,
             course: course
         }).exec();
@@ -122,7 +120,7 @@ StudyGroupTC.addResolver({
         // Return if it exists
         if (studygroup) return studygroup;
 
-        link = await createGroup(course, term);
+        const link = await createGroup(course, term);
 
         return await StudyGroup.create({ term: term, course: course, groupMeId: link});
 
