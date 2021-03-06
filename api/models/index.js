@@ -5,6 +5,7 @@ import { Instructor, InstructorTC } from './InstructorModel';
 import { User, UserTC } from './UserModel';
 import { StudyGroup, StudyGroupTC } from './StudyGroupModel';
 import { Item, ItemTC } from './ItemModel';
+import { Listing, ListingTC } from './ItemModel';
 
 export {
     Course,
@@ -20,5 +21,7 @@ export {
     StudyGroup,
     StudyGroupTC,
     Item,
-    ItemTC
+    ItemTC,
+    Listing,
+    ListingTC
 };

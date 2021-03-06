@@ -11,7 +11,7 @@ import { InstructorQuery, InstructorMutation } from "./InstructorSchema";
 import { ScheduleQuery, ScheduleMutation } from "./ScheduleSchema";
 import { AuthQuery, AuthMutation } from "./AuthSchema";
 import {StudyGroupQuery, StudyGroupMutation} from "./StudyGroupSchema";
-import { ItemMutation, ItemQuery } from "./ItemSchema";
+import { ItemQuery, ItemMutation } from "./ItemSchema";
 
 schemaComposer.Query.addFields({
     ...UserQuery,
