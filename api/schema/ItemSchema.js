@@ -43,9 +43,9 @@ const ItemQuery = {
 };
 
 const ItemMutation = {
-    createItem : ItemTC.getResolver('createOne'),
-    updateOne : ItemTC.getResolver('updateOne'),
-    removeOne : ItemTC.getResolver('removeOne')
+    itemCreateOne : ItemTC.getResolver('createOne'),
+    itemUpdateOne : ItemTC.getResolver('updateOne'),
+    itemRemoveOne : ItemTC.getResolver('removeOne')
 };
 
 export { ItemQuery, ItemMutation };
