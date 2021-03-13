@@ -14,6 +14,7 @@ import firebase from "firebase/app";
 // These imports load individual services into the firebase namespace.
 import "firebase/auth";
 import Error from "./error/Error";
+import ListingDisplay from "./listing-display/ListingDisplay";
 
 /**
  * Requests to verify the user's token on the backend
@@ -83,6 +84,9 @@ const Routes = ({}) => {
             </Route>
             <Route path="/about">
                 <About />
+            </Route>
+            <Route path="/listing-display">
+                <ListingDisplay />
             </Route>
             <PrivateRoute path="/schedule">
                 <Main />

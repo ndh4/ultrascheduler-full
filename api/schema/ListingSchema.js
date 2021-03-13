@@ -1,10 +1,13 @@
-import { Course, Listing, ListingTC } from "../models";
+import { Course, Listing } from "../models";
+import { ListingTC } from "../models/ListingModel";
 
 // CRUD Operations
 
 // Create
 const ListingMutation = {
     listingCreateOne: ListingTC.getResolver("createOne"),
+    listingUpdateOne: ListingTC.getResolver("updateOne"),
+    listingRemoveOne: ListingTC.getResolver("removeOne")
 };
 
 // Read
@@ -35,17 +38,12 @@ ListingTC.addResolver({
 })
 
 // Update
-const ListingMutation = {
-    listingUpdateOne: ListingTC.getResolver("updateOne"),
-};
 
 // Delete / Destroy
 
-const ListingMutation = {
-    listingRemoveOne: ListingTC.getResolver("removeOne")
-    
-};
-
-
+const ListingQuery = {
+    listingReadOne: ListingTC.getResolver("findOne"),
+    listingReadMany: ListingTC.getResolver("findMany")
+}
 
 export { ListingQuery, ListingMutation };
