@@ -7,6 +7,7 @@ import { gql, useQuery, useApolloClient } from "@apollo/client";
 import LoadingScreen from "./LoadingScreen";
 import About from "./about/About";
 import NewAuth from "./auth/Auth";
+import Item from "./individual-item/Item";
 
 // This import loads the firebase namespace along with all its type information.
 import firebase from "firebase/app";
@@ -81,6 +82,9 @@ const Routes = ({}) => {
             <Route path="/login">
                 <Login />
             </Route>
+            <Route path="/item">
+                <Item />
+            </Route>
             <Route path="/about">
                 <About />
             </Route>
@@ -98,3 +102,4 @@ const Routes = ({}) => {
 };
 
 export default Routes;
+

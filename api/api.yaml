@@ -1,5 +1,12 @@
 runtime: nodejs10
 service: api
 
+<<<<<<< HEAD
 basic_scaling:
   max_instances: 5
+=======
+automatic_scaling:
+  min_instances: 1
+  min_pending_latency: 30ms
+  max_pending_latency: automatic
+>>>>>>> e9a2285cf3c928365cee185f581a8831e77f4e72

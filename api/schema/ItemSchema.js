@@ -40,7 +40,9 @@ ItemTC.addResolver({
 
 const ItemQuery = {
     findCourse: ItemTC.getResolver("findByClass"),
+    findOneItem: ItemTC.getResolver("findOne")
 };
+
 
 const ItemMutation = {};
 
