@@ -1,10 +1,33 @@
-import { Course, Listing, ListingTC } from "../models";
+import { Course, Listing, ListingTC, Item, ItemTC } from "../models";
 
 // CRUD Operations
 
 // Create
 
 // Read
+
+ListingTC.addResolver({
+    name: "findByCourse",
+    type: [ListingTC],
+    args: { _id: "ID!" },
+    resolve: async ({ source, args, context, info }) => {
+        // Assume you alr have the course ID
+
+        // 
+        let matchedItems = await Item.find({courses : { $in: args._id }});
+        let matchedIDs = matchedItems.map((item)=>{
+            return item._id;
+        })
+        console.log(matchedIDs)
+        // Use course id to filter
+        let filter = {item: { $in: matchedIDs }}
+
+
+        // const populated = (await Listing.populate("item")).execPopulate();
+        // console.log(populated);
+        return Listing.find(filter);
+    }
+});
 
 // ListingTC.addResolver({
 //     name: "findByClass",
@@ -36,7 +59,7 @@ import { Course, Listing, ListingTC } from "../models";
 // Delete / Destroy
 
 const ListingQuery = {
-
+    listingsByCourse: ListingTC.getResolver('findByCourse')
 };
 
 const ListingMutation = {
