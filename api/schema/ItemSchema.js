@@ -42,6 +42,10 @@ const ItemQuery = {
     findCourse: ItemTC.getResolver("findByClass"),
 };
 
-const ItemMutation = {};
+const ItemMutation = {
+    itemCreateOne : ItemTC.getResolver('createOne'),
+    itemUpdateOne : ItemTC.getResolver('updateOne'),
+    itemRemoveOne : ItemTC.getResolver('removeOne')
+};
 
 export { ItemQuery, ItemMutation };

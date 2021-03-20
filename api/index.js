@@ -106,7 +106,7 @@ app.use(function(err, req, res, next) {
 // Need to call httpsServer.listen instead of app.listen so that the WebSockets (subscriptions) server runs
 app.listen({ port: PORT }, () => {
     // console.log(httpsServer.address());
-    console.log(`🚀 Server ready at https://localhost:${PORT}${server.graphqlPath}`);
+    console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
     // console.log(`🚀 Subscriptions ready at wss://localhost:${PORT}${server.subscriptionsPath}`);
 });
 
