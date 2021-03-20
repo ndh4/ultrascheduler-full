@@ -1,0 +1,16 @@
+/* Set up classes for the various types: text and input, text and drop down etc
+    one for overall container on page 
+*/
+
+
+
+.Title{
+text-align: center;
+
+}
+
+
+.Field{
+    background: white;
+
+}

@@ -7,6 +7,7 @@ import { gql, useQuery, useApolloClient } from "@apollo/client";
 import LoadingScreen from "./LoadingScreen";
 import About from "./about/About";
 import NewAuth from "./auth/Auth";
+import Form from "./ListingForm/Form"
 
 // This import loads the firebase namespace along with all its type information.
 import firebase from "firebase/app";
@@ -83,6 +84,9 @@ const Routes = ({}) => {
             </Route>
             <Route path="/about">
                 <About />
+            </Route>
+            <Route path="/form">
+                <Form />
             </Route>
             <PrivateRoute path="/schedule">
                 <Main />
