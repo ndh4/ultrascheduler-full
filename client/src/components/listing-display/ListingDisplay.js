@@ -40,10 +40,10 @@ const Listing = ({ data }) => {
                     {data.item.title}
                 </div>
                 <div className="listingItemInfo">
-                    {data.item.year} version | {data.item.version} type
+                    {data.item.year}  | {data.item.version}
                 </div>
                 <div className="listingAuthor">
-                    by {data.item.author} author
+                    by {data.item.author} 
                 </div>
                 
                 <div className="listingCourses"> 
@@ -68,7 +68,18 @@ const Listing = ({ data }) => {
 const GET_LISTINGS = gql`
     query GetListings {
         listingReadMany {
-            item
+            item {
+                _id
+                courses {
+                    _id
+                    subject
+                    courseNum
+                }
+                title
+                year
+                author
+                version
+            }
             seller
             condition
             price
