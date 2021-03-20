@@ -8,6 +8,7 @@ import { User } from "./UserModel";
 
 const CONDITIONS = ['NEW', 'LIKE NEW', 'USED'];
 const STATUSES = ['AVAILABLE', 'PENDING', 'SOLD'];
+const PICKUPS = ['On Campus', 'Near Campus', 'Shipped']
 
 var ListingSchema = new Schema({
     item: { type: Schema.Types.ObjectID, ref: Item, required: true },
@@ -18,6 +19,7 @@ var ListingSchema = new Schema({
     description: { type: String, required: false },
     availability: { type: String, required: true, enum: STATUSES },
     pictures: [{ type: String, required: false }],
+    pickup: [{type: String, required: true, enum: PICKUPS}]
 }, { timestamps: true });
 
 export const Listing = mongoose.model("listings", ListingSchema);

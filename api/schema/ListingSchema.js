@@ -7,28 +7,71 @@ import { Course, Listing, ListingTC, Item, ItemTC } from "../models";
 // Read
 
 ListingTC.addResolver({
-    name: "findByCourse",
+    name: "filter",
     type: [ListingTC],
-    args: { _id: "ID!" },
+    args: {_id: "[ID]", type: "String", min_price: "Int!", max_price: "Int!", 
+            status: "String", pickup: "String"},
     resolve: async ({ source, args, context, info }) => {
-        // Assume you alr have the course ID
 
-        // 
-        let matchedItems = await Item.find({courses : { $in: args._id }});
-        let matchedIDs = matchedItems.map((item)=>{
-            return item._id;
-        })
-        console.log(matchedIDs)
-        // Use course id to filter
-        let filter = {item: { $in: matchedIDs }}
+        let matchedIDs, matchedCourseIDs, matchedTypeIDs = []
+        // Get items by courseID if ID inputted by user
+        if(args._id) {
+            let matchedCourseItems = await Item.find({courses : { $in: args._id }});
+            matchedCourseIDs = matchedItems.map((item)=>{
+                return item._id;
+            })
+            console.log(matchedIDs)
+        }
+        if (args.type){
+            let matchedTypeItems = await Item.find({type: args.type})
+            matchedTypeIDs = matchedTypeItems.map((item)=>{
+                return item._id;
+            })
+        }
 
+        //get intersecting IDs
+        if(args._id && args.type){
+            matchedIDs = matchedCourseIDs.filter(value => matchedTypeIDs.includes(value));
+        }
+        else if(args._id){
+            matchedIDs = matchedCourseIDs
+        }
+        else if(args.type){
+            matchedIDs = matchedTypeIDs
+        }
 
-        // const populated = (await Listing.populate("item")).execPopulate();
-        // console.log(populated);
+        // Add the filter fields the user has inputted 
+        let base_filter = {item: { $in: matchedIDs}, 
+            price: {$gte: args.min_price, $lte: args.max_price},
+            availability: args.status, pickup: args.pickup}    
+        
+        let field_mapping = {_id: 'item', type: 'item', status: 'availability', pickup: 'pickup'}
+           
+        //instantiate filter
+        let filter = { price: {$gte: args.min_price, $lte: args.max_price} };
+      
+        // For all fields in the filter, add them to our filter
+        for (let key in args) {
+            if(key) {
+                let field = field_mapping[key]
+                filter[field] = base_filter[field]
+            } 
+        }
+        
         return Listing.find(filter);
     }
 });
 
+// ListingTC.addResolver({
+//     name:'findByStatus',
+//     type: [ListingTC],
+//     args: {status: "String!"},
+//     resolve: async ({ source, args, context, info }) => {
+//         let matchedItems = await Listing.find({availability: 
+//             args.status});
+//         return matchedItems;
+//     }
+// });
 // ListingTC.addResolver({
 //     name: "findByClass",
 //     type: [ListingTC],
@@ -59,7 +102,7 @@ ListingTC.addResolver({
 // Delete / Destroy
 
 const ListingQuery = {
-    listingsByCourse: ListingTC.getResolver('findByCourse')
+    listingsByFilter: ListingTC.getResolver('filter'),
 };
 
 const ListingMutation = {
