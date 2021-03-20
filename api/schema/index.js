@@ -12,7 +12,7 @@ import { ScheduleQuery, ScheduleMutation } from "./ScheduleSchema";
 import { AuthQuery, AuthMutation } from "./AuthSchema";
 import {StudyGroupQuery, StudyGroupMutation} from "./StudyGroupSchema";
 import { ItemQuery, ItemMutation } from "./ItemSchema";
-import { ListingMutation, ListingQuery } from "./ListingSchema";
+import { ListingQuery, ListingMutation } from './ListingSchema';
 
 schemaComposer.Query.addFields({
     ...UserQuery,

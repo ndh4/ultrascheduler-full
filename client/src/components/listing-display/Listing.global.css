@@ -1,0 +1,77 @@
+:root {
+    --edition-color: #4DD5D3;
+    --title-color: #535353 ;
+    --author-color: #b3b3b3;
+    --course1-dark: ;
+    --course1-light: ;
+
+}
+
+.listingContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+
+}
+
+.listingPicture {
+    display: flex;
+    height: 100%;
+}
+
+.listingTitle {
+    display: flex;
+    color: var(--title-color);
+}
+
+.listingAuthor {
+    display: flex;
+    color: var(--author-color);
+    
+}
+
+.listingEdition {
+    display: flex;
+}
+
+.specificImage {
+    display: flex;
+    height: 70%;
+    width: 50%;
+}
+
+.listingInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.listingItemInfo{
+    display: flex;
+    flex-direction: column;
+    color: var(--edition-color);
+}
+.listingCourses {
+    display: flex;
+    fill: ;
+
+}
+.listingPrice {
+    display: flex;
+    color: var(--title-color);
+}
+
+.listingDisplayContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.listingSellInfo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.listingContact {
+    display: flex;
+}
