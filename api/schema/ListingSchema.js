@@ -1,4 +1,16 @@
-import { Course, Listing, ListingTC, Item, ItemTC } from "../models";
+import { Course, ItemTC, Listing, ListingTC } from "../models";
+
+/**
+ * Relations (necessary for any fields that link to other types in the schema)
+ * https://graphql-compose.github.io/docs/plugins/plugin-mongoose.html#how-to-build-nesting-relations
+ */
+ ListingTC.addRelation("item", {
+    resolver: () => ItemTC.getResolver("findById"),
+    prepareArgs: {
+        _id: (source) => source.item,
+    },
+    projection: { item: 1 },
+});
 
 // CRUD Operations
 
@@ -103,6 +115,8 @@ ListingTC.addResolver({
 
 const ListingQuery = {
     listingsByFilter: ListingTC.getResolver('filter'),
+    listingFindMany: ListingTC.getResolver("findMany"),
+    listingFindOne: ListingTC.getResolver("findOne")
 };
 
 const ListingMutation = {
