@@ -1,5 +1,16 @@
-import { Course, Listing } from "../models";
-import { ListingTC } from "../models/ListingModel";
+import { Course, ItemTC, Listing, ListingTC } from "../models";
+
+/**
+ * Relations (necessary for any fields that link to other types in the schema)
+ * https://graphql-compose.github.io/docs/plugins/plugin-mongoose.html#how-to-build-nesting-relations
+ */
+ ListingTC.addRelation("item", {
+    resolver: () => ItemTC.getResolver("findById"),
+    prepareArgs: {
+        _id: (source) => source.item,
+    },
+    projection: { item: 1 },
+});
 
 // CRUD Operations
 
