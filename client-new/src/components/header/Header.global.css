@@ -1,0 +1,42 @@
+.headerContainer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+}
+
+.logoContainer {
+    justify-self: flex-start;
+    height: 75px;
+    margin-left: 25px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.logoContainer > img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.titleContainer {
+    align-self: center;
+    text-align: center;
+}
+
+.buttonsContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+}
+
+.buttonsContainer > button {
+    width: 100px;
+    margin: 10px;
+}
+
+.buttonsContainer > .select {
+    width: 150px;
+    margin: 10px;
+}
