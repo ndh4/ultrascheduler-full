@@ -24,12 +24,12 @@ const Auth = () => {
     const history = useHistory();
     const location = useLocation();
 
+    const { data, loading, error } = useQuery(VERIFY_TOKEN);
+
     if (!location.state) {
         history.push("/login");
         return null;
     }
-
-    const { data, loading, error } = useQuery(VERIFY_TOKEN);
 
     if (error) return <Error />;
     if (loading) return <LoadingScreen />;

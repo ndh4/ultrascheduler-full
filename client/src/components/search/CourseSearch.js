@@ -497,26 +497,26 @@ const CourseSearch = ({ scheduleID, clickValue }) => {
         return displayArray[activeButtonIndex];
     };
 
-    /**
-     * Displays the course list component based on whether user is searching
-     * by distribution or by department
-     */
-    const displayCourseList = () => {
-        return (
-            <CourseList
-                clickValue={clickValue}
-                scheduleID={scheduleID}
-                query={getQuery[activeButtonIndex]}
-                searchType={variables4Query[activeButtonIndex]}
-                idx={activeButtonIndex}
-            />
-            //<div></div>
-        );
+    // /**
+    //  * Displays the course list component based on whether user is searching
+    //  * by distribution or by department
+    //  */
+    // const displayCourseList = () => {
+    //     return (
+    //         <CourseList
+    //             clickValue={clickValue}
+    //             scheduleID={scheduleID}
+    //             query={getQuery[activeButtonIndex]}
+    //             searchType={variables4Query[activeButtonIndex]}
+    //             idx={activeButtonIndex}
+    //         />
+    //         //<div></div>
+    //     );
 
-        const displayArray = [selection, selection, selection, time, selection];
+    //     const displayArray = [selection, selection, selection, time, selection];
 
-        return displayArray[activeButtonIndex];
-    };
+    //     return displayArray[activeButtonIndex];
+    // };
 
     // Initialize Google Analytics
     initGA();
