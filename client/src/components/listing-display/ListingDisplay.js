@@ -47,14 +47,14 @@ const Listing = ({ data }) => {
                 </div>
                 
                 <div className="listingCourses"> 
-                    {data.item.courses[0].subject} {data.item.courses[0].courseNum} {/* this will need to map from courses -> buttons/tags */}
+                    {data.item.courses[0].subject} {data.item.courses[0].courseNum}  {/* this will need to map from courses -> buttons/tags */}
                 </div>
                 <div className="listingSellInfo">
                     <div className="listingPrice">
                         ${data.price}
                 
                     </div>
-                    <div classname="listingContact">
+                    <div classname="listingContactAvailable">
                         Contact Seller
                         {/* contact seller/pdf/etc flexible button here */}
                     </div>

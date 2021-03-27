@@ -31,13 +31,8 @@ const authLink = setContext(async (_, { headers }) => {
 
 // HTTP Backend Link
 const httpLink = new HttpLink({
-<<<<<<< HEAD
-     uri: "http://localhost:3000/graphql",
-    //uri: "/graphql",
-=======
     uri: "http://localhost:3000/graphql",
     // uri: "/graphql",
->>>>>>> origin/feature/launchpad-textbooks
 });
 
 // WebSocket Backend Link
