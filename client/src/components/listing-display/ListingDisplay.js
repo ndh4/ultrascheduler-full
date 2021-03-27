@@ -67,7 +67,7 @@ const Listing = ({ data }) => {
 
 const GET_LISTINGS = gql`
     query GetListings {
-        listingReadMany {
+        listingFindMany {
             item {
                 _id
                 courses {

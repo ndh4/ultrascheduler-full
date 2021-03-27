@@ -1,4 +1,4 @@
-import { Course, ItemTC, Listing, ListingTC } from "../models";
+import { Course, Item, ItemTC, Listing, ListingTC } from "../models";
 
 /**
  * Relations (necessary for any fields that link to other types in the schema)
@@ -21,19 +21,27 @@ import { Course, ItemTC, Listing, ListingTC } from "../models";
 ListingTC.addResolver({
     name: "filter",
     type: [ListingTC],
-    args: {_id: "[ID]", type: "String", min_price: "Int!", max_price: "Int!", 
+    args: {_id: "[ID]", subject: "String", type: "String", min_price: "Int!", max_price: "Int!", 
             status: "String", pickup: "String"},
     resolve: async ({ source, args, context, info }) => {
 
-        let matchedIDs, matchedCourseIDs, matchedTypeIDs = []
+        let matchedIDs, matchedCategoryIDs, matchedTypeIDs = []
         // Get items by courseID if ID inputted by user
         if(args._id) {
-            let matchedCourseItems = await Item.find({courses : { $in: args._id }});
-            matchedCourseIDs = matchedItems.map((item)=>{
+            let matchedCategoryItems = await Item.find({courses : { $in: args._id }});
+            matchedCategoryIDs = matchedCategoryItems.map((item)=>{
                 return item._id;
             })
             console.log(matchedIDs)
         }
+
+        else{ //is a standardized text
+            let matchedCategoryItems = await Item.find({subject: args.subject})
+            matchedCategoryIDs = matchedCategoryItems.map((item)=>{
+                return item._id;
+            })
+        }
+
         if (args.type){
             let matchedTypeItems = await Item.find({type: args.type})
             matchedTypeIDs = matchedTypeItems.map((item)=>{
