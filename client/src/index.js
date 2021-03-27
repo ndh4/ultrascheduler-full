@@ -7,7 +7,6 @@ import Routes from './components/Routes'
 
 // Setup history
 import { createBrowserHistory } from 'history';
-export const history = createBrowserHistory();
 
 // Setup Toast for Notifications
 import { ToastProvider } from 'react-toast-notifications'
@@ -19,6 +18,8 @@ import { ApolloProvider } from '@apollo/client'
 // Setup firebase for SAML
 import './firebase'
 
+export const history = createBrowserHistory();
+
 render(
     <ApolloProvider client={client}>
         <Router history={history}>
@@ -27,5 +28,5 @@ render(
             </ToastProvider>
         </Router>
     </ApolloProvider>, 
-    document.querySelector('#app')
+    document.querySelector('#root')
 )

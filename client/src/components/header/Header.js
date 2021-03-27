@@ -10,6 +10,12 @@ import { useHistory, useLocation } from "react-router";
 import { gql, useApolloClient, useQuery } from "@apollo/client";
 import Select from "react-select";
 
+// This import loads the firebase namespace along with all its type information.
+import firebase from "firebase/app";
+
+// These imports load individual services into the firebase namespace.
+import "firebase/auth";
+
 import "./Header.global.css";
 
 const GET_LOCAL_DATA = gql`
@@ -24,12 +30,6 @@ const termOptions = [
 
 const formatTerm = (term) =>
     termOptions.filter((termOption) => termOption.value == term)[0];
-
-// This import loads the firebase namespace along with all its type information.
-import firebase from "firebase/app";
-
-// These imports load individual services into the firebase namespace.
-import "firebase/auth";
 
 function Header() {
     const history = useHistory();
