@@ -15,11 +15,7 @@ import "firebase/auth";
 // Copied from: https://www.apollographql.com/docs/react/v3.0-beta/networking/authentication/
 const authLink = setContext(async (_, { headers }) => {
     // get the authentication token from firebase if it exists
-    let token;
-    const user = await firebase.auth().onAuthStateChanged(async (user) => {
-        token = await user.getIdToken();
-    })
-    // const token = await firebase.auth().currentUser.getIdToken();
+    const token = await firebase.auth().currentUser.getIdToken();
     // return the headers to the context so httpLink can read them
     return {
         headers: {
