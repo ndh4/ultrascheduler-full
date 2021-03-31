@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+    backend:
+        build: ./api
+        image: riceapps/hatch-api:latest
+
+        restart: unless-stopped
+
+        env_file:
+            - ./api/.env
+
+        ports:
+            - 3000:3000
+
+        volumes:
+            - ./api:/api
+            - /api/node_modules
+
+        networks:
+            - app-network
+
+    frontend:
+        build: ./client
+        image: riceapps/hatch-client:latest
+
+        container_name: frontend
+
+        restart: unless-stopped
+
+        environment:
+            - CHOKIDAR_USEPOLLING=true
+
+        env_file:
+            - ./client/.env.local
+
+        volumes:
+            - ./client:/client
+            - /client/node_modules
+
+        ports:
+            - 3001:3001
+
+        depends_on:
+            - backend
+
+        networks:
+            - app-network
+
+networks:
+    app-network:
+        driver: bridge
