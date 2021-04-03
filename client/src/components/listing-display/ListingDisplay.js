@@ -3,6 +3,7 @@ import Header from "../header/Header";
 import "./Listing.global.css";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import NoImage from './NoImage.png';
+import Filter from '../filtering/Filter'
 
 const dummyObject = {
     "_id": "604d1c78661c7616db93d208",
@@ -28,39 +29,6 @@ const Listing = ({ data }) => {
     console.log(data);
     return (
         <div className="listingContainer">
-            <div className="listingPicture">
-                <img src={NoImage} className='specificImage'/>
-                {
-                    // <img src={data.pictures}></img> {/* this will need to map from pics -> imgs */}
-                }
-                
-            </div>
-            <div className="listingInfo">
-                <div className="listingTitle">
-                    {data.item.title}
-                </div>
-                <div className="listingItemInfo">
-                    {data.item.year}  | {data.item.version}
-                </div>
-                <div className="listingAuthor">
-                    by {data.item.author} 
-                </div>
-                
-                <div className="listingCourses"> 
-                    {data.item.courses[0].subject} {data.item.courses[0].courseNum} {/* this will need to map from courses -> buttons/tags */}
-                </div>
-                <div className="listingSellInfo">
-                    <div className="listingPrice">
-                        ${data.price}
-                
-                    </div>
-                    <div classname="listingContact">
-                        Contact Seller
-                        {/* contact seller/pdf/etc flexible button here */}
-                    </div>
-                </div>
-                
-            </div>
         </div>
     )
 }
@@ -99,11 +67,12 @@ const ListingDisplay = () => {
     return (
         <div className="listingDisplayContainer">
             <Header />
-            <div className="listingsContainer">
+            <Filter classname="w-1/2"/>
+            {/* <div className="listingsContainer">
                 {data['listingReadMany'].map(listing => {
                     return (<Listing data={listing} />);
                 })}
-            </div>
+            </div> */}
         </div>
     )
 }
