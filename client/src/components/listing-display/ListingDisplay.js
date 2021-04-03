@@ -1,6 +1,5 @@
 import React from "react";
 import Header from "../header/Header";
-import "./Listing.global.css";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import NoImage from './NoImage.png';
 
@@ -27,39 +26,39 @@ const dummyObject = {
 const Listing = ({ data }) => {
     console.log(data);
     return (
-        <div className="listingContainer">
-            <div className="listingPicture">
-                <img src={NoImage} className='specificImage'/>
-                {
-                    // <img src={data.pictures}></img> {/* this will need to map from pics -> imgs */}
-                }
-                
+        <div className="flex flex-row justify-start w-100 h-1/4 border rounded-lg m-3 px-5 py-6 leading-normal">
+            <div className="flex h-100 w-1/5">
+                <img src={data.pictures.length > 0 ? data.pictures[0] : NoImage} className='flex h-100 w-11/12'/>                
             </div>
-            <div className="listingInfo">
-                <div className="listingTitle">
+            <div className="flex flex-col w-4/5 pl-1">
+                <div className="flex text-primary-black text-xl font-semibold">
                     {data.item.title}
                 </div>
-                <div className="listingItemInfo">
+                <div className="flex flex-col text-secondary-teal">
                     {data.item.year}  | {data.item.version}
                 </div>
-                <div className="listingAuthor">
+                <div className="flex text-gray-500 mb-3">
                     by {data.item.author} 
                 </div>
                 
-                <div className="listingCourses"> 
-                    {data.item.courses[0].subject} {data.item.courses[0].courseNum}  {/* this will need to map from courses -> buttons/tags */}
+                <div className="flex w-max text-primary-purple bg-primary-purple bg-opacity-10 px-3 border border-primary-purple rounded-lg"> 
+                    {data.item.courses[0].subject} {data.item.courses[0].courseNum}  {/* this will need to map from courses -> buttons/tags AND change color by course code (wait for filtering)*/}
                 </div>
-                <div className="listingSellInfo">
-                    <div className="listingPrice">
+                <div className="flex flex-row justify-between mt-5">
+                    <div className="flex text-primary-black text-3xl">
                         ${data.price}
-                
                     </div>
-                    <div classname="listingContactAvailable">
+                    <div className="flex w-1/3 h-7/12 bg-primary-teal rounded-full text-white justify-center items-center text-sm">
                         Contact Seller
                         {/* contact seller/pdf/etc flexible button here */}
                     </div>
                 </div>
-                
+            </div>
+            
+            <div className="pr-2">
+                <svg class="h-6 w-6 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                </svg>
             </div>
         </div>
     )
@@ -97,9 +96,9 @@ const ListingDisplay = () => {
         return <h1>Waiting...</h1>
     }
     return (
-        <div className="listingDisplayContainer">
+        <div className="flex flex-col self-center w-100">
             <Header />
-            <div className="listingsContainer">
+            <div className="w-2/5 self-center">
                 {data['listingReadMany'].map(listing => {
                     return (<Listing data={listing} />);
                 })}

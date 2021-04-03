@@ -106,11 +106,12 @@
 
 .listingContactAvailable {
     display: flex;
-    width: max-content;
+    width: 30%;
+    height: 40%;
+    align-items: center;
+    justify-content: center;
     margin-right: 10vw;
     background-color: var(--edition-color);
     border-radius: 28px;
     color: white;
-    border-radius: 7px;
-    padding-bottom: 5px;
 }
