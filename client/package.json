@@ -25,6 +25,7 @@
     "react-big-calendar": "^0.24.0",
     "react-dom": "^16.10.2",
     "react-ga": "^2.7.0",
+    "react-hook-form": "^7.0.0",
     "react-infinite": "^0.13.0",
     "react-responsive": "^8.1.0",
     "react-responsive-modal": "^5.0.2",
