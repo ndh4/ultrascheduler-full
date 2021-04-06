@@ -20,7 +20,8 @@ const GET_LOCAL_DATA = gql`
 
 const termOptions = [
     { label: "Spring 2021", value: 202120 },
-    { label: "Fall 2022", value: 202210 }
+    { label: "Summer 2021", value: 202130 },
+    { label: "Fall 2021", value: 202210 }
 ];
 
 const formatTerm = (term) =>
