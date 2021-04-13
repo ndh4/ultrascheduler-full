@@ -15,7 +15,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import Error from "./error/Error";
 import ListingDisplay from "./listing-display/ListingDisplay";
-import Listing from "./listing-individual/Listing";
+import ListingPage from "./listing-individual/ListingPage";
 
 /**
  * Requests to verify the user's token on the backend
@@ -74,7 +74,7 @@ const PrivateRoute = ({ children, ...rest }) => {
  * Defines all the routes for our system.
  * @param {*} param0
  */
-const Routes = ({}) => {
+const Routes = ({ }) => {
     return (
         <Switch>
             <Route path="/auth">
@@ -90,7 +90,7 @@ const Routes = ({}) => {
                 <ListingDisplay />
             </PrivateRoute>
             <PrivateRoute path="/individual-listing">
-                <Listing />
+                <ListingPage />
             </PrivateRoute>
             <PrivateRoute path="/schedule">
                 <Main />
