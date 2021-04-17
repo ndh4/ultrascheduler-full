@@ -2,15 +2,28 @@
     one for overall container on page 
 */
 
-
-
-.Title{
-text-align: center;
-
+.Title {
+  text-align: center;
 }
 
+.Field {
+  background: white;
+}
 
-.Field{
-    background: white;
+.font-sans {
+  font-family: Acari Sans;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 43px;
+  color: #149fa0;
+}
 
+.font-serif {
+  font-family: Acari Sans;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 29px;
+  color: #149fa0;
 }
