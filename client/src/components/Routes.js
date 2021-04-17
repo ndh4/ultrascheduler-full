@@ -76,32 +76,41 @@ const PrivateRoute = ({ children, ...rest }) => {
  */
 const Routes = ({ }) => {
     return (
-        <Switch>
-            <Route path="/auth">
-                <Auth />
-            </Route>
-            <Route path="/login">
-                <Login />
-            </Route>
-            <Route path="/about">
-                <About />
-            </Route>
-            <PrivateRoute path="/listing-display">
-                <ListingDisplay />
-            </PrivateRoute>
-            <PrivateRoute path="/individual-listing">
-                <ListingPage />
-            </PrivateRoute>
-            <PrivateRoute path="/schedule">
-                <Main />
-            </PrivateRoute>
-            <PrivateRoute exact path="/">
-                <Redirect to="/schedule" />
-            </PrivateRoute>
-            <Route>
-                <Error />
-            </Route>
-        </Switch>
+        <div>
+            <Switch>
+                <Route path="/auth">
+                    <Auth />
+                </Route>
+
+                <Route path="/login">
+                    <Login />
+                </Route>
+
+                <Route path="/about">
+                    <About />
+                </Route>
+
+                <PrivateRoute exact path="/listing-display">
+                    <ListingDisplay />
+                </PrivateRoute>
+
+                <PrivateRoute path="/listing-display/:id">
+                    <ListingPage />
+                </PrivateRoute >
+
+                <PrivateRoute path="/schedule">
+                    <Main />
+                </PrivateRoute>
+
+                <PrivateRoute exact path="/">
+                    <Redirect to="/schedule" />
+                </PrivateRoute>
+
+                <Route>
+                    <Error />
+                </Route>
+            </Switch >
+        </div >
     );
 };
 

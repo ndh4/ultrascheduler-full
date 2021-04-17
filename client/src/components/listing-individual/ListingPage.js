@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "../header/Header";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import NoImage from "./NoImage.png";
+import { useLocation } from "react-router";
 
 const defaultTextbookImageArray = [
     "https://images-na.ssl-images-amazon.com/images/I/51Wo9pTgBFL._SX402_BO1,204,203,200_.jpg",
@@ -9,10 +10,42 @@ const defaultTextbookImageArray = [
     "https://images-na.ssl-images-amazon.com/images/I/5102AwbnX7L._SX374_BO1,204,203,200_.jpg"
 ]; /* to be replaced w/ imgs pulled from backend */
 
+const GET_SELLER = gql`
+query GetSeller {
+    userOne {
+        firstName
+        lastName
+        netid
+        phone
+    }
+}
+`
 
-
-const ListingPage = () => {
+const ListingPage = ({ listing }) => {
     const [getImageURLIndex, setImageURLIndex] = useState(0);
+
+    const location = useLocation();
+
+    const { data, error } = useQuery(GET_SELLER);
+
+    if (!data) {
+        console.log(error);
+        return <h1>Waiting...</h1>
+    }
+
+    const ListingImage = ({ data, idx }) => {
+        return (
+            <img class="rounded w-12 h-12 transform transition duration-500 hover:scale-110" onClick={() => setImageURLIndex({ idx })} src={data} ></ img>
+        )
+    }
+
+    const ListingCourse = ({ data, idx }) => {
+        return (
+            <div class="flex w-max text-primary-purple bg-primary-purple bg-opacity-10 text-sm px-3 mb-2 border-2 border-primary-purple rounded-lg">
+                {location.state.item.courses[idx].subject} {location.state.item.courses[idx].courseNum}
+            </div>
+        )
+    }
 
     return (
         <div>
@@ -26,16 +59,16 @@ const ListingPage = () => {
                                     setImageURLIndex(getImageURLIndex - 1);
                                 }
                                 else {
-                                    setImageURLIndex(defaultTextbookImageArray.length - 1);
+                                    setImageURLIndex(location.state.pictures.length - 1);
                                 }
                             }
                             } xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" />
                         </svg>
-                        <img class="w-1/2" src={defaultTextbookImageArray[getImageURLIndex]}></img>
+                        <img class="w-1/2" src={location.state.pictures[getImageURLIndex]}></img>
                         <svg class="w-9 h-9 ml-8 text-gray-500 transition duration-500 hover:text-gray-400"
                             onClick={() => {
-                                if ((getImageURLIndex + 1) <= (defaultTextbookImageArray.length - 1)) {
+                                if ((getImageURLIndex + 1) <= (location.state.pictures.length - 1)) {
                                     setImageURLIndex(getImageURLIndex + 1);
                                 }
                                 else {
@@ -47,33 +80,33 @@ const ListingPage = () => {
                         </svg>
                     </div>
                     <div class="flex flex-row w-full justify-center space-x-8 pt-6">
-                        <img class="rounded w-12 h-12 transform transition duration-500 hover:scale-110" onClick={() => setImageURLIndex(0)} src={defaultTextbookImageArray[0]}></img> {/* map from image src's -> img tags */}
-                        <img class="rounded w-12 h-12 transform transition duration-500 hover:scale-110" onClick={() => setImageURLIndex(1)} src={defaultTextbookImageArray[1]}></img>
-                        <img class="rounded w-12 h-12 transform transition duration-500 hover:scale-110" onClick={() => setImageURLIndex(2)} src={defaultTextbookImageArray[2]}></img>
+                        {location.state.pictures.map((picture, index) => {
+                            return (
+                                <ListingImage data={picture} idx={index} />
+                            )
+                        })}
                     </div>
                 </div>
                 <div class="flex flex-col w-2/5 items-left my-10 pl-5">
                     <div class="flex flex-col items-left pt-10 pb-5">
-                        <div class="flex w-max text-primary-purple bg-primary-purple bg-opacity-10 text-sm px-3 mb-2 border-2 border-primary-purple rounded-lg">
-                            {/*{data.item.courses[0].subject} {data.item.courses[0].courseNum}*/}
-                            COMP 182
-                        </div>
+                        {location.state.item.courses.map((course, index) => {
+                            return (
+                                <ListingCourse data={course} idx={index} />
+                            )
+                        })}
                         <div class="flex text-primary-black text-3xl font-semibold leading-snug">
-                            {/*{data.item.title}*/}
-                            Discrete Math and Its Applications
+                            {location.state.item.title}
                             <br></br>
-                            {/*{data.item.year}  | {data.item.version}*/}
-                            (Second Edition)
+                            {location.state.item.year}  | {location.state.item.version}
                         </div>
                         <div class="flex text-primary-black text-3xl leading-normal">
-                            {/*${data.price}*/}
-                            $60 OBO
+                            ${location.state.price} {location.state.negotiable ? null : "OBO"}
                         </div>
                         <div class="flex text-primary-black leading-normal">
-                            Textbook | Hardcopy
+                            {location.state.item.type} | {location.state.condition}
                         </div>
                         <div class="flex text-green-500 leading-normal text-lg">
-                            Available
+                            {location.state.availability}
                         </div>
                         <div class="flex flex-row space-x-5 mt-5 items-center">
                             <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -93,7 +126,7 @@ const ListingPage = () => {
                             </div>
                         </div>
                         <div class="flextext-base text-primary-black mt-5 pr-10">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            {(!location.state.description) ? "No description given." : location.state.description}
                         </div>
                         <div class="h-0.5 bg-gray-300 mt-6"></div>
                     </div>
@@ -139,6 +172,5 @@ const ListingPage = () => {
         </div >
     )
 }
-
 
 export default ListingPage;
