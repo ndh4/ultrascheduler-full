@@ -17,6 +17,7 @@ var UserSchema = new Schema({
     phone: { type: String },
     token: { type: String },
     recentUpdate: { type: Boolean }, // this field used for displaying banners/modals on version updates
+    fbUser: { type: String },
 });
 
 export const User = mongoose.model("users", UserSchema);

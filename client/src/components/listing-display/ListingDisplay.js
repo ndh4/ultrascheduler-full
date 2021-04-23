@@ -28,9 +28,9 @@ const dummyObject = {
 const Listing = ({ data }) => {
     const history = useHistory();
     return (
-        <div className="flex flex-row justify-start w-100 h-1/4 border rounded-lg m-3 px-5 py-6 leading-normal">
-            <div className="flex h-100 w-1/5">
-                <img src={data.pictures.length > 0 ? data.pictures[0] : NoImage} className='flex h-100 w-11/12' />
+        <div className="flex flex-row justify-start w-full h-1/4 border rounded-lg m-3 px-5 py-6 leading-normal">
+            <div className="flex w-1/5 items-center">
+                <img src={data.pictures.length > 0 ? data.pictures[0] : NoImage} className='flex w-11/12' />
             </div>
             <div className="flex flex-col w-4/5 pl-3">
                 <div className="flex text-primary-black text-xl font-semibold">
@@ -50,7 +50,7 @@ const Listing = ({ data }) => {
                     <div className="flex text-primary-black text-3xl">
                         ${data.price}
                     </div>
-                    <div className="flex w-1/3 h-7/12 bg-primary-teal rounded-full text-white justify-center items-center text-sm" onClick={() => history.push(`/listing-display/${data.item._id}`, data)}>
+                    <div className="transform transition hover:bg-blue-500 flex w-2/5 md:w-1/3 h-7/12 bg-primary-teal rounded-full text-white justify-center items-center text-sm" onClick={() => history.push(`/listing-display/${data.item._id}`, data)}>
                         Contact Seller
                         {/* contact seller/pdf/etc flexible button here */}
                     </div>
@@ -104,7 +104,7 @@ const ListingDisplay = () => {
     return (
         <div className="flex flex-col self-center w-100">
             <Header />
-            <div className="w-1/2 self-center">
+            <div className="w-11/12 sm:w-4/5 md:w-2/3 lg:w-1/2 self-center">
                 {data['listingReadMany'].map(listing => {
                     return (
                         <Listing data={listing} />
