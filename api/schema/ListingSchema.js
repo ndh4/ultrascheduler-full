@@ -21,13 +21,13 @@ import { Course, Item, ItemTC, Listing, ListingTC } from "../models";
 ListingTC.addResolver({
     name: "filter",
     type: [ListingTC],
-    args: {_id: "[ID]", subject: "String", type: "String", min_price: "Int!", max_price: "Int!", 
+    args: {_id: "[ID]", category: "String", subject: "String", type: "String", min_price: "Int!", max_price: "Int!", 
             status: "String", pickup: "String"},
     resolve: async ({ source, args, context, info }) => {
 
         let matchedIDs, matchedCategoryIDs, matchedTypeIDs = []
         // Get items by courseID if ID inputted by user
-        if(args._id) {
+        if(args.category == 'Textbook') {
             let matchedCategoryItems = await Item.find({courses : { $in: args._id }});
             matchedCategoryIDs = matchedCategoryItems.map((item)=>{
                 return item._id;
@@ -35,7 +35,7 @@ ListingTC.addResolver({
             console.log(matchedIDs)
         }
 
-        else{ //is a standardized text
+        else{ //is a standardized test
             let matchedCategoryItems = await Item.find({subject: args.subject})
             matchedCategoryIDs = matchedCategoryItems.map((item)=>{
                 return item._id;

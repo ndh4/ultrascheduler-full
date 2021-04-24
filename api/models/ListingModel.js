@@ -9,7 +9,7 @@ import { User } from "./UserModel";
 const CONDITIONS = ['NEW', 'LIKE NEW', 'USED'];
 const STATUSES = ['AVAILABLE', 'PENDING', 'SOLD'];
 const PICKUPS = ['On Campus', 'Near Campus', 'Shipped']
-const CATEGORIES = []
+const CATEGORIES = ["Standardized Test","Textbook"]
 var ListingSchema = new Schema({
     item: { type: Schema.Types.ObjectID, ref: Item, required: true },
     condition: { type: String, required: true, enum: CONDITIONS },

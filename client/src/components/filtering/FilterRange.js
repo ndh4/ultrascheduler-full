@@ -1,5 +1,7 @@
 import React from 'react';
-//import Slider from 'react-rangeslider';
+// import Slider from 'react-rangeslider'
+// import Slider from '@material-ui/core/Slider';
+
 
 const FilterRange = (props) => {
     // Get options from backend based on if subject or course
@@ -15,11 +17,12 @@ const FilterRange = (props) => {
     // />
     
     return(
-        // <div>
-        //     {props.label}
-        //     {selector}
-        // </div>
-        <h1>Some info here</h1>
+        <div class = "w-3/12 px-8">
+            <div class='pb-2'>
+                {props.label}
+            </div>                
+            {/* {selector} */}
+        </div>
     );
 };
 export default FilterRange;

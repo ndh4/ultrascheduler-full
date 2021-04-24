@@ -1,55 +1,125 @@
-import React from 'react';
-import FilterDropdown from './FilterDropdown';
-//import FilterRange from './FilterRange';
-import FilterOption from './FilterOption';
-import FilterLabel from './FilterLabel.js';
-
+import React, { useState } from "react";
+import FilterDropdown from "./FilterDropdown";
+import FilterRange from "./FilterRange";
+import FilterOption from "./FilterOption";
+import FilterLabel from "./FilterLabel.js";
+import FilterButton from "./FilterButton";
+import { gql, useLazyQuery } from "@apollo/client";
 
 const Filter = (props) => {
-    // Get options from backend based on if subject or course
-    const cat_label = 'Category'
-    const course_label = "Course" 
-    const format_label = "Format" 
-    const range_label =  "Range" 
-    const range_dict = {"min":0, "max":3000, "value":3000 ,"label":{0: "Free"}}
-    const status_label = "Listing Status" 
-    const pickup_label = "Pickup Type"
+  const [getListings, {loading, data}] = useLazyQuery(query);
+  // Get options from backend based on if subject or course
+  const cat_label = "Category";
+  const course_label = "Course";
+  const format_label = "Type";
+  const range_label = "Price Range";
+  const range_dict = { min: 0, max: 3000, value: 3000, label: { 0: "Free" } };
+  const status_label = "Listing Status";
+  const pickup_label = "Pickup Type";
 
-    const category_options = ["Textbook", "Stand Text"]
-    const course_options = ["COMP 182", "ELEC 220", "HUMA 125"]
-    const format_options = ["Hardcopy", "Digital"]
-    const status_options = ["Available"]
-    const pickup_options = [" On Campus", " Near Campus", " Shipped"]
+  const category_options = ["Textbook", "Standard Test"];
+  const course_options = ["COMP 182", "ELEC 220", "HUMA 125"];
+  const format_options = ["Hardcopy", "Digital"];
+  const status_options = ["Available Only"];
+  const pickup_options = [" On Campus", " Near Campus", " Shipped"];
 
-   
-    //[
-//   { value: 'chocolate', label: 'Chocolate' },
-//   { value: 'strawberry', label: 'Strawberry' },
-//   { value: 'vanilla', label: 'Vanilla' }
-// ]
-    //const options = {} Some backend call
-    return(
-        <div class='flex flex-col'>
-            <div class='py-5'>
-                <FilterDropdown label = {cat_label} options={category_options} />
-            </div>
-            <div>
-                <FilterDropdown label = {course_label} options = {course_options}/>
-            </div>
-            <div class='py-5'>
-                <FilterDropdown label = {format_label} options={format_options} />
-            </div>
-            {/* <FilterRange label = {range_label}  options={range_dict}/> */}
-            <div>
-                <FilterOption label = {status_label} options={status_options} />
-            </div>
-            <div class = 'py-5'>
-                <FilterOption label = {pickup_label} options={pickup_options} />
-            </div>
-            
-            
-        
-        </div>
-    );
+  const [selected, setSelected] = useState({
+    [cat_label]: [],
+    [course_label]: [],
+    [format_label]: [],
+    [range_label]: [],
+    [status_label]: [],
+    [pickup_label]: [],
+  });
+
+  // const [selected, setSelected] = useState({});
+
+  // const [selected, setSelected] = useState([]);
+
+  const exSetSelected = (e) => {
+    console.log(selected);
+    console.log(e);
+    setSelected(e);
+  };
+
+  function sayHello() {
+    alert("You clicked me!");
+    getListings({variables: {category: selected[[cat_label]][0], course: selected[[course_label]][0], type: selected[[format_label]][0]}})
+  }
+
+  //[
+  //   { value: 'chocolate', label: 'Chocolate' },
+  //   { value: 'strawberry', label: 'Strawberry' },
+  //   { value: 'vanilla', label: 'Vanilla' }
+  // ]
+  //const options = {} Some backend call
+  return (
+    <div class="flex flex-col">
+      <div class="py-5">
+        <FilterDropdown
+          selected={selected}
+          setSelected={exSetSelected}
+          label={cat_label}
+          options={category_options}
+          placeholder={"This"}
+        />
+      </div>
+      <div>
+        <FilterDropdown
+          selected={selected}
+          setSelected={exSetSelected}
+          label={course_label}
+          options={course_options}
+          placeholder={"Select Course"}
+        />
+      </div>
+      <div class="py-5">
+        <FilterDropdown
+          selected={selected}
+          setSelected={exSetSelected}
+          label={format_label}
+          options={format_options}
+          placeholder={"Select Test"}
+        />
+      </div>
+      <FilterRange label={range_label} options={range_dict} />
+      <div class="py-5">
+        <FilterOption
+          selected={selected}
+          label={status_label}
+          options={status_options}
+          placeholder={"Hardcopy, Digital, etc."}
+        />
+      </div>
+      <div class="py-5">
+        <FilterOption
+          selected={selected}
+          label={pickup_label}
+          options={pickup_options}
+          placeholder={"This"}
+        />
+      </div>
+      <div class="py-5">
+        <FilterButton label="Apply Filter" handleClick={sayHello} />
+      </div>
+    </div>
+  );
 };
+
+const query = gql`
+  query FilterListings($category: String, $course: String, $type: String) {
+    listingsByFilter(
+      category: $category
+      subject: $course
+      type: $type
+      min_price: 0
+      max_price: 2500
+    ) {
+      seller
+      _id
+      availability
+    }
+  }
+`;
+
 export default Filter;
