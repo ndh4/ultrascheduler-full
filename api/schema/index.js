@@ -13,6 +13,7 @@ import { AuthQuery, AuthMutation } from "./AuthSchema";
 import {StudyGroupQuery, StudyGroupMutation} from "./StudyGroupSchema";
 import { ItemQuery, ItemMutation } from "./ItemSchema";
 import { ListingQuery, ListingMutation } from './ListingSchema';
+import {CourseReviewQuery, CourseReviewMutation} from './CourseReviewSchema'
 
 schemaComposer.Query.addFields({
     ...UserQuery,
@@ -23,7 +24,8 @@ schemaComposer.Query.addFields({
     ...AuthQuery,
     ...StudyGroupQuery,
     ...ItemQuery,
-    ...ListingQuery
+    ...ListingQuery,
+    ...CourseReviewQuery
 });
 
 schemaComposer.Mutation.addFields({
@@ -35,7 +37,8 @@ schemaComposer.Mutation.addFields({
     ...AuthMutation,
     ...StudyGroupMutation,
     ...ItemMutation,
-    ...ListingMutation
+    ...ListingMutation,
+    ...CourseReviewMutation
 });
 
 schemaComposer.Subscription.addFields({});
