@@ -1,3 +1,4 @@
+import { schemaComposer } from "graphql-compose";
 import { composeWithMongoose } from "graphql-compose-mongoose";
 
 var mongoose = require("mongoose"),
@@ -20,3 +21,6 @@ var UserSchema = new Schema({
 
 export const User = mongoose.model("users", UserSchema);
 export const UserTC = composeWithMongoose(User);
+
+// Create a Seller Model as a subset of the User Model
+export const SellerTC = UserTC.clone("Seller");
