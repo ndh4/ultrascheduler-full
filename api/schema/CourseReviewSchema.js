@@ -1,4 +1,4 @@
-import {Session, SessionTC, Course, CourseTC, CourseReview, CourseReviewTC} from '../models';
+import {Session, SessionTC, Course, CourseTC, CourseReview, CourseReviewTC, Instructor, InstructorTC} from '../models';
 
 // used to access fields belonging to session
 CourseReviewTC.addRelation("session", {
@@ -9,10 +9,18 @@ CourseReviewTC.addRelation("session", {
     projection: { session: 1 },
 });
 
-SessionTC.addRelation("course", {
+CourseReviewTC.addRelation("course", {
     resolver: () => CourseTC.getResolver("findById"),
     prepareArgs: {
         _id: (source) => source.course,
+    },
+    projection: { course: 1 },
+});
+
+CourseReviewTC.addRelation("instructor", {
+    resolver: () => CourseTC.getResolver("findById"),
+    prepareArgs: {
+        _id: (source) => source.instructor,
     },
     projection: { course: 1 },
 });
@@ -21,11 +29,13 @@ SessionTC.addRelation("course", {
     // run for-loop for all sessions associated with course 
 
 // may not need: session_id: "ID!", 
+//used on course review page to load review information
+    // 
 CourseReviewTC.addResolver({
     name: "findReviews",
     type: [CourseReviewTC],
-    args: {course_id: "ID!", additional_filters: { term: "String", 
-    major: "String", year: "Int" } },
+    args: {course_id: "ID!", term: "String!",  
+            optional_filters: {motive: "[String]", professor: "[ID]", year: "[Int]" } },
     resolve: async ({ source, args, context, info }) => {
 
         const filter = {};
