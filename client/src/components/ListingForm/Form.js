@@ -1,15 +1,25 @@
-import React from "react"
+import React, { createContext, useContext } from "react"
 import { useForm } from "react-hook-form";
 import './Form.css'
 
+// Create context for Registering every possiblew component
+const RegisterContext = createContext(null);
 
+// system-ui somehow gets the acari sans
 
 // props that were being plugged into each container
 
 // props for the input boxes
-const ParagraphElem = ({ id, placeholder }) => <textarea className={`flex-grow w-2/6 appearance-none block bg-blue-100 text-grey-darker border-green-100 border rounded px-4 mb-3 mr-1 ml-5`} rows={5} type="text" id={id} name={id} placeholder={placeholder} />
+const ParagraphElem = ({ id, placeholder }) => { 
+    const register = useContext(RegisterContext);
+    return(<textarea {...register( id , {required: true})} className={`flex-grow w-2/6 appearance-none block bg-blue-100 text-grey-darker border-green-100 border rounded px-4 mb-3 mr-1 ml-5`} rows={5} type="text" id={id} name={id} placeholder={placeholder} />)
+}
 // props for the input placeholder text
-const InputElem = ({ id, placeholder }) => <input className={`flex-grow w-2/6 appearance-none block bg-blue-100 text-grey-darker border-green-100 border rounded py-3 px-4 mb-3 ml-5`} type="text" id={id} name={id} placeholder={placeholder} />
+// inputelem is for all input element and it is registered using context
+const InputElem = ({ id, placeholder }) => {
+    const register = useContext(RegisterContext);
+    return (<input {...register( id , {required: true})} className={`flex-grow w-2/6 appearance-none block bg-blue-100 text-grey-darker border-green-100 border rounded py-3 px-4 mb-3 ml-5`} type="text" id={id} name={id} placeholder={placeholder} />)
+}
 
 // namecontainer is for the first row components that takes in the name
 const NameContainer = ({ label, id}) => {
@@ -18,8 +28,8 @@ const NameContainer = ({ label, id}) => {
             <label className="font-bold w-1/6" htmlFor={id}>{label}</label>
             <div className="flex flex-row flex-grow justify-between">
             
-                <InputElem placeholder= "First Name"/>
-                <InputElem placeholder="Last Name"/><br></br>
+                <InputElem id={"firstName"} placeholder= "First Name"/>
+                <InputElem id={"lastName"} placeholder="Last Name"/><br></br>
             </div>
         </div>
     )
@@ -28,6 +38,7 @@ const NameContainer = ({ label, id}) => {
 // containerone for the skeleton of email, phone, find a class/prep, book title, link to source
 const ContainerOne = (props) => {
     const { label, placeholder, id, paragraph = false } = props;
+    
     return (
         <div className="flex flex-row gap-7 ">
             <label  className="font-bold w-1/6 " htmlFor={id}>{label}</label>
@@ -40,14 +51,18 @@ const ContainerOne = (props) => {
 
 // container for category and type that has radios (circular buttons) for the possible inputs
 const FormRow3 = ({ id, label, categories }) => {
+    const register = useContext(RegisterContext);
     return (
         <div className="flex flex-row gap-4 items-center">
             <label className="font-bold w-1/6 mr-6" htmlFor={id}> {label} </label>
             {/* .map is a for loop where the categories (things that you can pick) are mapped buttons */}
+            
             {categories.map(catType => {
+                
                 return (
+                    // react fragment lets you return multiple elements
                     <React.Fragment>
-                        <input className="ml-2 " type="radio" id={catType} />
+                        <input {...register(`${catType}`, {required: false})} className="ml-2 " type="radio" id={catType} />
                         <label htmlFor={id}> {catType}</label>
                     </React.Fragment>
                 )
@@ -56,14 +71,15 @@ const FormRow3 = ({ id, label, categories }) => {
     )
 }
 
+// backend
 function Form(){
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const onSubmit = (data) => {
-        console.log("Hello!");
         console.log(data);
     }
   
-    // console.log(watch("exampleRequired"));
+    // covered by line above
+     console.log(watch("displayOnListing"));
 
     return(
     // container for the whole page is the div below
@@ -73,11 +89,13 @@ function Form(){
         <h1 className="font-bold system-ui">New Listing</h1>
         </div>
        
+        <RegisterContext.Provider value={register}>
+
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className="w-5/6 flex flex-col flex-wrap mx-20 mr-20 overflow-hidden align-center text-lg text-green-100  system-ui"> 
 
                 
-                <NameContainer {...register("firstName", {required: true})} label="Your Name*" id="yname" />
+                <NameContainer  label="Your Name*" id="yname" />
 
 
 
@@ -86,68 +104,70 @@ function Form(){
                 <input className="w-4/5 appearance-none  block w-full bg-green-100 text-grey-darker border rounded py-3 px-4 mb-3 " type="text" id="email" name="email" placeholder="e.g. css_luvr@rice.edu"></input><br></br>
                 </div> */}
                 {/* <FormRow2 label="Email*" placeholder="e.g. abc123@rice.edu" id="email" /> */}
-                <ContainerOne  {...register("email", {required: true})} label="Email*" id="email" placeholder="abc123@rice.edu"/>
+                <ContainerOne  label="Email*" id="email" placeholder="abc123@rice.edu"/>
+                {/* {...register("email", {required: true})} */}
 
                 <div className="flex flex-row gap-7 items-center ">
-                <label className="w-1/6" htmlFor="display"></label>
-                <input className="ml-5" type="checkbox" id="display" name="display"></input>
+                <span className="w-1/6"></span>
+                <input {...register("displayOnListing", {required: false})} className="ml-5" type="checkbox" id="display" />
                 <label htmlFor="display">Display on Listing for Buyers to Contact</label><br></br>
                 </div>
 
-                <ContainerOne {...register("phoneNumber", {required: true})} label="Phone*" placeholder="e.g. 123-456-7890" id="phone" />
+                <ContainerOne  label="Phone*" placeholder="e.g. 123-456-7890" id="phone" />
+                {/* {...register("phoneNumber", {required: true})} */}
 
                 {/* delivery is the only component not in a container bc it uses checkboxes */}
                 <div className="flex flex-row gap-4 items-center">
                 <label className="w-1/6 font-bold mr-8" htmlFor="delivery">Delivery*</label>
-                <input type="checkbox" id="delivery"></input>
-                <label className=" " htmlFor="delivery">On Campus</label>
-                <input type="checkbox" id="delivery"></input>
-                <label className=" " htmlFor="delivery">Buyer Picks Up Near Campus</label>
-                <input type="checkbox" id="delivery"></input>
-                <label className=" " htmlFor="type">Ship to Buyer</label><br></br>
+                <input {...register("delivery", {required: false})} type="checkbox" id="delivery"></input>
+                <label  htmlFor="delivery">On Campus</label>
+                <input {...register("onCampus", {required: false})} type="checkbox" id="delivery"></input>
+                <label  htmlFor="delivery">Buyer Picks Up Near Campus</label>
+                <input {...register("ship", {required: false})} type="checkbox" id="delivery"></input>
+                <label  htmlFor="type">Ship to Buyer</label><br></br>
                 </div>
 
-                {/* useignn formrow3 for category but didnt work cuz there was an extra buttonn in the component */}
+                {/* THIS PART USES THE SKELETON THAT WAS SET UP ABOVE TO ACTUALLY OUTPUT ON THE WEBSITE */}
+                {/* useignn formrow3 for category but didnt work cuz there was an extra button in the component */}
                 <FormRow3 label="Category*" id="category" categories={["Course", "Standardized Test", "Other"]}/>
 
 
-                <ContainerOne label="Find a Class/Prep*" placeholder="e.g. COMP 182" id="delivery" />
+                <ContainerOne label="Find a Class/Prep*" placeholder="e.g. COMP 182" id="findClass" />
 
                 
-                <ContainerOne {...register("title", {required: true})} label="Book Title*" placeholder="e.g. Intro to Psych" id="booktitle" />
-
+                <ContainerOne label="Book Title*" placeholder="e.g. Intro to Psych" id="booktitle" />
+                {/* {...register("title", {required: true})}  */}
 
                 <FormRow3 id="type" label="Type*" categories={["Digital", "Hardcopy", "Equipment/Kit", "Other"]}/>
                 
+
+                <ContainerOne  label="Link to source" placeholder="e.g. https://" id="link" />
+                {/* {...register("link", {required: true})} */}
                 
-
-                <ContainerOne {...register("link", {required: true})} label="Link to source" placeholder="e.g. https://" id="link" />
-
-                
-                <ContainerOne {...register("description", {required: true})} label="Description" placeholder="blah blah blah...." id="description" paragraph={true} />
-
+                <ContainerOne  label="Description" placeholder="blah blah blah...." id="description" paragraph={true} />
+                {/* {...register("description", {required: true})} */}
              
-                <ContainerOne {...register("price", {required: true})} label="Asking Price*" placeholder="$20" id="askingprice" />
-
+                <ContainerOne  label="Asking Price*" placeholder="$20" id="askingprice" />
+                {/* {...register("price", {required: true})} */}
 
                 
 
 
                 <div >
                 {/* <button className="appearance-none block bg-green-100 text-grey-darker border rounded py-3 px-12 mb-3" type="submit" value="Submit Form"></button>   
-                 */}
-                 {/* <button>Submit form</button> */}
-                 <button class="bg-teal-100 hover:bg-blue-700 text-white font-bold py-2 px-10 rounded" type="submit" value="Submit Form">
+                 <button>Submit form</button> */}
+                <button class="bg-teal-100 hover:bg-blue-700 text-white font-bold py-2 px-10 rounded" type="submit" value="Submit Form">
                     Submit
                  </button>
-                </div>
-
-                {/* <input type="submit" value="submit" /> */}
+                </div> 
+{/* 
+                 <input type="submit" value="submit" /> */}
 
             </div> 
 
             
         </form>
+        </RegisterContext.Provider>
         
 
     </div>
