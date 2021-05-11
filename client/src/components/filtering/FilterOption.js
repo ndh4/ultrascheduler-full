@@ -6,6 +6,13 @@ const FilterOption = (props) => {
     const checkStyle = {background: '#1DC2C4',
         borderRadius: '2px', color:'#1DC2C4'}
         
+    const labelTextStyle = {fontFamily: 'Acari Sans',
+    fontStyle: 'normal',
+    fontWeight: 'normal',
+    fontSize: '20px',
+    lineHeight: '19px',
+    color: '#898E91'}
+
     const textStyle = {fontFamily: 'Acari Sans',
         fontStyle: 'normal',
         fontWeight:' normal',
@@ -22,8 +29,8 @@ const FilterOption = (props) => {
     ));
     
     return(
-        <div class='flex w-3/12 flex-col'>
-            <div class="px-8 py-2">
+        <div class='flex w-full flex-col'>
+            <div class="px-8 py-2" style={labelTextStyle}>
                 {props.label}
             </div>
             <div class = "flex px-8 flex-wrap">

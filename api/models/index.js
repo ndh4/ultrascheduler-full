@@ -2,7 +2,7 @@ import { Course, CourseTC } from './CourseModel';
 import { Session, SessionTC } from './SessionModel';
 import { Schedule, ScheduleTC } from './ScheduleModel';
 import { Instructor, InstructorTC } from './InstructorModel';
-import { User, UserTC } from './UserModel';
+import { User, UserTC, SellerTC } from './UserModel';
 import { StudyGroup, StudyGroupTC } from './StudyGroupModel';
 import { Item, ItemTC } from './ItemModel';
 import { Listing, ListingTC } from './ListingModel';
@@ -23,5 +23,6 @@ export {
     Item,
     ItemTC,
     Listing,
-    ListingTC
+    ListingTC,
+    SellerTC
 };

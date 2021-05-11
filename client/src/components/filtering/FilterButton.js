@@ -20,10 +20,10 @@ const buttonStyle = {
     };
     
 const FilterButton = ({ label, handleClick }) => (
-    <div class = "w-5/12 px-8 ">
+    <div class = "w-full px-8 ">
            
         <button
-            className="w-9/12 px-8 border rounded-xl"
+            className="w-full py-3 px-8 border rounded-xl"
             style={buttonStyle}
             onClick={handleClick}>
             <div style = {labelStyle}>{label}</div>

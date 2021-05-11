@@ -1,4 +1,4 @@
-import { Course, Item, ItemTC, Listing, ListingTC } from "../models";
+import { Course, CourseTC, Item, ItemTC, Listing, ListingTC } from "../models";
 
 /**
  * Relations (necessary for any fields that link to other types in the schema)
@@ -124,7 +124,9 @@ ListingTC.addResolver({
 const ListingQuery = {
     listingsByFilter: ListingTC.getResolver('filter'),
     listingFindMany: ListingTC.getResolver("findMany"),
-    listingFindOne: ListingTC.getResolver("findOne")
+    listingFindOne: ListingTC.getResolver("findOne"),
+    listingReadOne: ListingTC.getResolver("findOne"),
+    listingReadMany: ListingTC.getResolver("findMany")
 };
 
 const ListingMutation = {

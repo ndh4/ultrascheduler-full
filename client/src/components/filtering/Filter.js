@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FilterDropdown from "./FilterDropdown";
 import FilterRange from "./FilterRange";
 import FilterOption from "./FilterOption";
@@ -6,7 +6,7 @@ import FilterLabel from "./FilterLabel.js";
 import FilterButton from "./FilterButton";
 import { gql, useLazyQuery } from "@apollo/client";
 
-const Filter = (props) => {
+const Filter = ({ allListings, setListings }) => {
   const [getListings, {loading, data}] = useLazyQuery(query);
   // Get options from backend based on if subject or course
   const cat_label = "Category";
@@ -18,7 +18,8 @@ const Filter = (props) => {
   const pickup_label = "Pickup Type";
 
   const category_options = ["Textbook", "Standard Test"];
-  const course_options = ["COMP 182", "ELEC 220", "HUMA 125"];
+  // const course_options = ["COMP 182", "ELEC 220", "HUMA 125"];
+  const [courseOptions, setCourseOptions] = useState([]);
   const format_options = ["Hardcopy", "Digital"];
   const status_options = ["Available Only"];
   const pickup_options = [" On Campus", " Near Campus", " Shipped"];
@@ -42,11 +43,24 @@ const Filter = (props) => {
     setSelected(e);
   };
 
-  function sayHello() {
-    alert("You clicked me!");
-    getListings({variables: {category: selected[[cat_label]][0], course: selected[[course_label]][0], type: selected[[format_label]][0]}})
+  const handleApply = () => {
+    setListings(selected);
   }
 
+  // function sayHello() {
+  //   alert("You clicked me!");
+  //   getListings({variables: {category: selected[[cat_label]][0], course: selected[[course_label]][0], type: selected[[format_label]][0]}})
+  // }
+
+  useEffect(() => {
+    const courseTitles = new Set([]);
+    allListings.forEach(listing => {
+      const associatedCourse = listing["item"].courses[0];
+      const courseTitle = associatedCourse["subject"] + " " + associatedCourse["courseNum"];
+      courseTitles.add(courseTitle); 
+    });
+    setCourseOptions(Array.from(courseTitles));
+  }, [allListings]);
   //[
   //   { value: 'chocolate', label: 'Chocolate' },
   //   { value: 'strawberry', label: 'Strawberry' },
@@ -61,7 +75,7 @@ const Filter = (props) => {
           setSelected={exSetSelected}
           label={cat_label}
           options={category_options}
-          placeholder={"This"}
+          placeholder={"Select Category"}
         />
       </div>
       <div>
@@ -69,7 +83,7 @@ const Filter = (props) => {
           selected={selected}
           setSelected={exSetSelected}
           label={course_label}
-          options={course_options}
+          options={courseOptions}
           placeholder={"Select Course"}
         />
       </div>
@@ -79,11 +93,11 @@ const Filter = (props) => {
           setSelected={exSetSelected}
           label={format_label}
           options={format_options}
-          placeholder={"Select Test"}
+          placeholder={"Select Type"}
         />
       </div>
-      <FilterRange label={range_label} options={range_dict} />
-      <div class="py-5">
+      {/* <FilterRange label={range_label} options={range_dict} /> */}
+      {/* <div class="py-5">
         <FilterOption
           selected={selected}
           label={status_label}
@@ -98,9 +112,9 @@ const Filter = (props) => {
           options={pickup_options}
           placeholder={"This"}
         />
-      </div>
+      </div> */}
       <div class="py-5">
-        <FilterButton label="Apply Filter" handleClick={sayHello} />
+        <FilterButton label="Apply Filter" handleClick={handleApply} />
       </div>
     </div>
   );

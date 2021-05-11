@@ -17,7 +17,7 @@ const FilterRange = (props) => {
     // />
     
     return(
-        <div class = "w-3/12 px-8">
+        <div class = "w-full px-8">
             <div class='pb-2'>
                 {props.label}
             </div>                

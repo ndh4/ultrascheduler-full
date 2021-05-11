@@ -137,10 +137,10 @@ const Main = ({ }) => {
         } else {
             return (
                 <div className="Container">
-                    <div style={{width: "30%" }}>
+                    <div style={{ width: "30%" }}>
                         <CourseSearch scheduleID={schedule._id} clickValue={bottomMode} />
                     </div>
-                    <div style={{width: "70%"}}>
+                    <div style={{ width: "70%" }}>
                         <CourseCalendar
                             draftSessions={schedule.draftSessions}
                         />
@@ -160,7 +160,7 @@ const Main = ({ }) => {
                     className="iconButton"
                     onClick={handleClick}
                     value={values[index]}
-                    style={{ backgroundColor: bottomMode == values[index] ? "#697e99" : ""}}
+                    style={{ backgroundColor: bottomMode == values[index] ? "#697e99" : "" }}
                 >
                     {console.log(bottomMode)}
                     {icon}

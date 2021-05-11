@@ -59,11 +59,11 @@ function FilterDropdown({selected, setSelected, label, options, placeholder }){
       })
     };
 
-    const selector = <Select options={choices} styles={customStyles} placeholder={placeholder} onChange = {(e) => setSelected({...selected, [label]: e })} isMulti/>
+    const selector = <Select options={choices} styles={customStyles} placeholder={placeholder} onChange = {(e) => setSelected({...selected, [label]: e ? e : [] })} isMulti/>
     
     return(
-        <div class = "w-5/12 px-8 ">
-            <div class='pb-2m' style = {textStyle}>
+        <div class = "w-full px-8 ">
+            <div class='pb-2' style = {textStyle}>
                 {label}
             </div>
             <div class='border rounded-xl'>

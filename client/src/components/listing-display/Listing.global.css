@@ -2,16 +2,30 @@
     --edition-color: #4DD5D3;
     --title-color: #535353 ;
     --author-color: #b3b3b3;
-    --course1-dark: ;
-    --course1-light: ;
+    --course1-dark: #6932a8;
+    --course1-light: #dbc0fa;
 
 }
 
+.listingsContainer {
+    width: 40%;
+    align-self: center;
+}
+
 .listingContainer {
+    /* individual listing */
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-
+    width: 100%;
+    height: 20vh;
+    border: 1.5px solid #e4e8ee;
+    border-radius: 10px;
+    margin-top: 1vh;
+    margin-left: 1vw;
+    margin-right: 1vw;
+    padding: 2.5vh;
+    line-height: 3vh;
 }
 
 .listingPicture {
@@ -22,12 +36,13 @@
 .listingTitle {
     display: flex;
     color: var(--title-color);
+    font-size: larger;
 }
 
 .listingAuthor {
     display: flex;
     color: var(--author-color);
-    
+    margin-bottom: 1vh;    
 }
 
 .listingEdition {
@@ -36,13 +51,14 @@
 
 .specificImage {
     display: flex;
-    height: 70%;
-    width: 50%;
+    height: 100%;
+    width: 90%;
 }
 
 .listingInfo {
     display: flex;
     flex-direction: column;
+    width: 90%;
 }
 
 .listingItemInfo{
@@ -52,26 +68,50 @@
 }
 .listingCourses {
     display: flex;
-    fill: ;
-
+    color: var(--course1-dark);
+    border-color: var(--course1-dark);
+    background-color: var(--course1-light);
+    width: max-content;
+    border-radius: 7px;
+    border: 1.5px solid;
 }
 .listingPrice {
     display: flex;
     color: var(--title-color);
+    font-size: xx-large;
+    padding-bottom: 5vh;
 }
 
 .listingDisplayContainer {
+    /* contains whole page */
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    align-self: center;
+    width: 100%;
 }
 
 .listingSellInfo {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    margin-top: 5vh;
 }
 
-.listingContact {
+.listingContactSold {
     display: flex;
+    margin-right: 10vw;
+    background-color: var(--edition-color);
+    border-radius: 28px;
+}
+
+.listingContactAvailable {
+    display: flex;
+    width: 30%;
+    height: 40%;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10vw;
+    background-color: var(--edition-color);
+    border-radius: 28px;
+    color: white;
 }

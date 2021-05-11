@@ -22,7 +22,7 @@ var ItemSchema = new Schema({
     subject: {type: String, enum: SUBJECTS, required: false},
     author: String,
     //temporary
-    type: { type: String, enum: ["Digital", "Hardcopy", "Hardware", "Other"] },
+    category: { type: String, enum: ["Textbook", "Standardized Test"] },
     isbn: { type: Number, required: false },
 });
 

@@ -2,14 +2,15 @@ var mongoose = require("mongoose"),
     Schema = mongoose.Schema;
 
 require("../db");
-import { composeWithMongoose } from "graphql-compose-mongoose";    
+import { composeWithMongoose } from "graphql-compose-mongoose";
 import { Item } from "./ItemModel";
 import { User } from "./UserModel";
 
 const CONDITIONS = ['NEW', 'LIKE NEW', 'USED'];
 const STATUSES = ['AVAILABLE', 'PENDING', 'SOLD'];
 const PICKUPS = ['On Campus', 'Near Campus', 'Shipped']
-const CATEGORIES = ["Standardized Test","Textbook"]
+const TYPES = ['Hardcopy', 'Digital', 'Other'];
+
 var ListingSchema = new Schema({
     item: { type: Schema.Types.ObjectID, ref: Item, required: true },
     condition: { type: String, required: true, enum: CONDITIONS },
@@ -20,7 +21,7 @@ var ListingSchema = new Schema({
     availability: { type: String, required: true, enum: STATUSES },
     pictures: [{ type: String, required: false }],
     pickup: [{type: String, required: true, enum: PICKUPS}],
-    category: {type: String, required: true, enum: CATEGORIES}
+    type: {type: String, required: true, enum: TYPES }
 }, { timestamps: true });
 
 export const Listing = mongoose.model("listings", ListingSchema);
