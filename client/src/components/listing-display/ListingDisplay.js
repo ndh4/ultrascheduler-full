@@ -143,13 +143,17 @@ const ListingDisplay = () => {
 			// Update newListings to filtered subset
 			newListings = newListings.filter((listing) => {
 				const course = listing["item"]["courses"][0];
-				const courseTitle =
+                if (course) {
+                    const courseTitle =
 					course["subject"] + " " + course["courseNum"];
-				if (filterCourses.includes(courseTitle)) {
-					return true;
-				} else {
-					return false;
-				}
+                    if (filterCourses.includes(courseTitle)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
 			});
 		}
 
