@@ -14,6 +14,8 @@ import firebase from "firebase/app";
 // These imports load individual services into the firebase namespace.
 import "firebase/auth";
 import Error from "./error/Error";
+import ListingDisplay from "./listing-display/ListingDisplay";
+import ListingPage from "./listing-individual/ListingPage";
 
 /**
  * Requests to verify the user's token on the backend
@@ -72,28 +74,43 @@ const PrivateRoute = ({ children, ...rest }) => {
  * Defines all the routes for our system.
  * @param {*} param0
  */
-const Routes = ({}) => {
+const Routes = ({ }) => {
     return (
-        <Switch>
-            <Route path="/auth">
-                <Auth />
-            </Route>
-            <Route path="/login">
-                <Login />
-            </Route>
-            <Route path="/about">
-                <About />
-            </Route>
-            <PrivateRoute path="/schedule">
-                <Main />
-            </PrivateRoute>
-            <PrivateRoute exact path="/">
-                <Redirect to="/schedule" />
-            </PrivateRoute>
-            <Route>
-                <Error />
-            </Route>
-        </Switch>
+        <div>
+            <Switch>
+                <Route path="/auth">
+                    <Auth />
+                </Route>
+
+                <Route path="/login">
+                    <Login />
+                </Route>
+
+                <Route path="/about">
+                    <About />
+                </Route>
+
+                <PrivateRoute exact path="/listing-display">
+                    <ListingDisplay />
+                </PrivateRoute>
+
+                <PrivateRoute path="/listing-display/:id">
+                    <ListingPage />
+                </PrivateRoute >
+
+                <PrivateRoute path="/schedule">
+                    <Main />
+                </PrivateRoute>
+
+                <PrivateRoute exact path="/">
+                    <Redirect to="/schedule" />
+                </PrivateRoute>
+
+                <Route>
+                    <Error />
+                </Route>
+            </Switch >
+        </div >
     );
 };
 

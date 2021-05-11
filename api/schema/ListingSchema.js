@@ -48,8 +48,8 @@ import { Course, ItemTC, Listing, ListingTC } from "../models";
 // Delete / Destroy
 
 const ListingQuery = {
-    listingFindMany: ListingTC.getResolver("findMany"),
-    listingFindOne: ListingTC.getResolver("findOne")
+    listingReadOne: ListingTC.getResolver("findOne"),
+    listingReadMany: ListingTC.getResolver("findMany")
 };
 
 const ListingMutation = {
