@@ -43,15 +43,20 @@ const Listing = ({ data }) => {
 					{data.item.title}
 				</div>
 				<div className="flex flex-col text-secondary-teal">
-					Year: {data.item.year} | Edition: {data.item.version}
+					Edition {data.item.version} | {data.type}
 				</div>
 				<div className="flex text-gray-500 mb-3">
 					by {data.item.author}
 				</div>
 
 				<div className="flex w-max text-primary-purple bg-primary-purple bg-opacity-10 px-3 border border-primary-purple rounded-lg">
-					{data.item.courses[0].subject}{" "}
-					{data.item.courses[0].courseNum}{" "}
+					{data.item.category != "Textbook" ? null : (
+						<React.Fragment>
+							{data.item.courses[0].subject}{" "}
+							{data.item.courses[0].courseNum}{" "}
+						</React.Fragment>
+					)}
+
 					{/* this will need to map from courses -> buttons/tags AND change color by course code (wait for filtering)*/}
 				</div>
 				<div className="flex flex-row justify-between mt-5">
@@ -117,7 +122,7 @@ const GET_LISTINGS = gql`
 			negotiable
 			description
 			pickup
-            type
+			type
 		}
 	}
 `;
@@ -130,14 +135,12 @@ const ListingDisplay = () => {
 	const setListings = (filters) => {
 		let newListings = allListings;
 
-        console.log(filters);
-
 		if (filters["Course"].length > 0) {
 			const filterCourses = filters["Course"].map(
 				(course) => course.value
 			);
 
-            // Update newListings to filtered subset
+			// Update newListings to filtered subset
 			newListings = newListings.filter((listing) => {
 				const course = listing["item"]["courses"][0];
 				const courseTitle =
@@ -150,12 +153,12 @@ const ListingDisplay = () => {
 			});
 		}
 
-        if (filters["Category"].length > 0) {
-            const filterCategories = filters["Category"].map(
-				(category) => category.value
+		if (filters["Category"].length > 0) {
+			const filterCategories = filters["Category"].map(
+				(category) => category.value.replace(" ", "_")
 			);
 
-            // Update newListings to filtered subset
+			// Update newListings to filtered subset
 			newListings = newListings.filter((listing) => {
 				const category = listing["item"]["category"];
 				if (filterCategories.includes(category)) {
@@ -164,33 +167,27 @@ const ListingDisplay = () => {
 					return false;
 				}
 			});
-        }
+		}
 
-        if (filters["Type"].length > 0) {
-            const filterTypes = filters["Type"].map(
-				(type) => type.value
-			);
+		if (filters["Type"].length > 0) {
+			const filterTypes = filters["Type"].map((type) => type.value);
 
-            console.log(filterTypes);
-
-            // Update newListings to filtered subset
+			// Update newListings to filtered subset
 			newListings = newListings.filter((listing) => {
 				const type = listing["type"];
-                console.log(type);
 				if (filterTypes.includes(type)) {
 					return true;
 				} else {
 					return false;
 				}
 			});
-        }
+		}
 
-        setListingSubset(newListings);
+		setListingSubset(newListings);
 	};
 
 	useEffect(() => {
 		if (data) {
-            console.log(data["listingReadMany"]);
 			setAllListings(data["listingReadMany"]);
 			setListingSubset(data["listingReadMany"]);
 		}

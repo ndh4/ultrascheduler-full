@@ -17,7 +17,7 @@ const Filter = ({ allListings, setListings }) => {
   const status_label = "Listing Status";
   const pickup_label = "Pickup Type";
 
-  const category_options = ["Textbook", "Standard Test"];
+  const category_options = ["Textbook", "Standardized Test"];
   // const course_options = ["COMP 182", "ELEC 220", "HUMA 125"];
   const [courseOptions, setCourseOptions] = useState([]);
   const format_options = ["Hardcopy", "Digital"];
@@ -55,9 +55,11 @@ const Filter = ({ allListings, setListings }) => {
   useEffect(() => {
     const courseTitles = new Set([]);
     allListings.forEach(listing => {
-      const associatedCourse = listing["item"].courses[0];
-      const courseTitle = associatedCourse["subject"] + " " + associatedCourse["courseNum"];
-      courseTitles.add(courseTitle); 
+      if (listing.item.category == "Textbook") {
+        const associatedCourse = listing["item"].courses[0];
+        const courseTitle = associatedCourse["subject"] + " " + associatedCourse["courseNum"];
+        courseTitles.add(courseTitle); 
+      }
     });
     setCourseOptions(Array.from(courseTitles));
   }, [allListings]);

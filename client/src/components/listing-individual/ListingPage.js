@@ -170,13 +170,17 @@ const ListingPage = ({ listing }) => {
                             {location.state.item.title}
                         </div>
                         <div class="flex text-primary-black text-2xl font-semibold leading-snug">
-                            Year: {location.state.item.year}  | Edition: {location.state.item.version}
+                            {location.state.item.year ? (
+                                <React.Fragment>
+                                    Year: {location.state.item.year} |
+                                </React.Fragment>
+                            ) : null} Edition: {location.state.item.version}
                         </div>
                         <div class="flex text-primary-black text-3xl leading-normal">
                             ${location.state.price} {location.state.negotiable ? null : "OBO"}
                         </div>
                         <div class="flex text-primary-black leading-normal">
-                            {location.state.item.type} | {location.state.condition}
+                            {location.state.type} | {location.state.condition}
                         </div>
                         <div class="flex text-green-500 leading-normal text-lg">
                             {location.state.availability}
