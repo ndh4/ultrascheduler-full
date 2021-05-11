@@ -17,6 +17,8 @@ const ListingPage = ({ listing }) => {
 
     console.log(location.state.seller)
 
+    console.log(location.state);
+
     const GET_SELLER = gql`
         query GetSeller($id: MongoID!) {
             sellerOne(filter: {_id: $id}){
@@ -102,13 +104,16 @@ const ListingPage = ({ listing }) => {
         }
     }
 
-    let pickup = ""
+    let pickup = "";
 
-    if (location.state.pickup == 'ON CAMPUS') {
+    if (location.state.pickup[0] == 'On_Campus') {
         pickup = "On Campus Pickup"
     }
-    else if (location.state.pickup == 'DELIVERY') {
+    else if (location.state.pickup[0] == 'Shipped') {
         pickup = "Delivery"
+    }
+    else if (location.state.pickup[0] == 'Near_Campus') {
+        pickup = "On Campus Pickup"
     }
     else {
         pickup = "No pickup method specified"
@@ -163,14 +168,19 @@ const ListingPage = ({ listing }) => {
                         })}
                         <div class="flex text-primary-black text-3xl font-semibold leading-snug">
                             {location.state.item.title}
-                            <br></br>
-                            {location.state.item.year}  | {location.state.item.version}
+                        </div>
+                        <div class="flex text-primary-black text-2xl font-semibold leading-snug">
+                            {location.state.item.year ? (
+                                <React.Fragment>
+                                    Year: {location.state.item.year} |
+                                </React.Fragment>
+                            ) : null} Edition: {location.state.item.version}
                         </div>
                         <div class="flex text-primary-black text-3xl leading-normal">
                             ${location.state.price} {location.state.negotiable ? null : "OBO"}
                         </div>
                         <div class="flex text-primary-black leading-normal">
-                            {location.state.item.type} | {location.state.condition}
+                            {location.state.type} | {location.state.condition}
                         </div>
                         <div class="flex text-green-500 leading-normal text-lg">
                             {location.state.availability}

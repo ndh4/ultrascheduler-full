@@ -1,4 +1,4 @@
-import { Course, ItemTC, Listing, ListingTC } from "../models";
+import { Course, CourseTC, Item, ItemTC, Listing, ListingTC } from "../models";
 
 /**
  * Relations (necessary for any fields that link to other types in the schema)
@@ -18,6 +18,80 @@ import { Course, ItemTC, Listing, ListingTC } from "../models";
 
 // Read
 
+ListingTC.addResolver({
+    name: "filter",
+    type: [ListingTC],
+    args: {_id: "[ID]", category: "String", subject: "String", type: "String", min_price: "Int!", max_price: "Int!", 
+            status: "String", pickup: "String"},
+    resolve: async ({ source, args, context, info }) => {
+
+        let matchedIDs, matchedCategoryIDs, matchedTypeIDs = []
+        // Get items by courseID if ID inputted by user
+        if(args.category == 'Textbook') {
+            let matchedCategoryItems = await Item.find({courses : { $in: args._id }});
+            matchedCategoryIDs = matchedCategoryItems.map((item)=>{
+                return item._id;
+            })
+            console.log(matchedIDs)
+        }
+
+        else{ //is a standardized test
+            let matchedCategoryItems = await Item.find({subject: args.subject})
+            matchedCategoryIDs = matchedCategoryItems.map((item)=>{
+                return item._id;
+            })
+        }
+
+        if (args.type){
+            let matchedTypeItems = await Item.find({type: args.type})
+            matchedTypeIDs = matchedTypeItems.map((item)=>{
+                return item._id;
+            })
+        }
+
+        //get intersecting IDs
+        if(args._id && args.type){
+            matchedIDs = matchedCourseIDs.filter(value => matchedTypeIDs.includes(value));
+        }
+        else if(args._id){
+            matchedIDs = matchedCourseIDs
+        }
+        else if(args.type){
+            matchedIDs = matchedTypeIDs
+        }
+
+        // Add the filter fields the user has inputted 
+        let base_filter = {item: { $in: matchedIDs}, 
+            price: {$gte: args.min_price, $lte: args.max_price},
+            availability: args.status, pickup: args.pickup}    
+        
+        let field_mapping = {_id: 'item', type: 'item', status: 'availability', pickup: 'pickup'}
+           
+        //instantiate filter
+        let filter = { price: {$gte: args.min_price, $lte: args.max_price} };
+      
+        // For all fields in the filter, add them to our filter
+        for (let key in args) {
+            if(key) {
+                let field = field_mapping[key]
+                filter[field] = base_filter[field]
+            } 
+        }
+        
+        return Listing.find(filter);
+    }
+});
+
+// ListingTC.addResolver({
+//     name:'findByStatus',
+//     type: [ListingTC],
+//     args: {status: "String!"},
+//     resolve: async ({ source, args, context, info }) => {
+//         let matchedItems = await Listing.find({availability: 
+//             args.status});
+//         return matchedItems;
+//     }
+// });
 // ListingTC.addResolver({
 //     name: "findByClass",
 //     type: [ListingTC],
@@ -48,6 +122,9 @@ import { Course, ItemTC, Listing, ListingTC } from "../models";
 // Delete / Destroy
 
 const ListingQuery = {
+    listingsByFilter: ListingTC.getResolver('filter'),
+    listingFindMany: ListingTC.getResolver("findMany"),
+    listingFindOne: ListingTC.getResolver("findOne"),
     listingReadOne: ListingTC.getResolver("findOne"),
     listingReadMany: ListingTC.getResolver("findMany")
 };

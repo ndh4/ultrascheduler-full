@@ -9,6 +9,8 @@ require("../db");
  */
 import { Course } from "./CourseModel";
 
+const SUBJECTS = ["LSAT","MCAT","GRE","VCAT", "AP", "SAT/ACT","GMAT","MAT","DAT", "OAT"]
+
 var ItemSchema = new Schema({
     /**
      * @todo: What fields do we need here?
@@ -16,9 +18,11 @@ var ItemSchema = new Schema({
     title: { type: String, required: true },
     version: { type: String, required: false },
     year: { type: Number, required: false },
-    courses: [{ type: Schema.Types.ObjectId, ref: Course, required: true }],
+    courses: [{ type: Schema.Types.ObjectId, ref: Course, required: false }],
+    subject: {type: String, enum: SUBJECTS, required: false},
     author: String,
-    type: { type: String, enum: ["Textbook", "Lab", "Hardware", "Other"] },
+    //temporary
+    category: { type: String, enum: ["Textbook", "Standardized Test"] },
     isbn: { type: Number, required: false },
 });
 
