@@ -7,6 +7,7 @@ import { gql, useQuery, useApolloClient } from "@apollo/client";
 import LoadingScreen from "./LoadingScreen";
 import About from "./about/About";
 import NewAuth from "./auth/Auth";
+import DegreePlan from "./degree/DegreePlan";
 
 // This import loads the firebase namespace along with all its type information.
 import firebase from "firebase/app";
@@ -89,6 +90,9 @@ const Routes = ({}) => {
             </PrivateRoute>
             <PrivateRoute exact path="/">
                 <Redirect to="/schedule" />
+            </PrivateRoute>
+            <PrivateRoute path="/degree_plan">
+                <DegreePlan />
             </PrivateRoute>
             <Route>
                 <Error />
