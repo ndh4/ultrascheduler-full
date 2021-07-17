@@ -6,6 +6,7 @@ import { User, UserTC } from './UserModel';
 import { StudyGroup, StudyGroupTC } from './StudyGroupModel';
 import { Item, ItemTC } from './ItemModel';
 import { Listing, ListingTC } from './ListingModel';
+import { Degree, DegreeTC } from './DegreeModel';
 
 export {
     Course,
@@ -23,5 +24,7 @@ export {
     Item,
     ItemTC,
     Listing,
-    ListingTC
+    ListingTC,
+    Degree,
+    DegreeTC
 };
