@@ -2,8 +2,51 @@
     /* Rectangle 1728 */
     width: 545px;
     height: 270px;
-    
-    border: 1.5px solid #E1E3E3;
+
+    border: 1.5px solid #e1e3e3;
     box-sizing: border-box;
     border-radius: 5px;
-} 
+}
+
+.editSchedule {
+    width: 150px;
+    height: 35px;
+    left: 128px;
+    top: 511px;
+
+    border: 1.5px solid #e1e3e3;
+    box-sizing: border-box;
+    border-radius: 5px;
+    background-color: white;
+
+    left: 10.64%;
+    right: 82.37%;
+    top: 52.58%;
+    bottom: 45.24%;
+
+    font: "Acari Sans";
+    font-style: normal;
+    font-weight: 600;
+    font-size: 15.75px;
+    line-height: 19px;
+
+    color: #149fa0;
+    margin-bottom: 10px;
+
+    cursor: pointer;
+}
+
+/* hover is a keyword */
+.editSchedule:hover {
+    background-color: #149fa0;
+    color: #e1e3e3;
+}
+
+.bigBox {
+    width: 545px;
+    height: 315px;
+    /* border: 1.5px solid #d45b0b; */
+    margin-top: 50px;
+    margin-left: 50px;
+    margin-right: 25px;
+}

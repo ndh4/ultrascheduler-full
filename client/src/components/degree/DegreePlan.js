@@ -9,6 +9,15 @@ const DegreePlan = () => {
             <Semester />
             <Semester />
             <Semester />
+            <Semester />
+            <Semester />
+            <Semester />
+            <Semester />
+            <Semester />
+            <Semester />
+            <Semester />
+            <Semester />
+            <Semester />
         </div>
     )
 }

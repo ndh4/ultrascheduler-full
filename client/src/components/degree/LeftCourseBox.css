@@ -1,12 +1,12 @@
 .lcbox {
     position: relative;
     width: 420px;
-    height: 47px;
+    height: 48px;
     left: -1px;
     top: -1px;
 
-    border-right: 1.5px solid #E1E3E3;
-    border-top: 1.5px solid #E1E3E3;;
+    border-right: 1.5px solid #e1e3e3;
+    border-top: 1.5px solid #e1e3e3;
     box-sizing: border-box;
 
     display: flex;
@@ -17,7 +17,7 @@
 .courseCode {
     height: 19px;
 
-    font-family: Acari Sans;
+    font: "Acari Sans";
     font-style: normal;
     font-weight: bold;
     font-size: 16px;
@@ -29,7 +29,7 @@
 .courseName {
     height: 19px;
 
-    font-family: Acari Sans;
+    font: "Acari Sans";
     font-style: normal;
     font-size: 16px;
     line-height: 19px;
