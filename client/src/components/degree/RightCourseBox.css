@@ -1,0 +1,24 @@
+.rcbox {
+    position: relative;
+    width: 123px;
+    height: 47px;
+    left: -1px;
+    top: -1px;
+
+    border-top: 1.5px solid #E1E3E3;;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 19px;
+    /* identical to box height */
+
+
+    color: #5B5B5B;
+}

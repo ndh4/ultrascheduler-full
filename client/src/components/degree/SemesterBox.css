@@ -1,0 +1,9 @@
+.semesterFlexBox {
+    /* Rectangle 1728 */
+    width: 545px;
+    height: 270px;
+    
+    border: 1.5px solid #E1E3E3;
+    box-sizing: border-box;
+    border-radius: 5px;
+} 

@@ -1,0 +1,7 @@
+.rowBox {
+    width: 545px;
+    height: 44px;
+    
+    display: flex;
+    flex-direction: row;
+}
