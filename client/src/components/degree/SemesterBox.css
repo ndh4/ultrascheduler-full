@@ -8,8 +8,8 @@
     border-radius: 5px;
 }
 
-.editSchedule {
-    width: 150px;
+.button {
+    width: 180px;
     height: 35px;
     left: 128px;
     top: 511px;
@@ -34,10 +34,14 @@
     margin-bottom: 10px;
 
     cursor: pointer;
+
+    /* display: flex;
+    flex-direction: column;
+    justify-content: center; */
 }
 
 /* hover is a keyword */
-.editSchedule:hover {
+.button:hover {
     background-color: #149fa0;
     color: #e1e3e3;
 }
@@ -49,4 +53,35 @@
     margin-top: 50px;
     margin-left: 50px;
     margin-right: 25px;
+}
+
+.modal {
+    margin-top: 15%;
+    margin-left: 30%;
+    width: 545px;
+    height: 270px;
+    box-sizing: border-box;
+    border: 2px solid #149fa0;
+    border-radius: 5px;
+}
+
+.notesContent {
+    font: "Acari Sans";
+    font-style: normal;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.closeBtn:before {
+    cursor: pointer;
+    content: "\00d7";
+    color: black;
+    font-size: 400;
+    font-weight: 500;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
 }
