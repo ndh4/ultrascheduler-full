@@ -62,7 +62,7 @@ ScheduleTC.addResolver({
 ScheduleTC.addResolver({
     name: "findManyByUser",
     type: [ScheduleTC],
-    args: { _id: "ID!", filter: ScheduleTC.getInputTypeComposer() },
+    args: { _id: "ID", filter: ScheduleTC.getInputTypeComposer() },
     resolve: async ({ source, args, context, info }) => {
         let filter = { user: args._id };
         if (args.filter) {
@@ -83,7 +83,7 @@ ScheduleTC.addResolver({
     name: "scheduleUpdateDraftSessions",
     type: ScheduleTC,
     // day is an enum, so we want to get its enum from the model directly
-    args: { scheduleID: "ID!", push: "Boolean", sessionID: "ID!" },
+    args: { scheduleID: "ID!", push: "Boolean", sessionID: "ID!"},
     resolve: async ({ source, args, context, info }) => {
         // Check that requested schedule and requesting user match
         let match = checkScheduleUserMatch(args.scheduleID, context.decodedJWT);
@@ -146,7 +146,7 @@ ScheduleTC.addResolver({
 /**
  * Toggles the session visibility, given a schedule and a session ID
  */
- ScheduleTC.addResolver({
+ScheduleTC.addResolver({
     name: "scheduleToggleTerm",
     type: ScheduleTC,
     args: { scheduleID: "ID!", sessionID: "ID!" },
@@ -179,7 +179,7 @@ ScheduleTC.addResolver({
 
 const ScheduleQuery = {
     scheduleOne: ScheduleTC.getResolver("findOrCreate", [authMiddleware]),
-    scheduleMany: ScheduleTC.getResolver("findManyByUser")
+    scheduleMany: ScheduleTC.getResolver("findManyByUser", [authMiddleware])
 };
 
 const ScheduleMutation = {
@@ -203,6 +203,26 @@ const ScheduleMutation = {
     degreePlanAddCourse: ScheduleTC.getResolver("createOne"),
     degreePlanRemoveCourse: ScheduleTC.getResolver("removeOne")
 };
+
+// Grab whatever the frontend saves as the custom course and add a mutation
+// here that updates customCourse.
+// Use the updateOne mutation
+// Find the specific schedule ID (graphql-compose-mongoose), how to update a 
+// specific field
+// 
+// Same thing with deleting (for now, consider just adding the schedule, but
+// not deleting)
+
+// Notes is the same thing, but just a single string
+
+// Selecting current term and unchecking the box, that displays the current
+// term.
+
+// - create schedule Mutation
+// - create custom course Mutation
+// - update custom course Mutation
+// - delete a custom course Mutation
+// - delete a schedule Mutation
 
 async function authMiddleware(resolve, source, args, context, info) {
     // Without header, throw error
