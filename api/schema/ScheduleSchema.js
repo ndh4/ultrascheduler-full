@@ -71,7 +71,7 @@ ScheduleTC.addResolver({
                 filter[key] = args.filter[key];
             }
         }
-        return await Schedule.find(filter);
+        return Schedule.find(filter);
     },
 });
 
@@ -143,8 +143,43 @@ ScheduleTC.addResolver({
     },
 });
 
+/**
+ * Toggles the session visibility, given a schedule and a session ID
+ */
+ ScheduleTC.addResolver({
+    name: "scheduleToggleTerm",
+    type: ScheduleTC,
+    args: { scheduleID: "ID!", sessionID: "ID!" },
+    resolve: async ({ source, args, context, info }) => {
+        // Check that requested schedule and requesting user match
+        let match = checkScheduleUserMatch(args.scheduleID, context.decodedJWT);
+        if (!match) {
+            throw Error("Decoded user and Schedule do not match!");
+        }
+
+        let options = {
+            upsert: false,
+            new: true,
+            arrayFilters: [{ "elem.session": args.sessionID }],
+        };
+        // Perform update
+        await Schedule.updateOne(
+            { _id: args.scheduleID },
+            {
+                $bit: {
+                    "draftSessions.$[elem].visible": { xor: parseInt("1") },
+                },
+            },
+            options
+        );
+        // Return schedule
+        return await Schedule.findById(args.scheduleID);
+    },
+});
+
 const ScheduleQuery = {
     scheduleOne: ScheduleTC.getResolver("findOrCreate", [authMiddleware]),
+    scheduleMany: ScheduleTC.getResolver("findManyByUser")
 };
 
 const ScheduleMutation = {
@@ -161,6 +196,12 @@ const ScheduleMutation = {
         rp.args.push = false;
         return next(rp);
     }),
+
+    degreePlanAddTerm: ScheduleTC.getResolver("createOne"),
+    degreePlanRemoveTerm: ScheduleTC.getResolver("removeOne"),
+
+    degreePlanAddCourse: ScheduleTC.getResolver("createOne"),
+    degreePlanRemoveCourse: ScheduleTC.getResolver("removeOne")
 };
 
 async function authMiddleware(resolve, source, args, context, info) {
