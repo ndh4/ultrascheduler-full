@@ -1,0 +1,46 @@
+.ltbox {
+    position: relative;
+    width: 420px;
+    height: 44px;
+    left: -1px;
+    top: -0.5px;
+
+    border-right: 1.5px solid hsl(180, 3%, 89%);
+    box-sizing: border-box;
+    background: #ddf5f6;
+
+    display: flex;
+    align-items: center;
+}
+
+.year {
+    position: relative;
+    left: 30px;
+
+    font: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 19px;
+    /* identical to box height */
+
+    letter-spacing: 0.1em;
+
+    color: #5b5b5b;
+}
+
+.semester {
+    position: relative;
+    left: 35px;
+
+    font: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 19px;
+    /* identical to box height */
+
+    letter-spacing: 0.1em;
+
+    color: #5b5b5b;
+}

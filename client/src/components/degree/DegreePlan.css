@@ -1,0 +1,14 @@
+.layout {
+    /* padding is for text in box */
+    /* to cover the whole screen */
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left; /* horizontal, equidistant */
+    flex-direction: row;
+    /*align-items: space-around;  /* vertical */
+    /* justify-content and align-items depend on flex-direction
+    if flex-direction == column, reversed */
+}

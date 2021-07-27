@@ -1,0 +1,73 @@
+.lcbox {
+    position: relative;
+    width: 420px;
+    height: 48px;
+    left: -1px;
+    top: -1px;
+
+    border-right: 1.5px solid #e1e3e3;
+    border-top: 1.5px solid #e1e3e3;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.courseName:hover {
+    color: #338182;
+}
+
+.courseCode {
+    height: 19px;
+
+    font: "Acari Sans";
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 19px;
+
+    color: #338182;
+}
+
+.courseName {
+    height: 19px;
+
+    font: "Acari Sans";
+    font-style: normal;
+    font-size: 16px;
+    line-height: 19px;
+
+    color: #63ccce;
+}
+
+.modal {
+    margin-top: 15%;
+    margin-left: 30%;
+    width: 545px;
+    height: 270px;
+    box-sizing: border-box;
+    border: 2px solid #149fa0;
+    border-radius: 5px;
+}
+
+.courseInfoContent {
+    font: "Acari Sans";
+    font-style: normal;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
+}
+
+.closeBtn:before {
+    cursor: pointer;
+    content: "\00d7";
+    color: black;
+    font-size: 400;
+    font-weight: 500;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
