@@ -3,7 +3,7 @@ import "./SemesterBox.css";
 import CourseRowBox from "./CourseRowBox";
 import TitleBox from "./TitleBox";
 import { useHistory } from "react-router";
-import Modal from 'react-modal';
+import Modal from "react-modal";
 import { useState } from "react";
 
 const SemesterBox = () => {
@@ -14,17 +14,16 @@ const SemesterBox = () => {
     const [modalState, setModal] = useState(false);
     const openModal = () => {
         setModal(true);
-    }
+    };
     const closeModal = () => {
         setModal(false);
-    }
+    };
 
     // for the notes content
     const [inputVal, changeInputVal] = useState("");
-    const saveInput = () => {
+    const saveInput = (e) => {
         changeInputVal(document.getElementById("notes").value);
-        document.getElementById('notes').value = '';
-    }
+    };
 
     return (
         <div className="bigBox">
@@ -38,17 +37,26 @@ const SemesterBox = () => {
             <button className="button" onClick={openModal}>
                 Add Notes
             </button>
-            <Modal isOpen={modalState} className='modal'>
-                <button onClick={closeModal} className='closeBtn'></button>
-                <div className='notesContent'>
-                <div>
-                    <input type='text' id='notes' placeholder='Write your notes here...'></input>
-                    <button onClick={saveInput}>Save</button>
-                </div>
-                    <div>{inputVal}</div>
+            <Modal isOpen={modalState} className="modal">
+                <button onClick={closeModal} className="closeBtn"></button>
+                <div className="notesContent">
+                    <div style={{ width: "100%", height: "100%" }}>
+                        <input
+                            id="notes"
+                            placeholder="Write your notes here..."
+                            value={inputVal}
+                            type="input"
+                            style={{
+                                width: "80%",
+                                heigth: 200,
+                            }}
+                            onChange={(e) => changeInputVal(e.target.value)}
+                        />
+                    </div>
+                    {/* <div>{inputVal}</div> */}
                 </div>
             </Modal>
-            
+
             <button className="button" onClick="modal">
                 Add Custom Course
             </button>
