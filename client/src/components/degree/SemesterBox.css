@@ -9,14 +9,12 @@
 }
 
 .button {
-    width: 180px;
     height: 35px;
     left: 128px;
     top: 511px;
 
     border: 1.5px solid #e1e3e3;
     box-sizing: border-box;
-    border-radius: 5px;
     background-color: white;
 
     left: 10.64%;

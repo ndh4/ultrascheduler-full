@@ -27,6 +27,7 @@
     "dotenv": "^8.2.0",
     "express": "~4.16.1",
     "express-jwt": "^5.3.1",
+    "express-load": "^1.1.16",
     "firebase-admin": "^9.3.0",
     "graphql": "^15.0.0",
     "graphql-compose": "^7.15.0",
