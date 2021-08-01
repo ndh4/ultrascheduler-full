@@ -3,7 +3,7 @@ import "./SemesterBox.css";
 import CourseRowBox from "./CourseRowBox";
 import TitleBox from "./TitleBox";
 import { useHistory } from "react-router";
-import Modal from 'react-modal';
+import Modal from "react-modal";
 import { useState } from "react";
 
 const SemesterBox = () => {
@@ -14,17 +14,17 @@ const SemesterBox = () => {
     const [modalState, setModal] = useState(false);
     const openModal = () => {
         setModal(true);
-    }
+    };
     const closeModal = () => {
         setModal(false);
-    }
+    };
 
     // for the notes content
     const [inputVal, changeInputVal] = useState("");
-    const saveInput = () => {
-        changeInputVal(document.getElementById("notes").value);
-        document.getElementById('notes').value = '';
-    }
+    // const saveInput = (e) => {
+    //     changeInputVal(document.getElementById("notes").value);
+    //     document.getElementById("notes").value = inputVal;
+    // }
 
     return (
         <div className="bigBox">
@@ -36,19 +36,32 @@ const SemesterBox = () => {
             </button>
 
             <button className="button" onClick={openModal}>
-                Add Notes
+                Edit Notes
             </button>
-            <Modal isOpen={modalState} className='modal'>
-                <button onClick={closeModal} className='closeBtn'></button>
+            <Modal isOpen={modalState} className='modal' onRequestClose={closeModal}>
                 <div className='notesContent'>
-                <div>
-                    <input type='text' id='notes' placeholder='Write your notes here...'></input>
-                    <button onClick={saveInput}>Save</button>
-                </div>
-                    <div>{inputVal}</div>
+                    {/* <input type='text' id='notes' placeholder='Write your notes here...' /> */}
+                    {/* <input 
+                        type='text' 
+                        id='notes' 
+                        placeholder='Write your notes here...'
+                        value={inputVal}
+                        onChange={(e) => changeInputVal(e.target.value)}
+                        style={{whiteSpace: 'pre-wrap', overflowWrap: 'break-word'}}
+                        className='textbox'
+                        /> */}
+                    <textarea 
+                        maxlength='400' 
+                        placeholder='Write your notes here...' 
+                        className='textbox' 
+                        value={inputVal}
+                        onChange={(e) => changeInputVal(e.target.value)}>
+                    </textarea>
+                    {/* <button onClick={saveInput}>Save</button> */}
+                    {/* <div style={{width: "90%", wordWrap: "break-word"}}>{inputVal}</div> */}
                 </div>
             </Modal>
-            
+
             <button className="button" onClick="modal">
                 Add Custom Course
             </button>

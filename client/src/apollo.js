@@ -1,10 +1,5 @@
 // Apollo Client Setup
-import {
-    ApolloClient,
-    HttpLink,
-    InMemoryCache,
-    gql,
-} from "@apollo/client";
+import { ApolloClient, HttpLink, InMemoryCache, gql } from "@apollo/client";
 import { setContext } from "@apollo/link-context";
 
 // Need firebase for token authentication

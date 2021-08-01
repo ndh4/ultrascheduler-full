@@ -275,6 +275,7 @@ const CourseList = ({ clickValue, scheduleID, query, searchType, idx }) => {
     // Get term from local state management
     const { data: termData } = useQuery(GET_TERM);
     let { term } = termData;
+    console.log(term);
 
     let courseResults;
     let draftSessions;
@@ -285,14 +286,20 @@ const CourseList = ({ clickValue, scheduleID, query, searchType, idx }) => {
     });
 
     // Fetch data required
-    const { data: courseData, loading, error } = useQuery(query, {
+    const {
+        data: courseData,
+        loading,
+        error,
+    } = useQuery(query, {
         variables: { ...searchType, term: term },
     });
     // Since searchType is passed in as an object with the value as the query returned value,
     // we need to check the object's value instead of directly checking searchType === ""
     if (Object.values(searchType)[0] === "") return <br />;
 
-    const errorMessage = (<p>Something went wrong. Please refresh the page and try again 🥺</p>);
+    const errorMessage = (
+        <p>Something went wrong. Please refresh the page and try again 🥺</p>
+    );
 
     if (loading) return <p>Loading...</p>;
     if (error) return errorMessage;
