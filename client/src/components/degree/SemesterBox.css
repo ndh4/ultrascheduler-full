@@ -61,7 +61,7 @@
     width: 545px;
     height: 270px;
     box-sizing: border-box;
-    border: 2px solid #149fa0;
+    border-color: transparent;
     border-radius: 5px;
 }
 
@@ -72,16 +72,23 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    border-color: transparent;
 }
 
-.closeBtn:before {
-    cursor: pointer;
-    content: "\00d7";
-    color: black;
-    font-size: 400;
-    font-weight: 500;
+.textbox {
+    position: relative;
+    top: 10px;
+    width: 520px;
+    height: 240px;
+    font-family: "Acari Sans";
+    font-size: 16px;
 
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
+    border: transparent;
+    border-radius: 5px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
 }
