@@ -6,6 +6,7 @@ import { useHistory } from "react-router";
 import Modal from 'react-modal';
 import { useState } from "react";
 
+
 const SemesterBox = () => {
     // for the edit schedule button
     const history = useHistory();
@@ -25,6 +26,18 @@ const SemesterBox = () => {
         changeInputVal(document.getElementById("notes").value);
         document.getElementById('notes').value = '';
     }
+
+    //for the add course button
+    var row = [];
+    var counter = 0;
+    const message = () => {
+        console.log("Hello World!");
+        row.push(<CourseRowBox />);
+        console.log(row);
+        counter++;
+        console.log(counter);
+    }
+
 
     return (
         <div className="bigBox">
@@ -49,11 +62,14 @@ const SemesterBox = () => {
                 </div>
             </Modal>
             
-            <button className="button" onClick="modal">
+            <button className="button" onClick={message}>
                 Add Custom Course
             </button>
             <div className="semesterFlexBox">
                 <TitleBox />
+                {/*for (var x = 0; x < counter; x++) {
+                    <CourseRowBox />
+                }*/}
                 <CourseRowBox />
                 <CourseRowBox />
                 <CourseRowBox />
@@ -63,5 +79,5 @@ const SemesterBox = () => {
         </div>
     );
 };
-
+  
 export default SemesterBox;
