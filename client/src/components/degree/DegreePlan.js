@@ -5,44 +5,23 @@ import { useState } from 'react'
 
 const DegreePlan = () => {
     // to keep the semester in a list to order them
-    const [semesterList, setSemesterList] = useState(["202110"]);
+    const [semesterList, setSemesterList] = useState([{id: 1},]);
+
+    // adding new semester to semester list (state variable)
     const addNewSem = () => {
-        // var sem = document.createElement("Semester");
-        // sem.appendChild("Semester")
-
-        // var sems = document.getElementById("semList");
-        // sems.innerHTML += Semester;
-        // console.log(sems);
-
-        // var oneSem = document.registerElement('sem-ele');
-        // document.body.appendChild(new oneSem());
-        // var sems = document.getElementById("semList");
-        // var s = document.createElement('oneSem');
-        // sems.appendChild(s);
-
-        // var sems = document.getElementById('semList');
-        // sems.value+="<Semester />"
-        // console.log(sems)
-
-        // customElements.define('new-semester', Semester, { extends: "ul" });
-        // let newSem = document.createElement('ul', { is : 'new-semester' })
-        const sems = document.getElementById("semList");
-        const oneSem = document.createElement("Semester");
-        // var s = document.getElementById('s');
-        // var text = document.createTextNode("+");
-        // oneSem.appendChild(text);
-        sems.appendChild(oneSem);
-
-        // var s = document.getElementById('s');
-        // console.log(s);
+        const newSem = {id: semesterList.length + 1}
+        setSemesterList([...semesterList, newSem])
     }
+
     return (
-        <div className='layout'>
-        <button onClick={addNewSem}>+</button>
-            <div id='semList'>
-                <Semester id='s'/>
-                <Semester/>
+        <div>
+            <div className='layout'>
+            {semesterList.map(
+            (semester) => {
+            return (
+                <Semester id={semester.id} />)})}
             </div>
+            <button onClick={addNewSem} className="addBtn">+</button>
         </div>
     )
 }
