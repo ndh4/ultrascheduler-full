@@ -177,6 +177,11 @@ ScheduleTC.addResolver({
     },
 });
 
+/**
+ * Add or remove a term from the degeree planner
+ */
+
+
 const ScheduleQuery = {
     scheduleOne: ScheduleTC.getResolver("findOrCreate", [authMiddleware]),
     scheduleMany: ScheduleTC.getResolver("findManyByUser", [authMiddleware])
@@ -200,29 +205,24 @@ const ScheduleMutation = {
     degreePlanAddTerm: ScheduleTC.getResolver("createOne"),
     degreePlanRemoveTerm: ScheduleTC.getResolver("removeOne"),
 
+    // for adding a new schedule, i can create a new term in the mutation.
+    // 
+
     degreePlanAddCourse: ScheduleTC.getResolver("createOne"),
+    degreePlanUpdateCourse: ScheduleTC.getResolver("updateOne"),
     degreePlanRemoveCourse: ScheduleTC.getResolver("removeOne")
 };
 
 // Grab whatever the frontend saves as the custom course and add a mutation
 // here that updates customCourse.
-// Use the updateOne mutation
 // Find the specific schedule ID (graphql-compose-mongoose), how to update a 
 // specific field
-// 
-// Same thing with deleting (for now, consider just adding the schedule, but
-// not deleting)
 
 // Notes is the same thing, but just a single string
 
 // Selecting current term and unchecking the box, that displays the current
 // term.
-
-// - create schedule Mutation
-// - create custom course Mutation
-// - update custom course Mutation
-// - delete a custom course Mutation
-// - delete a schedule Mutation
+// Have a bunch of check boxes that you can click to display/hide terms
 
 async function authMiddleware(resolve, source, args, context, info) {
     // Without header, throw error
