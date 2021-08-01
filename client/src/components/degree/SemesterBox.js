@@ -3,7 +3,7 @@ import "./SemesterBox.css";
 import CourseRowBox from "./CourseRowBox";
 import TitleBox from "./TitleBox";
 import { useHistory } from "react-router";
-import Modal from 'react-modal';
+import Modal from "react-modal";
 import { useState } from "react";
 
 const SemesterBox = () => {
@@ -14,10 +14,10 @@ const SemesterBox = () => {
     const [modalState, setModal] = useState(false);
     const openModal = () => {
         setModal(true);
-    }
+    };
     const closeModal = () => {
         setModal(false);
-    }
+    };
 
     // for the notes content
     const [inputVal, changeInputVal] = useState("");
@@ -61,7 +61,7 @@ const SemesterBox = () => {
                     {/* <div style={{width: "90%", wordWrap: "break-word"}}>{inputVal}</div> */}
                 </div>
             </Modal>
-            
+
             <button className="button" onClick="modal">
                 Add Custom Course
             </button>
