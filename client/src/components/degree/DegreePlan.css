@@ -13,45 +13,18 @@
     if flex-direction == column, reversed */
 }
 
-.gotoschedule {
-    width: 180px;
-    height: 35px;
-    left: 128px;
-    top: 511px;
+.addBtn {
+    width: 545px;
+    height: 270px;
 
+    margin-top: 50px;
+    margin-left: 50px;
+    margin-right: 25px;
+
+    background-color: transparent;
     border: 1.5px solid #e1e3e3;
     box-sizing: border-box;
     border-radius: 5px;
-    background-color: white;
 
-    left: 10.64%;
-    right: 82.37%;
-    top: 52.58%;
-    bottom: 45.24%;
-
-    font: "Acari Sans";
-    font-style: normal;
-    font-weight: 600;
-    font-size: 15.75px;
-    line-height: 19px;
-
-    color: #149fa0;
-    margin-bottom: 10px;
-
-    cursor: pointer;
-
-    /* display: flex;
-    flex-direction: column;
-    justify-content: center; */
-}
-
-/* hover is a keyword */
-.gotoschedule:hover {
-    background-color: #149fa0;
-    color: #e1e3e3;
-}
-
-.title {
-    text-align: center;
-    font: "Acari Sans";
+    font-size: 100%;
 }

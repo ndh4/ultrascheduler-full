@@ -14,13 +14,6 @@ const LeftCourseBox = () => {
         setModal(false);
     }
 
-    // for the course info content
-    const [inputVal, changeInputVal] = useState("");
-    const saveInput = () => {
-        changeInputVal(document.getElementById("notes").value);
-        document.getElementById('notes').value = '';
-    }
-
     return (
         <div>
         <div className='lcbox'>
@@ -28,8 +21,7 @@ const LeftCourseBox = () => {
             <a href="#" className='courseName' onClick={openModal}>PRINCIPLES OF ARCHITECTURE II</a>
         </div>
 
-        <Modal isOpen={modalState} className='modal'>
-            <button onClick={closeModal} className='closeBtn'></button>
+        <Modal isOpen={modalState} className='modal' onRequestClose={closeModal}>
             <div className='courseInfoContent'>
             <div>
                 <div>Course Instructor:</div>

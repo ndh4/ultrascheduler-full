@@ -1,34 +1,27 @@
 import React from 'react'
 import Semester from './SemesterBox'
 import './DegreePlan.css'
-import { useHistory } from "react-router";
+import { useState } from 'react'
 
 const DegreePlan = () => {
-    const history = useHistory();
+    // to keep the semester in a list to order them
+    const [semesterList, setSemesterList] = useState([{id: 1},]);
+
+    // adding new semester to semester list (state variable)
+    const addNewSem = () => {
+        const newSem = {id: semesterList.length + 1}
+        setSemesterList([...semesterList, newSem])
+    }
+
     return (
         <div>
-            <button
-                className="gotoschedule"
-                onClick={() => history.push("/schedule")}
-            >
-                Back to Schedule
-            </button>
-            <h1 className='title'>My Degree Plan</h1>
             <div className='layout'>
-                <Semester />
-                <Semester />
-                <Semester />
-                <Semester />
-                <Semester />
-                <Semester />
-                <Semester />
-                <Semester />
-                <Semester />
-                <Semester />
-                <Semester />
-                <Semester />
-                <Semester />
+            {semesterList.map(
+            (semester) => {
+            return (
+                <Semester id={semester.id} />)})}
             </div>
+            <button onClick={addNewSem} className="addBtn">+</button>
         </div>
     )
 }
