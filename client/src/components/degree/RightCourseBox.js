@@ -1,10 +1,10 @@
 import React from 'react';
 import './RightCourseBox.css'
 
-const RightCourseBox = () => {
+const RightCourseBox = (props) => {
     return (
         <div className='rcbox'>
-            <div className='courseCredit'>3</div>
+            <div className='courseCredit'>{props["credits"]}</div>
         </div>
     )
 }

@@ -12,3 +12,22 @@
     /* justify-content and align-items depend on flex-direction
     if flex-direction == column, reversed */
 }
+
+
+.addBtn {
+    width: 545px;
+    height: 315px;
+
+    margin-top: 50px;
+    margin-left: 50px;
+    margin-right: 25px;
+
+    background-color: transparent;
+    border: 1.5px solid #e1e3e3;
+    box-sizing: border-box;
+    border-radius: 5px;
+
+    font-size: 250px;
+    color: #e1e3e3;
+}
+
