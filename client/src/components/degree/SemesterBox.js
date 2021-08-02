@@ -75,7 +75,7 @@ const SemesterBox = () => {
                 </div>
             </Modal>
 
-            <button className="button" onClick="modal">
+            <button className="button" onClick={message}>
                 Add Custom Course
             </button>
             <div className="semesterFlexBox">
