@@ -49,6 +49,7 @@
     font-style: normal;
     font-size: 15px;
     line-height: 19px;
+    z-index: 10;
 }
 .saveBtn:hover {
     background-color: #e1e3e3;

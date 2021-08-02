@@ -10,7 +10,7 @@ let creditSum;
 const SemesterBox = (props) => {
     // for the edit schedule button
     const history = useHistory();
-
+    const curLength = props.currentLength;
     // for the notes modal
     const [modalState, setModal] = useState(false);
     const openModal = () => {
@@ -19,13 +19,13 @@ const SemesterBox = (props) => {
     const closeModal = () => {
         setModal(false);
     };
-
     // for the notes content
     const [inputVal, changeInputVal] = useState("");
     const saveInput = (e) => {
         changeInputVal(document.getElementById("notes").value);
         document.getElementById("notes").value = inputVal;
     };
+    const [instuctorList, setInstructorList] = useState([]);
 
     //for the add course button
     var row = [];
@@ -155,8 +155,12 @@ const SemesterBox = (props) => {
                 Add Custom Course
             </button>
             <div className="semesterFlexBox">
-                <TitleBox term    = {props["term"]} 
-                          credits = {props["credits"]}/>
+                <TitleBox
+                    currentLength={curLength}
+                    index={props.index}
+                    term={props["term"]}
+                    credits={props["credits"]}
+                />
 
                 {defaultDraftSessions && defaultDraftSessions.map((session) => {
                     return (<CourseRowBox subject   = {session["subject"]} 

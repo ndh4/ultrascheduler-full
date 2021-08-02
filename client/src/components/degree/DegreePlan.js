@@ -56,7 +56,7 @@ const MUTATION_ADD_SEMESTER = gql`
 const DegreePlan = () => {
     // to keep the semester in a list to order them
     const [semesterList, setSemesterList] = useState([]);
-
+    const [curLength, setCurLength] = useState(0);
     // get the data from the query
     const { loading, error, data } = useQuery(QUERY_ALL_USER_SCHEDULES);
 
@@ -83,6 +83,7 @@ const DegreePlan = () => {
             notes: schedule.notes,
         }));
         setSemesterList(defaultSchedule);
+        setCurLength(defaultSchedule && defaultSchedule.length);
     }, [loading, data, error]);
 
     // adding new semester to semester list (state variable)
@@ -102,7 +103,6 @@ const DegreePlan = () => {
     };
 
     const history = useHistory();
-
     return (
         <div>
             <button
@@ -117,7 +117,7 @@ const DegreePlan = () => {
                 return (<SemesterBox term={semester.term} draftSessions={semester.draftSessions} notes={semester.notes} />)
             })} */}
                 {semesterList &&
-                    semesterList.map((semester) => {
+                    semesterList.map((semester, index) => {
                         return (
                             <SemesterBox
                                 term={semester.term}
@@ -125,12 +125,14 @@ const DegreePlan = () => {
                                 notes={semester.notes}
                                 //  id={semester.id}
                                 deleteSem={() => deleteSem(semester.term)}
+                                currentLength={semesterList.length}
+                                index={index}
                             />
                         );
                     })}
                 <button
                     onClick={() => {
-                        addNewSem;
+                        addNewSem();
                     }}
                     className="addBtn"
                 >
