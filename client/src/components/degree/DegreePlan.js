@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import SemesterBox from "./SemesterBox";
 import "./DegreePlan.css";
 import { gql, useQuery, useMutation } from "@apollo/client";
+
 // query all of the schedules for a user
 const QUERY_ALL_USER_SCHEDULES = gql`
     query scheduleMany {
@@ -33,30 +34,36 @@ const QUERY_ALL_USER_SCHEDULES = gql`
         }
     }
 `;
+
 // mutation to delete semester, call from onclick the buttons
 // const MUTATION_DELETE_SEMESTER = gql`
 //     mutation
 // `;
+
 // mutation to add semester, call from onclick the buttons
 // const MUTATION_DELETE_SEMESTER = gql`
 //     mutation
 // `;
+
 const DegreePlan = () => {
     // to keep the semester in a list to order them
     const [semesterList, setSemesterList] = useState([]);
+
     // get the data from the query
     const { loading, error, data } = useQuery(QUERY_ALL_USER_SCHEDULES);
+
     // print status to page (NOTE: Raises Rending more hooks than previous... error)
     // if (loading) return <p>Loading</p>;
     // if (error) return <p>Error</p>;
     // if (!data) return <p>Error</p>;
+
     useEffect(() => {
         // get only the data we need
         // const defaultSchedule = data.scheduleMany.map(schedule =>
         //     (
-        //         {“term”: schedule.term,
-        //         “draftSessions”: schedule.draftSessions,
-        //         “notes”: schedule.notes}
+        //         {"term": schedule.term,
+        //         "draftSessions": schedule.draftSessions,
+        //         "notes": schedule.notes}
         //     )
         // );
         const defaultSchedule = data?.scheduleMany.map((schedule) => ({
@@ -66,11 +73,13 @@ const DegreePlan = () => {
         }));
         setSemesterList(defaultSchedule);
     }, [loading, data, error]);
+
     // adding new semester to semester list (state variable)
     const addNewSem = () => {
         // const newSem = {}
         // setSemesterList([...semesterList, newSem])
     };
+
     // delete a semester
     const deleteSem = (term) => {
         const updated_list = semesterList.filter(
@@ -78,6 +87,7 @@ const DegreePlan = () => {
         );
         setSemesterList(updated_list);
     };
+
     return (
         <div>
             <div className="layout">
