@@ -3,6 +3,7 @@ import { Switch, Route, Redirect, useHistory } from "react-router";
 import Auth from "./auth/Auth";
 import Login from "./login/Login";
 import Main from "./main/Main";
+import MainWithTerm from "./main/MainWithTerm";
 import { gql, useQuery, useApolloClient } from "@apollo/client";
 import LoadingScreen from "./LoadingScreen";
 import About from "./about/About";
@@ -63,8 +64,8 @@ const PrivateRoute = ({ children, ...rest }) => {
     }, []);
 
     if (isWaiting) return <LoadingScreen />;
-    if (getLoggedIn) return <Route {...rest} render={(props) => children} />
-    if (!getLoggedIn) return <Redirect to="login" />
+    if (getLoggedIn) return <Route {...rest} render={(props) => children} />;
+    if (!getLoggedIn) return <Redirect to="login" />;
 
     return <LoadingScreen />;
 };
@@ -87,6 +88,9 @@ const Routes = ({}) => {
             </Route>
             <PrivateRoute path="/schedule">
                 <Main />
+            </PrivateRoute>
+            <PrivateRoute path="/schedule/:term">
+                <MainWithTerm />
             </PrivateRoute>
             <PrivateRoute exact path="/">
                 <Redirect to="/schedule" />

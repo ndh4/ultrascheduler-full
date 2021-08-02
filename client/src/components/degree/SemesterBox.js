@@ -15,17 +15,17 @@ const SemesterBox = (props) => {
     const [modalState, setModal] = useState(false);
     const openModal = () => {
         setModal(true);
-    }
+    };
     const closeModal = () => {
         setModal(false);
-    }
+    };
 
     // for the notes content
     const [inputVal, changeInputVal] = useState("");
     const saveInput = (e) => {
         changeInputVal(document.getElementById("notes").value);
         document.getElementById("notes").value = inputVal;
-    }
+    };
 
     //for the add course button
     var row = [];
@@ -109,30 +109,49 @@ const SemesterBox = (props) => {
     // console.log('instructor list', instructorList)
     return (
         <div className="bigBox">
-            <button onClick={props.deleteSem} style={{width:"35px"}} className="button">x</button>
             <button
-                className="button" style={{width:"170px"}}
+                onClick={props.deleteSem}
+                style={{ width: "35px" }}
+                className="button"
+            >
+                x
+            </button>
+            <button
+                className="button"
+                style={{ width: "170px" }}
                 onClick={() => history.push("/schedule")}
             >
                 Edit Schedule
             </button>
 
-            <button className="button" style={{width:"170px"}} onClick={openModal}>
+            <button
+                className="button"
+                style={{ width: "170px" }}
+                onClick={openModal}
+            >
                 Edit Notes
             </button>
-            <Modal isOpen={modalState} className='modal' onRequestClose={closeModal}>
-                <div className='notesContent'>
-                    <textarea 
-                        maxlength='400' 
-                        placeholder='Write your notes here...' 
-                        className='textbox' 
+            <Modal
+                isOpen={modalState}
+                className="modal"
+                onRequestClose={closeModal}
+            >
+                <div className="notesContent">
+                    <textarea
+                        maxlength="400"
+                        placeholder="Write your notes here..."
+                        className="textbox"
                         value={inputVal}
-                        onChange={(e) => changeInputVal(e.target.value)}>
-                    </textarea>
+                        onChange={(e) => changeInputVal(e.target.value)}
+                    ></textarea>
                 </div>
             </Modal>
 
-            <button className="button" style={{width:"170px"}} onClick="modal">
+            <button
+                className="button"
+                style={{ width: "170px" }}
+                onClick="modal"
+            >
                 Add Custom Course
             </button>
             <div className="semesterFlexBox">
@@ -156,15 +175,5 @@ const SemesterBox = (props) => {
     );
 };
 
-export {creditSum};
+export { creditSum };
 export default SemesterBox;
-
-
-
-
-
-
-
-
-
-

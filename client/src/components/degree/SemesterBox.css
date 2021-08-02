@@ -1,58 +1,47 @@
 .semesterFlexBox {
     /* Rectangle 1728 */
     width: 545px;
-    height: 270px;
-
-    border: 1.5px solid #e1e3e3;
+    height: 30%;
+    border: transparent;
     box-sizing: border-box;
     border-radius: 5px;
 }
-
 .button {
     height: 35px;
     left: 128px;
     top: 511px;
-
     border: 1.5px solid #e1e3e3;
     box-sizing: border-box;
     background-color: white;
-
     left: 10.64%;
     right: 82.37%;
     top: 52.58%;
     bottom: 45.24%;
-
     font: "Acari Sans";
     font-style: normal;
     font-weight: 600;
     font-size: 15.75px;
     line-height: 19px;
-
     color: #149fa0;
     margin-bottom: 10px;
-
     cursor: pointer;
-
     /* display: flex;
     flex-direction: column;
     justify-content: center; */
 }
-
 /* hover is a keyword */
 .button:hover {
     background-color: #149fa0;
     color: #e1e3e3;
 }
-
 .bigBox {
     width: 545px;
-    height: 315px;
+    /* height: 315px; */
     /* border: 1.5px solid #d45b0b; */
     margin-top: 50px;
     margin-left: 50px;
     margin-right: 25px;
 }
-
 .modal {
     margin-top: 15%;
     margin-left: 30%;
@@ -62,7 +51,6 @@
     border-color: transparent;
     border-radius: 5px;
 }
-
 .notesContent {
     font: "Acari Sans";
     font-style: normal;
@@ -72,7 +60,6 @@
     align-items: center;
     border-color: transparent;
 }
-
 .textbox {
     position: relative;
     top: 10px;
@@ -80,31 +67,11 @@
     height: 240px;
     font-family: "Acari Sans";
     font-size: 16px;
-
     border: transparent;
     border-radius: 5px;
 }
-
 input:focus,
 textarea:focus,
 select:focus {
     outline: none;
-}
-
-
-.deleteBtn {
-    position: relative;
-    top: -1px;
-    width: 35px;
-    height: 35px;
-    cursor: pointer;
-    color: #5b5b5b;
-    border: 1.5px solid #e1e3e3;
-    box-sizing: border-box;
-    background-color: white;
-}
-
-.deleteBtn:hover {
-    background-color: red;
-    color: #e1e3e3;
 }

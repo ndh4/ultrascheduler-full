@@ -28,8 +28,11 @@ const QUERY_ALL_USER_SCHEDULES = gql`
 `;
 
 const termOptions = [
-    { label: "Spring 2021", value: 202120},
-    { label: "Fall 2010", value: 201010},
+    { label: "Spring 2021", value: 202120 },
+    { label: "Fall 2021", value: 202110 },
+    { label: "Spring 2022", value: 202220 },
+    { label: "Fall 2022", value: 202210 },
+    { label: "Fall 2023", value: 202310 },
 ];
 
 const formatTerm = (term) =>
@@ -106,6 +109,21 @@ function Header() {
                 >
                     {location.pathname == "/about" ? "Schedule" : "About"}
                 </Button>
+
+                <Button
+                    variant="outlined"
+                    style={{ minWidth: 150 }}
+                    onClick={() =>
+                        location.pathname == "/degree_plan"
+                            ? history.push("/schedule")
+                            : history.push("/degree_plan")
+                    }
+                >
+                    {location.pathname == "/degree_plan"
+                        ? "Schedule"
+                        : "Degree Plan"}
+                </Button>
+
                 <Button variant="outlined" onClick={() => handleLogoutClick()}>
                     Log Out
                 </Button>
