@@ -49,7 +49,6 @@ const QUERY_ALL_USER_SCHEDULES = gql`
 const DegreePlan = () => {
     // to keep the semester in a list to order them
     const [semesterList, setSemesterList] = useState([]);
-    const [curLength, setCurLength] = useState(0);
     // get the data from the query
     const { loading, error, data } = useQuery(QUERY_ALL_USER_SCHEDULES);
 
@@ -73,7 +72,6 @@ const DegreePlan = () => {
             notes: schedule.notes,
         }));
         setSemesterList(defaultSchedule);
-        setCurLength(defaultSchedule && defaultSchedule.length);
     }, [loading, data, error]);
 
     // adding new semester to semester list (state variable)
