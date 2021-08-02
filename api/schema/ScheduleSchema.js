@@ -83,7 +83,7 @@ ScheduleTC.addResolver({
     name: "scheduleUpdateDraftSessions",
     type: ScheduleTC,
     // day is an enum, so we want to get its enum from the model directly
-    args: { scheduleID: "ID!", push: "Boolean", sessionID: "ID!"},
+    args: { scheduleID: "ID!", push: "Boolean", sessionID: "ID!" },
     resolve: async ({ source, args, context, info }) => {
         // Check that requested schedule and requesting user match
         let match = checkScheduleUserMatch(args.scheduleID, context.decodedJWT);
@@ -181,10 +181,9 @@ ScheduleTC.addResolver({
  * Add or remove a term from the degeree planner
  */
 
-
 const ScheduleQuery = {
     scheduleOne: ScheduleTC.getResolver("findOrCreate", [authMiddleware]),
-    scheduleMany: ScheduleTC.getResolver("findManyByUser", [authMiddleware])
+    scheduleMany: ScheduleTC.getResolver("findManyByUser", [authMiddleware]),
 };
 
 const ScheduleMutation = {
@@ -206,16 +205,16 @@ const ScheduleMutation = {
     degreePlanRemoveTerm: ScheduleTC.getResolver("removeOne"),
 
     // for adding a new schedule, i can create a new term in the mutation.
-    // 
+    //
 
     degreePlanAddCourse: ScheduleTC.getResolver("createOne"),
     degreePlanUpdateCourse: ScheduleTC.getResolver("updateOne"),
-    degreePlanRemoveCourse: ScheduleTC.getResolver("removeOne")
+    degreePlanRemoveCourse: ScheduleTC.getResolver("removeOne"),
 };
 
 // Grab whatever the frontend saves as the custom course and add a mutation
 // here that updates customCourse.
-// Find the specific schedule ID (graphql-compose-mongoose), how to update a 
+// Find the specific schedule ID (graphql-compose-mongoose), how to update a
 // specific field
 
 // Notes is the same thing, but just a single string

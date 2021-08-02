@@ -14,6 +14,7 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 
 import "./Main.global.css";
 import Error from "../error/Error";
+import { useParams } from "react-router";
 
 export const BottomModeContext = createContext("Calendar");
 
@@ -90,7 +91,9 @@ const Main = ({}) => {
     let { data: storeData } = useQuery(GET_LOCAL_DATA);
     let { term, recentUpdate } = storeData;
     const [bottomMode, setBottomMode] = useState("Calendar");
-    console.log(term);
+    const { curTerm } = useParams();
+    console.log(curTerm);
+    // console.log(term);
     // Need to be able to update recentUpdate field on the user when they dismiss
     let [seenRecentUpdate] = useMutation(SEEN_RECENT_UPDATE);
 
