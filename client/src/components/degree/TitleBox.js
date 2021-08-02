@@ -14,14 +14,13 @@ const TitleBox = (props) => {
     } else {
         convertNumToSem = "Summer Semester";
     }
-
+    console.log(props.term);
     return (
         <div className="rowBox">
             <LeftTitleBox
-                year={props["term"].substring(0, 4)}
+                year={props.term.substring(0, 4)}
                 semester={convertNumToSem}
-                currentLength={props.currentLength}
-                index={props.index}
+                selector={props.selector}
             />
             <RightTitleBox credits={props["credits"]} />
         </div>
