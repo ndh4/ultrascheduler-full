@@ -18,8 +18,18 @@ const GET_LOCAL_DATA = gql`
     }
 `;
 
+const QUERY_ALL_USER_SCHEDULES = gql`
+    query scheduleMany {
+        scheduleMany {
+        _id
+        term
+    }
+}
+`;
+
 const termOptions = [
-    { label: "Spring 2021", value: 202120 },
+    { label: "Spring 2021", value: 202120},
+    { label: "Fall 2010", value: 201010},
 ];
 
 const formatTerm = (term) =>
@@ -32,6 +42,8 @@ import firebase from "firebase/app";
 import "firebase/auth";
 
 function Header() {
+    const {loadingScheduleQuery, errorScheduleQuery, dataScheduleQuery} = useQuery(QUERY_ALL_USER_SCHEDULES)
+
     const history = useHistory();
     const client = useApolloClient();
     const location = useLocation();

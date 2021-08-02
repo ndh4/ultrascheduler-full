@@ -9,6 +9,7 @@ const CourseRowBox = (props) => {
             <LeftCourseBox  courseNum     = {props["courseNum"]} 
                             longTitle     = {props["longTitle"]} 
                             subject       = {props["subject"]}
+                            // instructorName  = {props["instructorName"]}
                             instructorFN  = {props["instructorFN"]}
                             instructorLN  = {props["instructorLN"]}
                             prereqs       = {props["prereqs"]}

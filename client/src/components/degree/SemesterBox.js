@@ -1,4 +1,4 @@
-import React, { useState }from "react";
+import React, { useState, useEffect }from "react";
 import "./SemesterBox.css";
 import CourseRowBox from "./CourseRowBox";
 import TitleBox from "./TitleBox";
@@ -37,27 +37,76 @@ const SemesterBox = (props) => {
         counter++;
         console.log(counter);
     }
+    
+    // console.log('checkmark', props["draftSessions"][6].session)
+    // console.log('checkmark', props["draftSessions"][6].session)
+
+    // const instructorFN = (typeof props["draftSessions"].session.instructors[0].firstName !== undefined) ? props["draftSessions"].sessions.instructors[0].firstName : "N/A"
+    // const instructorLN = (typeof props["draftSessions"].session.instructors[0].lastName !== undefined) ? props["draftSessions"].sessions.instructors[0].lastName : "N/A"
+
+    // console.log('check', props["draftSessions"])
+    // console.log('check1', props["draftSessions"][6].session.instructors)
 
     const defaultDraftSessions = props["draftSessions"].map(sessions => (
         {
         "subject": sessions.session.course.subject,
-            "courseNum": sessions.session.course.courseNum, 
-            "longTitle": sessions.session.course.longTitle, 
-            "credits": sessions.session.course.creditsMin,
-            "instructorFN": (sessions.session.instructors[0] == undefined) ? ("N/A") : (sessions.session.instructors[0].firstName),
-            "instructorLN": sessions.session.instructors[0].lastName,
-            "prereqs": sessions.session.course.prereqs,
-            "corereqs": sessions.session.course.corereqs,
-            "maxEnrollment": sessions.session.maxEnrollment
+        "courseNum": sessions.session.course.courseNum, 
+        "longTitle": sessions.session.course.longTitle, 
+        "credits": sessions.session.course.creditsMin,
+        // "instructors": (sessions.session.instructors.length != 0) ? sessions.session.instructors : "N/A",
+        "instructorFN": sessions.session.instructors[0].firstName,
+        "instructorLN": sessions.session.instructors[0].lastName,
+        "prereqs": sessions.session.course.prereqs,
+        "coreqs": sessions.session.course.coreqs,
+        "maxEnrollment": sessions.session.maxEnrollment
         }
     ));
+    // console.log('check2', defaultDraftSessions)
 
+    // console.log(defaultDraftSessions[0]["instructors"])
+    // console.log('check3', defaultDraftSessions[6]['instructors'])
+
+    // const [instructorList, setInstructorList] = useState([]);
+
+    // console.log("before the use effect")
+    
+    // useEffect(() => {
+    //     console.log("enter the use effect")
+    //     defaultDraftSessions && defaultDraftSessions.map((session) => {
+    //     const instructorsPerSession = []
+    //     console.log('entered')
+    //     if (session['instructors'].length != 0) {
+    //         console.log("hi")
+    //         session['instructors'] && session['instructors'].map((instructor) => (
+    //             instructorsPerSession.push({ 
+    //                 'instructorName': instructor.firstName + ' ' + instructor.lastName
+    //             })
+    //         ))
+    //     } else {
+    //         instructorsPerSession.push({'instructorName': "N/A"})
+    //     }
+    //     setInstructorList([...instructorList, instructorsPerSession])
+    // })
+    // })
+    
+    // if (defaultDraftSessions[0]["instructors"].length != 0){
+    //     instructorList = defaultDraftSessions["instructors"].map((instructor) => (
+    //         {
+    //             'instructorName' : instructor.firstName + ' ' + instructor.lastName,
+    //         }
+    //     ))
+    // } else {
+    //     instructorDict = {
+    //         'instructorName' : "N/A",
+    //     }
+    //     instructorList.push(instructorDict)
+    // }
+        
     creditSum = defaultDraftSessions.reduce(function(sum, arr) {
         return sum + arr.credits
     },0);
-
-    console.log(creditSum)
-        
+    
+    // console.log('instructor list', instructorList)
     return (
         <div className="bigBox">
             <button onClick={props.deleteSem} style={{width:"35px"}} className="button">x</button>
@@ -90,14 +139,13 @@ const SemesterBox = (props) => {
                 <TitleBox term    = {props["term"]} 
                           credits = {props["credits"]}/>
 
-                {defaultDraftSessions.map((session) => {
+                {defaultDraftSessions && defaultDraftSessions.map((session) => {
                     return (<CourseRowBox subject   = {session["subject"]} 
                                           courseNum = {session["courseNum"]} 
                                           longTitle = {session["longTitle"]} 
                                           credits   = {session["credits"]} 
-
-                                          instructorFN  = {session["instructorFN"]}
-                                          instructorLN  = {session["instructorLN"]}
+                                          instructorFN  = {session['instructorFN']}
+                                          instructorLN  = {session['instructorLN']}
                                           prereqs       = {session["prereqs"]}
                                           coreqs        = {session["coreqs"]}
                                           maxEnrollment = {session["maxEnrollment"]}/>

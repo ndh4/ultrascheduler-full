@@ -205,9 +205,6 @@ const ScheduleMutation = {
     degreePlanAddTerm: ScheduleTC.getResolver("createOne"),
     degreePlanRemoveTerm: ScheduleTC.getResolver("removeOne"),
 
-    // for adding a new schedule, i can create a new term in the mutation.
-    // 
-
     degreePlanAddCourse: ScheduleTC.getResolver("createOne"),
     degreePlanUpdateCourse: ScheduleTC.getResolver("updateOne"),
     degreePlanRemoveCourse: ScheduleTC.getResolver("removeOne")
