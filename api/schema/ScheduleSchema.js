@@ -177,6 +177,18 @@ ScheduleTC.addResolver({
     },
 });
 
+ScheduleTC.addResolver({
+    name: "createNewSchedule",
+    type: ScheduleTC,
+    args: ScheduleTC.getResolver("createOne").getArgs(),
+    resolve: async ({ source, args, context, info }) => {
+        const { user } = args.filter;
+        // Create if it doesn't exist
+        console.log(args);
+        return await Schedule.create({ term: args.record.term, user: user });
+    },
+});
+
 /**
  * Add or remove a term from the degeree planner
  */
@@ -200,8 +212,11 @@ const ScheduleMutation = {
         rp.args.push = false;
         return next(rp);
     }),
-
-    degreePlanAddTerm: ScheduleTC.getResolver("createOne"),
+    // Schedule.create({ term: term, user: user })
+    createNewSchedule: ScheduleTC.getResolver("createNewSchedule", [
+        authMiddleware,
+    ]),
+    degreePlanAddTerm: ScheduleTC.getResolver("createOne", [authMiddleware]),
     degreePlanRemoveTerm: ScheduleTC.getResolver("removeOne"),
 
     // for adding a new schedule, i can create a new term in the mutation.

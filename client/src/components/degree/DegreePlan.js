@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import SemesterBox from "./SemesterBox";
 import "./DegreePlan.css";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { useHistory } from "react-router";
+import { Context as TermContext } from "../../contexts/termContext";
+import TitleBox from "./TitleBox";
 
 // query all of the schedules for a user
 const QUERY_ALL_USER_SCHEDULES = gql`
@@ -10,6 +12,9 @@ const QUERY_ALL_USER_SCHEDULES = gql`
         scheduleMany {
             _id
             term
+            user {
+                _id
+            }
             draftSessions {
                 session {
                     course {
@@ -37,15 +42,26 @@ const QUERY_ALL_USER_SCHEDULES = gql`
 `;
 
 // mutation to add semester, call from onclick the buttons
+// const MUTATION_ADD_SEMESTER = gql`
+//     mutation degreePlanAddTerm($term: String!) {
+//         degreePlanAddTerm(record: { term: $term }) {
+//             record {
+//                 _id
+//                 term
+//             }
+//         }
+//     }
+// `;
+
 const MUTATION_ADD_SEMESTER = gql`
-    mutation degreePlanAddTerm($term: String!) {
-        degreePlanAddTerm(record: {term: $term}) {
-        record {
-            _id
+    mutation createNewSchedule($term: String!) {
+        createNewSchedule(record: { term: $term }) {
             term
+            user {
+                _id
+            }
         }
     }
-}
 `;
 
 // mutation to delete semester, call from onclick the buttons
@@ -56,12 +72,16 @@ const MUTATION_ADD_SEMESTER = gql`
 const DegreePlan = () => {
     // to keep the semester in a list to order them
     const [semesterList, setSemesterList] = useState([]);
-    const [curLength, setCurLength] = useState(0);
+    const [userId, setUserId] = useState("");
     // get the data from the query
     const { loading, error, data } = useQuery(QUERY_ALL_USER_SCHEDULES);
+    const {
+        state: { term },
+    } = useContext(TermContext);
 
     // add a new semester from the mutation
-    const [mutateSemester, {loadingMutation, errorMutation, dataMutation}] = useMutation(MUTATION_ADD_SEMESTER);
+    const [mutateSemester, { loadingMutation, errorMutation, dataMutation }] =
+        useMutation(MUTATION_ADD_SEMESTER);
 
     // print status to page (NOTE: Raises Rending more hooks than previous... error)
     // if (loading) return <p>Loading</p>;
@@ -77,22 +97,30 @@ const DegreePlan = () => {
         //         "notes": schedule.notes}
         //     )
         // );
+        const user_id = data?.scheduleMany[0].user._id;
         const defaultSchedule = data?.scheduleMany.map((schedule) => ({
             term: schedule.term,
             draftSessions: schedule.draftSessions,
             notes: schedule.notes,
         }));
+        setUserId(user_id);
         setSemesterList(defaultSchedule);
-        setCurLength(defaultSchedule && defaultSchedule.length);
     }, [loading, data, error]);
+    console.log(userId);
 
     // adding new semester to semester list (state variable)
     const addNewSem = () => {
-        console.log("entered")
-        mutateSemester({ variables: {term: "201710", draftSessions: []}})
-        const newSem = {'term': "201710", "draftSessions": [], "notes": ""}
-        setSemesterList([...semesterList, newSem])
-    }
+        console.log("entered");
+        mutateSemester({
+            variables: {
+                term: term,
+                draftSessions: [],
+            },
+        });
+        const newSem = { term: term, draftSessions: [], notes: "" };
+        setSemesterList([...semesterList, newSem]);
+    };
+    console.log(semesterList);
 
     // delete a semester
     const deleteSem = (term) => {
@@ -127,17 +155,23 @@ const DegreePlan = () => {
                                 deleteSem={() => deleteSem(semester.term)}
                                 currentLength={semesterList.length}
                                 index={index}
+                                selector={false}
                             />
                         );
                     })}
-                <button
-                    onClick={() => {
-                        addNewSem();
-                    }}
-                    className="addBtn"
-                >
-                    +
-                </button>
+
+                <div className="bigBox">
+                    <TitleBox term={""} credits={0} selector={true} />
+
+                    <button
+                        onClick={() => {
+                            addNewSem();
+                        }}
+                        className="addBtn"
+                    >
+                        +
+                    </button>
+                </div>
             </div>
         </div>
     );

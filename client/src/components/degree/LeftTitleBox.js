@@ -1,23 +1,29 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import "./LeftTitleBox.css";
 import { useState } from "react";
+import { Context as TermContext } from "../../contexts/termContext";
 
 const LeftTitleBox = (props) => {
     // for the drop-down box for semester selection
-    const [year, setYear] = useState(props.year);
-    const [sem, setSem] = useState(props.semester);
-
+    const { getTerm } = useContext(TermContext);
+    // 2021 and Fall are the current year default value
+    const [year, setYear] = useState(2021);
+    const [sem, setSem] = useState("Fall");
     const saveSelections = (e) => {
         setYear(e.target.value);
         setSem(e.target.value);
-        console.log(year, sem);
     };
-    console.log(props.index);
-    console.log(props.currentLength - 1);
+
+    useEffect(() => {
+        if (year && sem) {
+            let curTerm = `${year}${sem == "Fall" ? "10" : "20"}`;
+            getTerm(curTerm);
+        }
+    }, [year, sem]);
 
     return (
         <div className="ltbox">
-            {props.index != props.currentLength - 1 ? (
+            {!props.selector ? (
                 <>
                     <div className="year">{props.year}</div>
                     <div className="semester">{props.semester}</div>

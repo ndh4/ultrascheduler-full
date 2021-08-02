@@ -27,8 +27,8 @@ const GET_LOCAL_DATA = gql`
 const QUERY_USER_SCHEDULES = gql`
     query scheduleMany {
         scheduleMany {
-        _id
-        term
+            _id
+            term
         }
     }
 `;

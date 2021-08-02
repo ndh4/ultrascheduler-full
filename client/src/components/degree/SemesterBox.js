@@ -1,4 +1,4 @@
-import React, { useState, useEffect }from "react";
+import React, { useState, useEffect } from "react";
 import "./SemesterBox.css";
 import CourseRowBox from "./CourseRowBox";
 import TitleBox from "./TitleBox";
@@ -36,8 +36,8 @@ const SemesterBox = (props) => {
         console.log(row);
         counter++;
         console.log(counter);
-    }
-    
+    };
+
     // console.log('checkmark', props["draftSessions"][6].session)
     // console.log('checkmark', props["draftSessions"][6].session)
 
@@ -70,7 +70,7 @@ const SemesterBox = (props) => {
     // const [instructorList, setInstructorList] = useState([]);
 
     // console.log("before the use effect")
-    
+
     // useEffect(() => {
     //     console.log("enter the use effect")
     //     defaultDraftSessions && defaultDraftSessions.map((session) => {
@@ -79,7 +79,7 @@ const SemesterBox = (props) => {
     //     if (session['instructors'].length != 0) {
     //         console.log("hi")
     //         session['instructors'] && session['instructors'].map((instructor) => (
-    //             instructorsPerSession.push({ 
+    //             instructorsPerSession.push({
     //                 'instructorName': instructor.firstName + ' ' + instructor.lastName
     //             })
     //         ))
@@ -89,7 +89,7 @@ const SemesterBox = (props) => {
     //     setInstructorList([...instructorList, instructorsPerSession])
     // })
     // })
-    
+
     // if (defaultDraftSessions[0]["instructors"].length != 0){
     //     instructorList = defaultDraftSessions["instructors"].map((instructor) => (
     //         {
@@ -102,11 +102,12 @@ const SemesterBox = (props) => {
     //     }
     //     instructorList.push(instructorDict)
     // }
-        
-    creditSum = defaultDraftSessions.reduce(function(sum, arr) {
-        return sum + arr.credits
-    },0);
-    
+
+    creditSum = defaultDraftSessions.reduce(function (sum, arr) {
+        return sum + arr.credits;
+    }, 0);
+    console.log(props.term);
+
     // console.log('instructor list', instructorList)
     return (
         <div className="bigBox">
@@ -159,22 +160,27 @@ const SemesterBox = (props) => {
                 <TitleBox
                     currentLength={curLength}
                     index={props.index}
-                    term={props["term"]}
+                    term={props.term}
                     credits={props["credits"]}
+                    selector={props.selector}
                 />
 
-                {defaultDraftSessions && defaultDraftSessions.map((session) => {
-                    return (<CourseRowBox subject   = {session["subject"]} 
-                                          courseNum = {session["courseNum"]} 
-                                          longTitle = {session["longTitle"]} 
-                                          credits   = {session["credits"]} 
-                                          instructorFN  = {session['instructorFN']}
-                                          instructorLN  = {session['instructorLN']}
-                                          prereqs       = {session["prereqs"]}
-                                          coreqs        = {session["coreqs"]}
-                                          maxEnrollment = {session["maxEnrollment"]}/>
-                    )
-                })}
+                {defaultDraftSessions &&
+                    defaultDraftSessions.map((session) => {
+                        return (
+                            <CourseRowBox
+                                subject={session["subject"]}
+                                courseNum={session["courseNum"]}
+                                longTitle={session["longTitle"]}
+                                credits={session["credits"]}
+                                instructorFN={session["instructorFN"]}
+                                instructorLN={session["instructorLN"]}
+                                prereqs={session["prereqs"]}
+                                coreqs={session["coreqs"]}
+                                maxEnrollment={session["maxEnrollment"]}
+                            />
+                        );
+                    })}
             </div>
         </div>
     );
