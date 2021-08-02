@@ -30,7 +30,10 @@ const LeftCourseBox = (props) => {
 >
             <div className='courseInfoContent'>
             <div>
-                <pre class="text"><b>  Course Instructor:</b> {props["instructorFN"]} {props["instructorLN"]}</pre>
+                {/* <pre class="text"><b>  Course Instructor:</b> <ul> {props['instructorName'].map((name)=>{
+                    <li>{name}</li>
+                })} </ul></pre> */}
+                <pre class="text"><b>  Course Instructor:</b> {props['instructorFN']} {props['instructorLN']}</pre>
                 <pre class="text"><b>  Max Enrollment:   </b> {props["maxEnrollment"]}</pre>
                 <pre class="text"><b>  Prerequisites:    </b> {prereqs}</pre>
                 <pre class="text"><b>  Corerequisites:   </b> {coreqs}</pre>

@@ -36,12 +36,19 @@ const QUERY_ALL_USER_SCHEDULES = gql`
     }
 `;
 
-// mutation to delete semester, call from onclick the buttons
-// const MUTATION_DELETE_SEMESTER = gql`
-//     mutation
-// `;
-
 // mutation to add semester, call from onclick the buttons
+const MUTATION_ADD_SEMESTER = gql`
+    mutation degreePlanAddTerm($term: String!) {
+        degreePlanAddTerm(record: {term: $term}) {
+        record {
+            _id
+            term
+        }
+    }
+}
+`;
+
+// mutation to delete semester, call from onclick the buttons
 // const MUTATION_DELETE_SEMESTER = gql`
 //     mutation
 // `;
@@ -51,6 +58,9 @@ const DegreePlan = () => {
     const [semesterList, setSemesterList] = useState([]);
     // get the data from the query
     const { loading, error, data } = useQuery(QUERY_ALL_USER_SCHEDULES);
+
+    // add a new semester from the mutation
+    const [mutateSemester, {loadingMutation, errorMutation, dataMutation}] = useMutation(MUTATION_ADD_SEMESTER);
 
     // print status to page (NOTE: Raises Rending more hooks than previous... error)
     // if (loading) return <p>Loading</p>;
@@ -76,9 +86,11 @@ const DegreePlan = () => {
 
     // adding new semester to semester list (state variable)
     const addNewSem = () => {
-        // const newSem = {};
-        // setSemesterList([...semesterList, newSem]);
-    };
+        console.log("entered")
+        mutateSemester({ variables: {term: "201710", draftSessions: []}})
+        const newSem = {'term': "201710", "draftSessions": [], "notes": ""}
+        setSemesterList([...semesterList, newSem])
+    }
 
     // delete a semester
     const deleteSem = (term) => {
