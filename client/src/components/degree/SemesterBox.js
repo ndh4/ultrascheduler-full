@@ -47,6 +47,7 @@ const SemesterBox = (props) => {
     // console.log('check', props["draftSessions"])
     // console.log('check1', props["draftSessions"][6].session.instructors)
 
+    console.log('draft sessions', props['draftSessions'])
     const defaultDraftSessions = props["draftSessions"].map(sessions => (
         {
         "subject": sessions.session.course.subject,
@@ -54,8 +55,8 @@ const SemesterBox = (props) => {
         "longTitle": sessions.session.course.longTitle, 
         "credits": sessions.session.course.creditsMin,
         // "instructors": (sessions.session.instructors.length != 0) ? sessions.session.instructors : "N/A",
-        "instructorFN": sessions.session.instructors[0].firstName,
-        "instructorLN": sessions.session.instructors[0].lastName,
+        "instructorFN": (sessions.session.instructors.length != 0) ? sessions.session.instructors[0].firstName: 'N/A',
+        "instructorLN": (sessions.session.instructors.length != 0) ?sessions.session.instructors[0].lastName : '',
         "prereqs": sessions.session.course.prereqs,
         "coreqs": sessions.session.course.coreqs,
         "maxEnrollment": sessions.session.maxEnrollment
@@ -138,7 +139,7 @@ const SemesterBox = (props) => {
             >
                 <div className="notesContent">
                     <textarea
-                        maxlength="400"
+                        maxlength="689"
                         placeholder="Write your notes here..."
                         className="textbox"
                         value={inputVal}

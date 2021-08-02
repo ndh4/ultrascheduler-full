@@ -1,6 +1,6 @@
 .ltbox {
     position: relative;
-    width: 420px;
+    width: 421px;
     height: 44px;
     left: 1px;
     top: -0.5px;
@@ -12,12 +12,13 @@
 }
 .year {
     position: relative;
-    left: 30px;
+    left: 20px;
     font: Roboto;
     font-style: normal;
     font-weight: bold;
     font-size: 16px;
     line-height: 19px;
+    padding-top: 2px;
     /* identical to box height */
     letter-spacing: 0.05em;
     color: #5b5b5b;
@@ -26,12 +27,13 @@
 }
 .semester {
     position: relative;
-    left: 35px;
+    left: 25px;
     font: Roboto;
     font-style: normal;
     font-weight: bold;
     font-size: 16px;
     line-height: 19px;
+    padding-top: 2px;
     /* identical to box height */
     letter-spacing: 0.05em;
     color: #5b5b5b;

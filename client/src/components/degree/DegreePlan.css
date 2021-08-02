@@ -24,3 +24,12 @@
     font-size: 250px;
     color: #e1e3e3;
 }
+
+.title {
+    font: "Acari Sans";
+    font-style: normal;
+    font-size: 32px;
+    padding-left: 20px;
+    margin-top: 47px;
+    position: relative;
+}

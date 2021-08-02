@@ -12,6 +12,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-top: 2px;
     font: Roboto;
     font-style: normal;
     font-weight: bold;

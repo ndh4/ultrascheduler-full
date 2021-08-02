@@ -9,7 +9,9 @@
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: flex-start;
+    padding: 20px;
+    column-gap: 0.875rem;
 }
 .courseName:hover {
     color: #338182;
@@ -21,28 +23,35 @@
     font-weight: bold;
     font-size: 16px;
     line-height: 19px;
+    padding-top: 3px;
     color: #338182;
 }
 .courseName {
     height: 19px;
     font: "Acari Sans";
     font-style: normal;
+    padding-top: 3px;
     font-size: 16px;
     line-height: 19px;
     color: #63ccce;
 }
 .modal {
-    margin-top: 15%;
-    margin-left: 30%;
     width: 545px;
     height: 270px;
-    box-sizing: border-box;
     border: 2px solid #149fa0;
     border-radius: 5px;
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -272px;
+    margin-top: -135px;
+    overflow-y: auto;
 }
 .courseInfoContent {
     font: "Acari Sans";
     font-style: normal;
+    font-size: 16px;
     display: flex;
     flex-direction: column;
     justify-content: left;
