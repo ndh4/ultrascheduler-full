@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./SemesterBox.css";
 import CourseRowBox from "./CourseRowBox";
 import TitleBox from "./TitleBox";
@@ -10,7 +10,7 @@ let creditSum;
 const SemesterBox = (props) => {
     // for the edit schedule button
     const history = useHistory();
-
+    const curLength = props.currentLength;
     // for the notes modal
     const [modalState, setModal] = useState(false);
     const openModal = () => {
@@ -19,13 +19,13 @@ const SemesterBox = (props) => {
     const closeModal = () => {
         setModal(false);
     };
-
     // for the notes content
     const [inputVal, changeInputVal] = useState("");
     const saveInput = (e) => {
         changeInputVal(document.getElementById("notes").value);
         document.getElementById("notes").value = inputVal;
     };
+    const [instuctorList, setInstructorList] = useState([]);
 
     //for the add course button
     const defaultDraftSessions = props.draftSessions.map((sessions) => ({
@@ -40,6 +40,7 @@ const SemesterBox = (props) => {
         instructorLN: sessions.session.instructors[0]
             ? sessions.session.instructors[0].lastName
             : "N/A",
+        instructorList: sessions.session.instructors,
         prereqs: sessions.session.course.prereqs,
         corereqs: sessions.session.course.corereqs,
         maxEnrollment: sessions.session.maxEnrollment,
@@ -48,8 +49,6 @@ const SemesterBox = (props) => {
     creditSum = defaultDraftSessions.reduce(function (sum, arr) {
         return sum + arr.credits;
     }, 0);
-
-    console.log(creditSum);
 
     return (
         <div className="bigBox">
@@ -99,7 +98,12 @@ const SemesterBox = (props) => {
                 Add Custom Course
             </button>
             <div className="semesterFlexBox">
-                <TitleBox term={props["term"]} credits={props["credits"]} />
+                <TitleBox
+                    currentLength={curLength}
+                    index={props.index}
+                    term={props["term"]}
+                    credits={props["credits"]}
+                />
 
                 {defaultDraftSessions &&
                     defaultDraftSessions.map((session) => {
