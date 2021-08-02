@@ -15,7 +15,7 @@
 
 .year {
     position: relative;
-    left: 30px;
+    left: 20px;
 
     font: Roboto;
     font-style: normal;
@@ -31,7 +31,7 @@
 
 .semester {
     position: relative;
-    left: 35px;
+    left: 25px;
 
     font: Roboto;
     font-style: normal;

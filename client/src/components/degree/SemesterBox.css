@@ -90,3 +90,21 @@ textarea:focus,
 select:focus {
     outline: none;
 }
+
+
+.deleteBtn {
+    position: relative;
+    top: -1px;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    color: #5b5b5b;
+    border: 1.5px solid #e1e3e3;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.deleteBtn:hover {
+    background-color: red;
+    color: #e1e3e3;
+}

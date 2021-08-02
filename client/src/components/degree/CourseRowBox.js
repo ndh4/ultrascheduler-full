@@ -3,11 +3,18 @@ import './RowBox.css';
 import LeftCourseBox from './LeftCourseBox';
 import RightCourseBox from './RightCourseBox';
 
-const CourseRowBox = () => {
+const CourseRowBox = (props) => {
     return (
         <div className='rowBox'>
-            <LeftCourseBox />
-            <RightCourseBox />
+            <LeftCourseBox  courseNum     = {props["courseNum"]} 
+                            longTitle     = {props["longTitle"]} 
+                            subject       = {props["subject"]}
+                            instructorFN  = {props["instructorFN"]}
+                            instructorLN  = {props["instructorLN"]}
+                            prereqs       = {props["prereqs"]}
+                            coreqs        = {props["coreqs"]}
+                            maxEnrollment = {props["maxEnrollment"]}/>
+            <RightCourseBox credits       = {props["credits"]}/>
         </div>
     )
 }
