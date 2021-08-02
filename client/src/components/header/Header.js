@@ -94,6 +94,16 @@ function Header() {
                 >
                     {location.pathname == "/about" ? "Schedule" : "About"}
                 </Button>
+                <Button
+                    variant="outlined"
+                    onClick={() =>
+                        location.pathname == "/degree_plan"
+                            ? history.push("/schedule")
+                            : history.push("/degree_plan")
+                    }
+                >
+                    {location.pathname == "/degree_plan" ? "Schedule" : "Degree Plan"}
+                </Button>
                 <Button variant="outlined" onClick={() => handleLogoutClick()}>
                     Log Out
                 </Button>
