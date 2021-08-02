@@ -28,23 +28,22 @@ const SemesterBox = (props) => {
     };
 
     //for the add course button
-
-    const defaultDraftSessions = props["draftSessions"]
-        ? props["draftSessions"].map((sessions) => ({
-              subject: sessions.session.course.subject,
-              courseNum: sessions.session.course.courseNum,
-              longTitle: sessions.session.course.longTitle,
-              credits: sessions.session.course.creditsMin,
-              instructorFN:
-                  sessions.session.instructors[0] == undefined
-                      ? "N/A"
-                      : sessions.session.instructors[0].firstName,
-              instructorLN: sessions.session.instructors[0].lastName,
-              prereqs: sessions.session.course.prereqs,
-              corereqs: sessions.session.course.corereqs,
-              maxEnrollment: sessions.session.maxEnrollment,
-          }))
-        : [];
+    const defaultDraftSessions = props.draftSessions.map((sessions) => ({
+        subject: sessions.session.course.subject,
+        courseNum: sessions.session.course.courseNum,
+        longTitle: sessions.session.course.longTitle,
+        credits: sessions.session.course.creditsMin,
+        instructorFN:
+            sessions.session.instructors[0] == undefined
+                ? "N/A"
+                : sessions.session.instructors[0].firstName,
+        instructorLN: sessions.session.instructors[0]
+            ? sessions.session.instructors[0].lastName
+            : "N/A",
+        prereqs: sessions.session.course.prereqs,
+        corereqs: sessions.session.course.corereqs,
+        maxEnrollment: sessions.session.maxEnrollment,
+    }));
 
     creditSum = defaultDraftSessions.reduce(function (sum, arr) {
         return sum + arr.credits;

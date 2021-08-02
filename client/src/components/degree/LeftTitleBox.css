@@ -15,32 +15,43 @@
 
 .year {
     position: relative;
-    left: 20px;
-
+    left: 30px;
     font: Roboto;
     font-style: normal;
     font-weight: bold;
     font-size: 16px;
     line-height: 19px;
     /* identical to box height */
-
-    letter-spacing: 0.1em;
-
+    letter-spacing: 0.05em;
     color: #5b5b5b;
+    background-color: transparent;
+    border-color: transparent;
 }
-
 .semester {
     position: relative;
-    left: 25px;
-
+    left: 35px;
     font: Roboto;
     font-style: normal;
     font-weight: bold;
     font-size: 16px;
     line-height: 19px;
     /* identical to box height */
-
-    letter-spacing: 0.1em;
-
+    letter-spacing: 0.05em;
     color: #5b5b5b;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.saveBtn {
+    height: 25px;
+    position: relative;
+    left: 10%;
+    border: 1.5px solid #e1e3e3;
+    box-sizing: border-box;
+    background-color: white;
+    font: “Acari Sans”;
+    font-style: normal;
+    font-size: 15px;
+    line-height: 19px;
+    z-index: 99;
 }

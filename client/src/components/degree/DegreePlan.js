@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import SemesterBox from "./SemesterBox";
 import "./DegreePlan.css";
 import { gql, useQuery, useMutation } from "@apollo/client";
+import { useHistory } from "react-router";
 
 // query all of the schedules for a user
 const QUERY_ALL_USER_SCHEDULES = gql`
@@ -88,8 +89,17 @@ const DegreePlan = () => {
         setSemesterList(updated_list);
     };
 
+    const history = useHistory();
+
     return (
         <div>
+            <button
+                className="button"
+                onClick={() => history.push("/schedule")}
+            >
+                Back To Schedule
+            </button>
+            <h1 className="title">My Degree Plan</h1>
             <div className="layout">
                 {/* {defaultSchedule.map((semester) => {
                 return (<SemesterBox term={semester.term} draftSessions={semester.draftSessions} notes={semester.notes} />)
