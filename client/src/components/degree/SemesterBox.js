@@ -15,10 +15,10 @@ const SemesterBox = (props) => {
     const [modalState, setModal] = useState(false);
     const openModal = () => {
         setModal(true);
-    };
+    }
     const closeModal = () => {
         setModal(false);
-    };
+    }
 
     // for the notes content
     const [inputVal, changeInputVal] = useState("");
@@ -60,16 +60,15 @@ const SemesterBox = (props) => {
         
     return (
         <div className="bigBox">
-
-            <button onClick={props.deleteSem} className="deleteBtn">x</button>
+            <button onClick={props.deleteSem} style={{width:"35px"}} className="button">x</button>
             <button
-                className="button"
+                className="button" style={{width:"170px"}}
                 onClick={() => history.push("/schedule")}
             >
                 Edit Schedule
             </button>
 
-            <button className="button" onClick={openModal}>
+            <button className="button" style={{width:"170px"}} onClick={openModal}>
                 Edit Notes
             </button>
             <Modal isOpen={modalState} className='modal' onRequestClose={closeModal}>
@@ -81,12 +80,10 @@ const SemesterBox = (props) => {
                         value={inputVal}
                         onChange={(e) => changeInputVal(e.target.value)}>
                     </textarea>
-                    <button onClick={saveInput}>Save</button>
-                    <div style={{width: "90%", wordWrap: "break-word"}}>{inputVal}</div>
                 </div>
             </Modal>
 
-            <button className="button" onClick={message}>
+            <button className="button" style={{width:"170px"}} onClick="modal">
                 Add Custom Course
             </button>
             <div className="semesterFlexBox">

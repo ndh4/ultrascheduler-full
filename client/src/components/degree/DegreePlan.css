@@ -13,7 +13,6 @@
     if flex-direction == column, reversed */
 }
 
-
 .addBtn {
     width: 545px;
     height: 315px;
@@ -30,4 +29,3 @@
     font-size: 250px;
     color: #e1e3e3;
 }
-
