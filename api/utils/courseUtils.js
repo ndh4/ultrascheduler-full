@@ -35,6 +35,7 @@ export const getSubjects = async (term) => {
             String(term)
     );
     const parsed = await parser.parseStringPromise(data);
+    console.log(parsed);
     let subjects = parsed["SUBJECTS"]["SUBJECT"];
     subjects = subjects.map((subject) => subject["$"].code);
     return subjects;
@@ -61,8 +62,8 @@ export const getInstructors = async (term) => {
             firstName,
             lastName,
         };
-	});
-	
+    });
+
     return instructors;
 };
 

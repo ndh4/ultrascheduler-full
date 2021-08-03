@@ -64,6 +64,15 @@ const MUTATION_ADD_SEMESTER = gql`
     }
 `;
 
+const DELETE_SEMESTER = gql`
+    mutation removeSchedule($_id: MongoID!) {
+        removeSchedule(filter: { _id: $_id }) {
+            term
+            _id
+        }
+    }
+`;
+
 // mutation to delete semester, call from onclick the buttons
 // const MUTATION_DELETE_SEMESTER = gql`
 //     mutation
@@ -82,6 +91,10 @@ const DegreePlan = () => {
     // add a new semester from the mutation
     const [mutateSemester, { loadingMutation, errorMutation, dataMutation }] =
         useMutation(MUTATION_ADD_SEMESTER);
+    const [
+        deleteSemester,
+        { loadingMutationDelete, errorMutationDelete, dataMutationDelete },
+    ] = useMutation(DELETE_SEMESTER);
 
     // print status to page (NOTE: Raises Rending more hooks than previous... error)
     // if (loading) return <p>Loading</p>;
@@ -102,6 +115,7 @@ const DegreePlan = () => {
             term: schedule.term,
             draftSessions: schedule.draftSessions,
             notes: schedule.notes,
+            _id: schedule._id,
         }));
         setUserId(user_id);
         setSemesterList(defaultSchedule);
@@ -117,16 +131,21 @@ const DegreePlan = () => {
                 draftSessions: [],
             },
         });
-        const newSem = { term: term, draftSessions: [], notes: "" };
+        const newSem = { term: term, draftSessions: [], notes: "", _id: "" };
         setSemesterList([...semesterList, newSem]);
     };
     console.log(semesterList);
 
     // delete a semester
-    const deleteSem = (term) => {
+    const deleteSem = (term, _id) => {
         const updated_list = semesterList.filter(
             (semester) => semester.term != term
         );
+        deleteSemester({
+            variables: {
+                _id: _id,
+            },
+        });
         setSemesterList(updated_list);
     };
 
@@ -152,7 +171,9 @@ const DegreePlan = () => {
                                 draftSessions={semester.draftSessions}
                                 notes={semester.notes}
                                 //  id={semester.id}
-                                deleteSem={() => deleteSem(semester.term)}
+                                deleteSem={() =>
+                                    deleteSem(semester.term, semester._id)
+                                }
                                 currentLength={semesterList.length}
                                 index={index}
                                 selector={false}

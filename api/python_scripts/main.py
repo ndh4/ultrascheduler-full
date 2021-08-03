@@ -248,11 +248,11 @@ def parse_file(file, current_data):
 
         name = course.find("subject")["code"] + " " + course.find("crse_numb").text + " : " + course.find("crse_title").text
 
-        if name not in current_data.keys():
-            current_data[name] = {
-                "course_details": course_invariants,
-                "sessions": []
-            }
+        # if name not in current_data.keys():
+        #     current_data[name] = {
+        #         "course_details": course_invariants,
+        #         "sessions": []
+        #     }
 
         # Only need to add another session
         current_data[name]["sessions"].append(session_info)

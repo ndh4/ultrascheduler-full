@@ -47,21 +47,25 @@ const SemesterBox = (props) => {
     // console.log('check', props["draftSessions"])
     // console.log('check1', props["draftSessions"][6].session.instructors)
 
-    console.log('draft sessions', props['draftSessions'])
-    const defaultDraftSessions = props["draftSessions"].map(sessions => (
-        {
-        "subject": sessions.session.course.subject,
-        "courseNum": sessions.session.course.courseNum, 
-        "longTitle": sessions.session.course.longTitle, 
-        "credits": sessions.session.course.creditsMin,
+    console.log("draft sessions", props["draftSessions"]);
+    const defaultDraftSessions = props["draftSessions"].map((sessions) => ({
+        subject: sessions.session.course.subject,
+        courseNum: sessions.session.course.courseNum,
+        longTitle: sessions.session.course.longTitle,
+        credits: sessions.session.course.creditsMin,
         // "instructors": (sessions.session.instructors.length != 0) ? sessions.session.instructors : "N/A",
-        "instructorFN": (sessions.session.instructors.length != 0) ? sessions.session.instructors[0].firstName: 'N/A',
-        "instructorLN": (sessions.session.instructors.length != 0) ?sessions.session.instructors[0].lastName : '',
-        "prereqs": sessions.session.course.prereqs,
-        "coreqs": sessions.session.course.coreqs,
-        "maxEnrollment": sessions.session.maxEnrollment
-        }
-    ));
+        instructorFN:
+            sessions.session.instructors.length != 0
+                ? sessions.session.instructors[0].firstName
+                : "N/A",
+        instructorLN:
+            sessions.session.instructors.length != 0
+                ? sessions.session.instructors[0].lastName
+                : "",
+        prereqs: sessions.session.course.prereqs,
+        coreqs: sessions.session.course.coreqs,
+        maxEnrollment: sessions.session.maxEnrollment,
+    }));
     // console.log('check2', defaultDraftSessions)
 
     // console.log(defaultDraftSessions[0]["instructors"])
@@ -121,7 +125,7 @@ const SemesterBox = (props) => {
             <button
                 className="button"
                 style={{ width: "170px" }}
-                onClick={() => history.push("/schedule")}
+                onClick={() => history.push(`/schedule`)}
             >
                 Edit Schedule
             </button>

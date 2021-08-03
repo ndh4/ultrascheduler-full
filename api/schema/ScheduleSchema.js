@@ -189,6 +189,17 @@ ScheduleTC.addResolver({
     },
 });
 
+ScheduleTC.addResolver({
+    name: "removeSchedule",
+    type: ScheduleTC,
+    args: ScheduleTC.getResolver("removeOne").getArgs(),
+    resolve: async ({ source, args, context, info }) => {
+        // Create if it doesn't exist
+        console.log(args);
+        return await Schedule.findByIdAndRemove({ _id: args.filter._id });
+    },
+});
+
 /**
  * Add or remove a term from the degeree planner
  */
@@ -216,6 +227,7 @@ const ScheduleMutation = {
     createNewSchedule: ScheduleTC.getResolver("createNewSchedule", [
         authMiddleware,
     ]),
+    removeSchedule: ScheduleTC.getResolver("removeSchedule", [authMiddleware]),
     degreePlanAddTerm: ScheduleTC.getResolver("createOne", [authMiddleware]),
     degreePlanRemoveTerm: ScheduleTC.getResolver("removeOne"),
 

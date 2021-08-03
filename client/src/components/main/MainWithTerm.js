@@ -1,5 +1,4 @@
 import React, { useState, useEffect, createContext } from "react";
-import Header from "../header/Header";
 import CourseCalendar from "../calendar/Calendar";
 import ClassSelector from "../draftview/ClassSelector";
 import CourseSearch from "../search/CourseSearch";
@@ -181,7 +180,8 @@ const Main = ({}) => {
 
     return (
         <div className="App" style={{ display: "inline", color: "#272D2D" }}>
-            <Header />
+            <Header curTerm={curTerm} />
+
             <div style={{ padding: "2%" }}>
                 <ClassSelector
                     scheduleID={schedule._id}

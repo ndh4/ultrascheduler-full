@@ -35,45 +35,53 @@ const QUERY_USER_SCHEDULES = gql`
 
 // const termOptions = [
 //     { label: "Spring 2021", value: 202120 },
+//     { label: "Fall 2021", value: 202110 },
 // ];
 
 function Header() {
-    const [updateSchedules, setUpdatedSchedules] = useState([])
+    const [updateSchedules, setUpdatedSchedules] = useState([]);
 
-    const {loading, error, data} = useQuery(QUERY_USER_SCHEDULES);
+    const { loading, error, data } = useQuery(QUERY_USER_SCHEDULES);
 
     useEffect(() => {
-        let tempSchedules = []
+        let tempSchedules = [];
         if (!loading) {
-            console.log(data)
+            console.log(data);
         }
         for (let i = 0; i < data?.scheduleMany.length; i++) {
             let label;
-            let value = data?.scheduleMany[i]["term"]
-    
-            if (value.substring(4) == "10") label = "Fall " + value.substring(0,4);
-            else if (value.substring(4) == "20") label = "Spring " + value.substring(0,4);
-            else if (value.substring(4) == "30") label = "Summer " + value.substring(0,4);
-            else if (value.includes("Spring") || value.includes("Fall") || value.includes("Summer")) {
-                label = value;
-                if (value.includes("Spring")) value = value.substring(value.indexOf("2")) + "20";
-                else if (value.includes("Fall")) value = value.substring(value.indexOf("2")) + "10";
-                else if (value.includes("Summer")) value = value.substring(value.indexOf("2")) + "30";
-            }
-            else continue;
-    
-            console.log(parseInt(value))
-            console.log(typeof parseInt(value))
+            let value = data?.scheduleMany[i]["term"];
 
-            tempSchedules.push({"label": label, "value": parseInt(value)})
+            if (value.substring(4) == "10")
+                label = "Fall " + value.substring(0, 4);
+            else if (value.substring(4) == "20")
+                label = "Spring " + value.substring(0, 4);
+            else if (value.substring(4) == "30")
+                label = "Summer " + value.substring(0, 4);
+            else if (
+                value.includes("Spring") ||
+                value.includes("Fall") ||
+                value.includes("Summer")
+            ) {
+                label = value;
+                if (value.includes("Spring"))
+                    value = value.substring(value.indexOf("2")) + "20";
+                else if (value.includes("Fall"))
+                    value = value.substring(value.indexOf("2")) + "10";
+                else if (value.includes("Summer"))
+                    value = value.substring(value.indexOf("2")) + "30";
+            } else continue;
+
+            tempSchedules.push({ label: label, value: parseInt(value) });
         }
 
-        setUpdatedSchedules(tempSchedules)
+        setUpdatedSchedules(tempSchedules);
     }, [loading, data, error]);
 
-    console.log("updatedschdules", updateSchedules)
+    console.log("updatedschdules", updateSchedules);
 
-    const formatTerm = (schedule) => updateSchedules.filter((termOption) => termOption.value == schedule)[0];
+    const formatTerm = (schedule) =>
+        updateSchedules.filter((termOption) => termOption.value == schedule)[0];
 
     const history = useHistory();
     const client = useApolloClient();

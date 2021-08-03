@@ -62,7 +62,7 @@ export const client = new ApolloClient({
 const initialState = {
     service: process.env.REACT_APP_SERVICE_URL,
     recentUpdate: false,
-    term: 202120,
+    term: 202110,
 };
 
 // Initialize cache with a state
