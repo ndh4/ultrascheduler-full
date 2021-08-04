@@ -1,7 +1,7 @@
 .toschedule {
     height: 35px;
     width: 15%;
-    margin-right: 5%;
+    margin-right: 3%;
     left: 128px;
     top: 511px;
     border: 1.5px solid #e1e3e3;
@@ -31,13 +31,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    
 }
 .logoContainer {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    width: 20%;
-    margin-right: 5%;
+    width: 10%;
+    
 }
 
 .toschedule:hover {

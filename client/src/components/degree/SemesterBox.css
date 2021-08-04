@@ -5,8 +5,60 @@
     border: transparent;
     box-sizing: border-box;
     border-radius: 5px;
+
+}
+.buttonNav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 96%;
+
+}
+.deleteButton{
+    width: 5%;
+
+    height: 35px;
+    border: 1.5px solid #e1e3e3;
+    box-sizing: border-box;
+    background-color: white;
+    left: 10.64%;
+    right: 82.37%;
+    top: 52.58%;
+    bottom: 45.24%;
+    font: "Acari Sans";
+    font-style: normal;
+    font-weight: 600;
+    font-size: 15.75px;
+    line-height: 19px;
+    color: #149fa0;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.customButton{
+    width: 33%;
+
+    height: 35px;
+    border: 1.5px solid #e1e3e3;
+    box-sizing: border-box;
+    background-color: white;
+    left: 10.64%;
+    right: 82.37%;
+    top: 52.58%;
+    bottom: 45.24%;
+    font: "Acari Sans";
+    font-style: normal;
+    font-weight: 600;
+    font-size: 15.75px;
+    line-height: 19px;
+    color: #149fa0;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border-radius: 5px;
 }
 .button {
+    width: 25%;
+
     height: 35px;
     left: 128px;
     top: 511px;
@@ -32,6 +84,14 @@
 }
 /* hover is a keyword */
 .button:hover {
+    background-color: #149fa0;
+    color: #e1e3e3;
+}
+.deleteButton:hover {
+    background-color: #149fa0;
+    color: #e1e3e3;
+}
+.customButton:hover {
     background-color: #149fa0;
     color: #e1e3e3;
 }

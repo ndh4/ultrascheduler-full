@@ -35,12 +35,12 @@ const SemesterBox = (props) => {
     // const instructorFN = (typeof props["draftSessions"].session.instructors[0].firstName !== undefined) ? props["draftSessions"].sessions.instructors[0].firstName : "N/A"
     // const instructorLN = (typeof props["draftSessions"].session.instructors[0].lastName !== undefined) ? props["draftSessions"].sessions.instructors[0].lastName : "N/A"
 
-    // console.log('check', props["draftSessions"])
+    console.log('check', props["draftSessions"])
     // console.log('check1', props["draftSessions"][6].session.instructors)
 
     const defaultDraftSessions = props["draftSessions"].map((sessions) => {
         // return (sessions != undefined) ?
-        return {
+        return (sessions.session) ? ({
             subject: sessions.session.course
                 ? sessions.session.course.subject
                 : "N/A",
@@ -52,7 +52,7 @@ const SemesterBox = (props) => {
                 : "N/A",
             credits: sessions.session.course
                 ? sessions.session.course.creditsMin
-                : "N/A",
+                : 0,
             // "instructors": (sessions.session.instructors.length != 0) ? sessions.session.instructors : "N/A",
             instructorFN:
                 sessions.session.instructors.length != 0
@@ -69,21 +69,22 @@ const SemesterBox = (props) => {
                 ? sessions.session.course.coreqs
                 : "N/A",
             maxEnrollment: sessions.session.maxEnrollment,
-        };
+        }) :
+        (
+            
+            {
+                subject: 'N/A',
+                courseNum: 'N/A',
+                longTitle: 'N/A',
+                credits: 0,
+                instructorFN: 'N/A',
+                instructorLN: 'N/A',
+                prereqs: 'N/A',
+                coreqs: 'N/A',
+                maxEnrollment: 'N/A',
+            }
 
-        // (
-        //     {
-        //         subject: 'N/A',
-        //         courseNum: 'N/A',
-        //         longTitle: 'N/A',
-        //         credits: 'N/A',
-        //         instructorFN: 'N/A',
-        //         instructorLN: 'N/A',
-        //         prereqs: 'N/A',
-        //         coreqs: 'N/A',
-        //         maxEnrollment: 'N/A',
-        //     }
-        // )
+        )
     });
     // console.log('check2', defaultDraftSessions)
 
@@ -130,6 +131,8 @@ const SemesterBox = (props) => {
         return sum + arr.credits;
     }, 0);
 
+
+
     const [customCourseList, setCustomCourseList] = useState([]);
     const newCustomCourse = "newCustomCourse";
     // setCustomCourseList([...customCourseList, newCustomCourse]);
@@ -141,51 +144,53 @@ const SemesterBox = (props) => {
     // console.log('instructor list', instructorList)
     return (
         <div className="bigBox">
-            <button
-                onClick={props.deleteSem}
-                style={{ width: "35px" }}
-                className="button"
-            >
-                x
-            </button>
-            <button
-                className="button"
-                style={{ width: "170px" }}
-                onClick={() => history.push(`/schedule`)}
-            >
-                Edit Schedule
-            </button>
+            <div className='buttonNav'>
+                <button
+                    onClick={props.deleteSem}
+                    // style={{ width: "35px" }}
+                    className="deleteButton"
+                >
+                    x
+                </button>
+                <button
+                    className="button"
+                    // style={{ width: "170px" }}
+                    onClick={() => history.push(`/schedule`)}
+                >
+                    Edit Schedule
+                </button>
 
-            <button
-                className="button"
-                style={{ width: "170px" }}
-                onClick={openModal}
-            >
-                Edit Notes
-            </button>
-            <Modal
-                isOpen={modalState}
-                className="modal"
-                onRequestClose={closeModal}
-            >
-                <div className="notesContent">
-                    <textarea
-                        maxlength="689"
-                        placeholder="Write your notes here..."
-                        className="textbox"
-                        value={inputVal}
-                        onChange={(e) => changeInputVal(e.target.value)}
-                    ></textarea>
-                </div>
-            </Modal>
+                <button
+                    className="button"
+                    // style={{ width: "170px" }}
+                    onClick={openModal}
+                >
+                    Edit Notes
+                </button>
+                <Modal
+                    isOpen={modalState}
+                    className="modal"
+                    onRequestClose={closeModal}
+                >
+                    <div className="notesContent">
+                        <textarea
+                            maxlength="689"
+                            placeholder="Write your notes here..."
+                            className="textbox"
+                            value={inputVal}
+                            onChange={(e) => changeInputVal(e.target.value)}
+                        ></textarea>
+                    </div>
+                </Modal>
 
-            <button
-                className="button"
-                style={{ width: "170px" }}
-                onClick={addCustomCourse}
-            >
-                Add Custom Course
-            </button>
+                <button
+                    className="customButton"
+                    // style={{ width: "170px" }}
+                    onClick={addCustomCourse}
+                >
+                    Add Custom Course
+                </button>
+            </div>
             <div className="semesterFlexBox">
                 <TitleBox
                     currentLength={curLength}
