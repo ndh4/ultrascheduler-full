@@ -26,6 +26,24 @@
     background-color: transparent;
     border-color: transparent;
 }
+.yearSelect {
+    position: relative;
+    left: 20px;
+    font: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 19px;
+    padding-top: 2px;
+    /* identical to box height */
+    letter-spacing: 0.05em;
+    color: #5b5b5b;
+    background-color: transparent;
+    border-color: transparent;
+}
+.yearSelect:hover{
+    cursor: pointer;
+}
 .semester {
     position: relative;
     left: 25px;
@@ -40,6 +58,24 @@
     color: #5b5b5b;
     background-color: transparent;
     border-color: transparent;
+}
+.semesterSelect {
+    position: relative;
+    left: 25px;
+    font: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 19px;
+    padding-top: 2px;
+    /* identical to box height */
+    letter-spacing: 0.05em;
+    color: #5b5b5b;
+    background-color: transparent;
+    border-color: transparent;
+}
+.semesterSelect:hover{
+    cursor: pointer;
 }
 .saveBtn {
     height: 25px;

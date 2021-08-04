@@ -227,7 +227,7 @@ const DegreePlan = () => {
                         );
                     })}
 
-                <div className="bigBox">
+                <div className="addNewScheduleContainer">
                     <TitleBox term={""} credits={0} selector={true} />
 
                     <button

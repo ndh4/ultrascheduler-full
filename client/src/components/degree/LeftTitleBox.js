@@ -33,7 +33,7 @@ const LeftTitleBox = (props) => {
                     <select
                         name="year"
                         id="y"
-                        className="year"
+                        className="yearSelect"
                         onChange={(e) => setYear(e.target.value)}
                     >
                                       <option value="2021">2021</option>
@@ -46,7 +46,7 @@ const LeftTitleBox = (props) => {
                     <select
                         name="sem"
                         id="s"
-                        className="semester"
+                        className="semesterSelect"
                         onChange={(e) => setSem(e.target.value)}
                     >
                                         <option value="Fall">Fall</option>
