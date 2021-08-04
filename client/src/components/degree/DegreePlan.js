@@ -4,7 +4,6 @@ import "./DegreePlan.css";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { useHistory } from "react-router";
 import { Context as TermContext } from "../../contexts/termContext";
-import { Context as CustomCourseContext } from "../../contexts/customCourseContext";
 import TitleBox from "./TitleBox";
 import RiceAppsLogo from "../../riceappslogo.png";
 import { initGA, OutboundLink } from "../../utils/analytics";
@@ -111,11 +110,6 @@ const DegreePlan = () => {
         state: { term },
     } = useContext(TermContext);
 
-    const {
-        state: { customCourses },
-        addCustomCourse,
-    } = useContext(CustomCourseContext);
-    console.log(customCourses);
     // add a new semester from the mutation
     const [mutateSemester, { loadingMutation, errorMutation, dataMutation }] =
         useMutation(MUTATION_ADD_SEMESTER, {
@@ -190,20 +184,6 @@ const DegreePlan = () => {
     return (
         <div>
             <DegreePlanNav />
-            {/* <div className="logoContainer">
-                <img
-                    src={RiceAppsLogo}
-                    // style={styles.logo}
-                    onClick={() => handleLogoClick()}
-                />
-                <button
-                    className="toschedule"
-                    onClick={() => history.push("/schedule")}
-                >
-                    Back To Schedule
-                </button>
-            </div>
-            <h1 className="title">My Degree Plan</h1> */}
             <div className="layout">
                 {/* {defaultSchedule.map((semester) => {
                 return (<SemesterBox term={semester.term} draftSessions={semester.draftSessions} notes={semester.notes} />)
@@ -212,6 +192,7 @@ const DegreePlan = () => {
                     semesterList.map((semester, index) => {
                         return (
                             <SemesterBox
+                                _id={semester._id}
                                 term={semester.term}
                                 draftSessions={semester.draftSessions}
                                 notes={semester.notes}
@@ -220,8 +201,7 @@ const DegreePlan = () => {
                                 deleteSem={() =>
                                     deleteSem(semester.term, semester._id)
                                 }
-                                currentLength={semesterList.length}
-                                index={index}
+                                updateCustomCourse={updateCustomCourse}
                                 selector={false}
                             />
                         );

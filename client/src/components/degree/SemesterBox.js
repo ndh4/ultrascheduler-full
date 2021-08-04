@@ -1,18 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import "./SemesterBox.css";
 import CourseRowBox from "./CourseRowBox";
 import TitleBox from "./TitleBox";
 import { useHistory } from "react-router";
 import Modal from "react-modal";
 import CustomCourseRow from "./CustomCourseRow";
+import { Context as CustomCourseContext } from "../../contexts/customCourseContext";
+import { gql, useQuery, useMutation } from "@apollo/client";
+
 // import CustomCourse from "./CustomCourse";
 
 let creditSum;
 
+const UPDATE_CUSTOM_COURSES = gql`
+    mutation updateCustomCourses($_id: MongoID!, $customCourse: [String]) {
+        updateCustomCourses(
+            record: { customCourse: $customCourse }
+            filter: { _id: $_id }
+        ) {
+            record {
+                _id
+                term
+                customCourse
+            }
+        }
+    }
+`;
+
 const SemesterBox = (props) => {
     // for the edit schedule button
     const history = useHistory();
-    const curLength = props.currentLength;
     // for the notes modal
     const [modalState, setModal] = useState(false);
     const openModal = () => {
@@ -23,77 +40,84 @@ const SemesterBox = (props) => {
     };
     // for the notes content
     const [inputVal, changeInputVal] = useState("");
+
     const saveInput = (e) => {
         changeInputVal(document.getElementById("notes").value);
         document.getElementById("notes").value = inputVal;
     };
     const [instuctorList, setInstructorList] = useState([]);
 
+    const {
+        state: { customCourses },
+    } = useContext(CustomCourseContext);
+
+    const [updateCustomCourses, { loading, error, data }] = useMutation(
+        UPDATE_CUSTOM_COURSES
+    );
+    console.log(customCourses);
+
+    const updateCustomCourseToSchedule = () => {
+        updateCustomCourses({
+            variables: {
+                _id: props._id,
+                customCourse: [],
+            },
+        });
+    };
     // console.log('checkmark', props["draftSessions"][6].session)
     // console.log('checkmark', props["draftSessions"][6].session)
 
     // const instructorFN = (typeof props["draftSessions"].session.instructors[0].firstName !== undefined) ? props["draftSessions"].sessions.instructors[0].firstName : "N/A"
     // const instructorLN = (typeof props["draftSessions"].session.instructors[0].lastName !== undefined) ? props["draftSessions"].sessions.instructors[0].lastName : "N/A"
 
-    console.log('check', props["draftSessions"])
+    // console.log("check", props["draftSessions"]);
     // console.log('check1', props["draftSessions"][6].session.instructors)
 
     const defaultDraftSessions = props["draftSessions"].map((sessions) => {
         // return (sessions != undefined) ?
-        return (sessions.session) ? ({
-            subject: sessions.session.course
-                ? sessions.session.course.subject
-                : "N/A",
-            courseNum: sessions.session.course
-                ? sessions.session.course.courseNum
-                : "N/A",
-            longTitle: sessions.session.course
-                ? sessions.session.course.longTitle
-                : "N/A",
-            credits: sessions.session.course
-                ? sessions.session.course.creditsMin
-                : 0,
-            // "instructors": (sessions.session.instructors.length != 0) ? sessions.session.instructors : "N/A",
-            instructorFN:
-                sessions.session.instructors.length != 0
-                    ? sessions.session.instructors[0].firstName
-                    : "N/A",
-            instructorLN:
-                sessions.session.instructors.length != 0
-                    ? sessions.session.instructors[0].lastName
-                    : "",
-            prereqs: sessions.session.course
-                ? sessions.session.course.prereqs
-                : "N/A",
-            coreqs: sessions.session.course
-                ? sessions.session.course.coreqs
-                : "N/A",
-            maxEnrollment: sessions.session.maxEnrollment,
-        }) :
-        (
-            
-            {
-                subject: 'N/A',
-                courseNum: 'N/A',
-                longTitle: 'N/A',
-                credits: 0,
-                instructorFN: 'N/A',
-                instructorLN: 'N/A',
-                prereqs: 'N/A',
-                coreqs: 'N/A',
-                maxEnrollment: 'N/A',
-            }
-
-        )
+        return sessions.session
+            ? {
+                  subject: sessions.session.course
+                      ? sessions.session.course.subject
+                      : "N/A",
+                  courseNum: sessions.session.course
+                      ? sessions.session.course.courseNum
+                      : "N/A",
+                  longTitle: sessions.session.course
+                      ? sessions.session.course.longTitle
+                      : "N/A",
+                  credits: sessions.session.course
+                      ? sessions.session.course.creditsMin
+                      : 0,
+                  // "instructors": (sessions.session.instructors.length != 0) ? sessions.session.instructors : "N/A",
+                  instructorFN:
+                      sessions.session.instructors.length != 0
+                          ? sessions.session.instructors[0].firstName
+                          : "N/A",
+                  instructorLN:
+                      sessions.session.instructors.length != 0
+                          ? sessions.session.instructors[0].lastName
+                          : "",
+                  prereqs: sessions.session.course
+                      ? sessions.session.course.prereqs
+                      : "N/A",
+                  coreqs: sessions.session.course
+                      ? sessions.session.course.coreqs
+                      : "N/A",
+                  maxEnrollment: sessions.session.maxEnrollment,
+              }
+            : {
+                  subject: "N/A",
+                  courseNum: "N/A",
+                  longTitle: "N/A",
+                  credits: 0,
+                  instructorFN: "N/A",
+                  instructorLN: "N/A",
+                  prereqs: "N/A",
+                  coreqs: "N/A",
+                  maxEnrollment: "N/A",
+              };
     });
-    // console.log('check2', defaultDraftSessions)
-
-    // console.log(defaultDraftSessions[0]["instructors"])
-    // console.log('check3', defaultDraftSessions[6]['instructors'])
-
-    // const [instructorList, setInstructorList] = useState([]);
-
-    // console.log("before the use effect")
 
     // useEffect(() => {
     //     console.log("enter the use effect")
@@ -131,20 +155,19 @@ const SemesterBox = (props) => {
         return sum + arr.credits;
     }, 0);
 
-
-
     const [customCourseList, setCustomCourseList] = useState([]);
     const newCustomCourse = "newCustomCourse";
     // setCustomCourseList([...customCourseList, newCustomCourse]);
 
-    const addCustomCourse = () => {
-        setCustomCourseList([...customCourseList, newCustomCourse]);
+    const addCustomCourseAction = () => {
+        setCustomCourseList(customCourseList.concat(customCourses));
+        // setCustomCourseList([...customCourseList, newCustomCourse]);
     };
 
     // console.log('instructor list', instructorList)
     return (
         <div className="bigBox">
-            <div className='buttonNav'>
+            <div className="buttonNav">
                 <button
                     onClick={props.deleteSem}
                     // style={{ width: "35px" }}
@@ -167,6 +190,14 @@ const SemesterBox = (props) => {
                 >
                     Edit Notes
                 </button>
+
+                <button
+                    className="button"
+                    // style={{ width: "170px" }}
+                    onClick={updateCustomCourseToSchedule}
+                >
+                    Save
+                </button>
                 <Modal
                     isOpen={modalState}
                     className="modal"
@@ -186,15 +217,13 @@ const SemesterBox = (props) => {
                 <button
                     className="customButton"
                     // style={{ width: "170px" }}
-                    onClick={addCustomCourse}
+                    onClick={addCustomCourseAction}
                 >
                     Add Custom Course
                 </button>
             </div>
             <div className="semesterFlexBox">
                 <TitleBox
-                    currentLength={curLength}
-                    index={props.index}
                     term={props.term}
                     credits={props["credits"]}
                     selector={props.selector}
@@ -221,6 +250,7 @@ const SemesterBox = (props) => {
                         return (
                             <CustomCourseRow
                                 customCourses={props.customCourse}
+                                index={index}
                             />
                         );
                     })}

@@ -19,35 +19,55 @@ const CustomCourseRow = (props) => {
     //     setInputCredit(courseInfo[2]);
     // });
 
-    useEffect(() => {
+    const saveCustomCourse = () => {
         if (inputCode && inputName && inputCredit) {
             addCustomCourse(`${inputCode}&${inputName}&${inputCredit}`);
+        } else {
+            alert("Please fill in all the information for the course");
         }
-    }, [inputCode, inputName, inputCredit]);
+    };
     return (
-        <div className="rowBox">
-            <div className="lcbox">
-                <input
-                    placeholder={inputCode ? inputCode : "Enter Code"}
-                    className="customCourseCode"
-                    type="text"
-                    onChange={(e) => setInputCode(e.target.value)}
-                />
-                <input
-                    placeholder={inputName ? inputName : "Enter Name"}
-                    className="customCourseName"
-                    type="text"
-                    onChange={(e) => setInputName(e.target.value)}
-                />
+        <div className="outerRowBox">
+            <div className="rowBox">
+                <div className="lcbox">
+                    <input
+                        placeholder={inputCode ? inputCode : "Enter Code"}
+                        className="customCourseCode"
+                        type="text"
+                        onChange={(e) => setInputCode(e.target.value)}
+                    />
+                    <input
+                        placeholder={inputName ? inputName : "Enter Name"}
+                        className="customCourseName"
+                        type="text"
+                        onChange={(e) => setInputName(e.target.value)}
+                    />
+                </div>
+                <div className="rccbox">
+                    <input
+                        placeholder={inputCredit ? inputCredit : "#"}
+                        className="customCredit"
+                        type="number"
+                        min="1"
+                        onChange={(e) => setInputCredit(e.target.value)}
+                    />
+                </div>
             </div>
-            <div className="rccbox">
-                <input
-                    placeholder={inputCredit ? inputCredit : "#"}
-                    className="customCredit"
-                    type="number"
-                    min="1"
-                    onChange={(e) => setInputCredit(e.target.value)}
-                />
+            <div className="button-container">
+                <button
+                    // style={{ width: "35px" }}
+                    className="deleteButton"
+                    onClick={saveCustomCourse}
+                >
+                    <span style={{ fontSize: 18 }}>+</span>
+                </button>
+
+                <button
+                    // style={{ width: "35px" }}
+                    className="deleteButton"
+                >
+                    x
+                </button>
             </div>
         </div>
     );
