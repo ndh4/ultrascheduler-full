@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./RowBox.css";
 import "./LeftCourseBox.css";
 import "./RightCourseBox.css";
@@ -6,18 +6,18 @@ import SemesterBox from "./SemesterBox";
 import { Context as CustomCourseContext } from "../../contexts/customCourseContext";
 
 const CustomCourseRow = (props) => {
-    const courseInfo = props.customCourse ? props.customCourse.split(" ") : [];
+    // const courseInfo = props.customCourse ? props.customCourse.split(" ") : [];
 
     const [inputCode, setInputCode] = useState();
     const [inputName, setInputName] = useState("");
     const [inputCredit, setInputCredit] = useState(1);
     const { addCustomCourse } = useContext(CustomCourseContext);
 
-    useEffect(() => {
-        setInputCode(courseInfo[0]);
-        setInputName(courseInfo[1]);
-        setInputCredit(courseInfo[2]);
-    });
+    // useEffect(() => {
+    //     setInputCode(courseInfo[0]);
+    //     setInputName(courseInfo[1]);
+    //     setInputCredit(courseInfo[2]);
+    // });
 
     useEffect(() => {
         if (inputCode && inputName && inputCredit) {
