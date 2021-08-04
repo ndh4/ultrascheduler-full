@@ -16,19 +16,22 @@ import { ToastProvider } from "react-toast-notifications";
 import { client } from "./apollo";
 import { ApolloProvider } from "@apollo/client";
 import { Provider as TermProvider } from "./contexts/termContext";
+import { Provider as CustomCourseProvider } from "./contexts/customCourseContext";
 
 // Setup firebase for SAML
 import "./firebase";
 
 render(
-    <TermProvider>
-        <ApolloProvider client={client}>
-            <Router history={history}>
-                <ToastProvider>
-                    <Routes />
-                </ToastProvider>
-            </Router>
-        </ApolloProvider>
-    </TermProvider>,
+    <CustomCourseProvider>
+        <TermProvider>
+            <ApolloProvider client={client}>
+                <Router history={history}>
+                    <ToastProvider>
+                        <Routes />
+                    </ToastProvider>
+                </Router>
+            </ApolloProvider>
+        </TermProvider>
+    </CustomCourseProvider>,
     document.querySelector("#app")
 );

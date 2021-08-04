@@ -4,6 +4,8 @@ import CourseRowBox from "./CourseRowBox";
 import TitleBox from "./TitleBox";
 import { useHistory } from "react-router";
 import Modal from "react-modal";
+import CustomCourseRow from "./CustomCourseRow";
+// import CustomCourse from "./CustomCourse";
 
 let creditSum;
 
@@ -27,17 +29,6 @@ const SemesterBox = (props) => {
     };
     const [instuctorList, setInstructorList] = useState([]);
 
-    //for the add course button
-    var row = [];
-    var counter = 0;
-    const message = () => {
-        console.log("Hello World!");
-        row.push(<CourseRowBox />);
-        console.log(row);
-        counter++;
-        console.log(counter);
-    };
-
     // console.log('checkmark', props["draftSessions"][6].session)
     // console.log('checkmark', props["draftSessions"][6].session)
 
@@ -47,25 +38,53 @@ const SemesterBox = (props) => {
     // console.log('check', props["draftSessions"])
     // console.log('check1', props["draftSessions"][6].session.instructors)
 
-    console.log("draft sessions", props["draftSessions"]);
-    const defaultDraftSessions = props["draftSessions"].map((sessions) => ({
-        subject: sessions.session.course.subject,
-        courseNum: sessions.session.course.courseNum,
-        longTitle: sessions.session.course.longTitle,
-        credits: sessions.session.course.creditsMin,
-        // "instructors": (sessions.session.instructors.length != 0) ? sessions.session.instructors : "N/A",
-        instructorFN:
-            sessions.session.instructors.length != 0
-                ? sessions.session.instructors[0].firstName
+    const defaultDraftSessions = props["draftSessions"].map((sessions) => {
+        // return (sessions != undefined) ?
+        return {
+            subject: sessions.session.course
+                ? sessions.session.course.subject
                 : "N/A",
-        instructorLN:
-            sessions.session.instructors.length != 0
-                ? sessions.session.instructors[0].lastName
-                : "",
-        prereqs: sessions.session.course.prereqs,
-        coreqs: sessions.session.course.coreqs,
-        maxEnrollment: sessions.session.maxEnrollment,
-    }));
+            courseNum: sessions.session.course
+                ? sessions.session.course.courseNum
+                : "N/A",
+            longTitle: sessions.session.course
+                ? sessions.session.course.longTitle
+                : "N/A",
+            credits: sessions.session.course
+                ? sessions.session.course.creditsMin
+                : "N/A",
+            // "instructors": (sessions.session.instructors.length != 0) ? sessions.session.instructors : "N/A",
+            instructorFN:
+                sessions.session.instructors.length != 0
+                    ? sessions.session.instructors[0].firstName
+                    : "N/A",
+            instructorLN:
+                sessions.session.instructors.length != 0
+                    ? sessions.session.instructors[0].lastName
+                    : "",
+            prereqs: sessions.session.course
+                ? sessions.session.course.prereqs
+                : "N/A",
+            coreqs: sessions.session.course
+                ? sessions.session.course.coreqs
+                : "N/A",
+            maxEnrollment: sessions.session.maxEnrollment,
+        };
+
+        // (
+        //     {
+        //         subject: 'N/A',
+        //         courseNum: 'N/A',
+        //         longTitle: 'N/A',
+        //         credits: 'N/A',
+        //         instructorFN: 'N/A',
+        //         instructorLN: 'N/A',
+        //         prereqs: 'N/A',
+        //         coreqs: 'N/A',
+        //         maxEnrollment: 'N/A',
+        //     }
+        // )
+    });
     // console.log('check2', defaultDraftSessions)
 
     // console.log(defaultDraftSessions[0]["instructors"])
@@ -110,7 +129,14 @@ const SemesterBox = (props) => {
     creditSum = defaultDraftSessions.reduce(function (sum, arr) {
         return sum + arr.credits;
     }, 0);
-    console.log(props.term);
+
+    const [customCourseList, setCustomCourseList] = useState([]);
+    const newCustomCourse = "newCustomCourse";
+    // setCustomCourseList([...customCourseList, newCustomCourse]);
+
+    const addCustomCourse = () => {
+        setCustomCourseList([...customCourseList, newCustomCourse]);
+    };
 
     // console.log('instructor list', instructorList)
     return (
@@ -156,7 +182,7 @@ const SemesterBox = (props) => {
             <button
                 className="button"
                 style={{ width: "170px" }}
-                onClick="modal"
+                onClick={addCustomCourse}
             >
                 Add Custom Course
             </button>
@@ -182,6 +208,14 @@ const SemesterBox = (props) => {
                                 prereqs={session["prereqs"]}
                                 coreqs={session["coreqs"]}
                                 maxEnrollment={session["maxEnrollment"]}
+                            />
+                        );
+                    })}
+                {customCourseList &&
+                    customCourseList.map((course, index) => {
+                        return (
+                            <CustomCourseRow
+                                customCourses={props.customCourse}
                             />
                         );
                     })}

@@ -14,7 +14,6 @@ const TitleBox = (props) => {
     } else {
         convertNumToSem = "Summer Semester";
     }
-    console.log(props.term);
     return (
         <div className="rowBox">
             <LeftTitleBox

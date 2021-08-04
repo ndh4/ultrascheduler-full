@@ -1,10 +1,22 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useReducer } from "react";
 import SemesterBox from "./SemesterBox";
 import "./DegreePlan.css";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { useHistory } from "react-router";
 import { Context as TermContext } from "../../contexts/termContext";
+import { Context as CustomCourseContext } from "../../contexts/customCourseContext";
 import TitleBox from "./TitleBox";
+import RiceAppsLogo from "../../riceappslogo.png";
+import { initGA, OutboundLink } from "../../utils/analytics";
+import DegreePlanNav from "./DegreePlanHeader";
+
+// Redirects people to our Medium page on a new page if they click our logo to learn more about us
+const handleLogoClick = () => {
+    OutboundLink(
+        "Clicked Logo.",
+        window.open("https://medium.com/riceapps", "_blank")
+    );
+};
 
 // query all of the schedules for a user
 const QUERY_ALL_USER_SCHEDULES = gql`
@@ -69,14 +81,25 @@ const DELETE_SEMESTER = gql`
         removeSchedule(filter: { _id: $_id }) {
             term
             _id
+            customCourse
         }
     }
 `;
 
-// mutation to delete semester, call from onclick the buttons
-// const MUTATION_DELETE_SEMESTER = gql`
-//     mutation
-// `;
+const UPDATE_CUSTOM_COURSES = gql`
+    mutation updateCustomCourses($_id: MongoID!, $customCourse: [String]) {
+        updateCustomCourses(
+            record: { customCourse: $customCourse }
+            filter: { _id: $_id }
+        ) {
+            record {
+                _id
+                term
+                customCourse
+            }
+        }
+    }
+`;
 
 const DegreePlan = () => {
     // to keep the semester in a list to order them
@@ -88,13 +111,27 @@ const DegreePlan = () => {
         state: { term },
     } = useContext(TermContext);
 
+    const {
+        state: { customCourses },
+        addCustomCourse,
+    } = useContext(CustomCourseContext);
+    console.log(customCourses);
     // add a new semester from the mutation
     const [mutateSemester, { loadingMutation, errorMutation, dataMutation }] =
-        useMutation(MUTATION_ADD_SEMESTER);
+        useMutation(MUTATION_ADD_SEMESTER, {
+            refetchQueries: () => [{ query: QUERY_ALL_USER_SCHEDULES }],
+        });
     const [
         deleteSemester,
         { loadingMutationDelete, errorMutationDelete, dataMutationDelete },
-    ] = useMutation(DELETE_SEMESTER);
+    ] = useMutation(DELETE_SEMESTER, {
+        refetchQueries: () => [{ query: QUERY_ALL_USER_SCHEDULES }],
+    });
+
+    const [
+        updateCustomCourse,
+        { loadingMutationUpdate, errorMutationUpdate, dataMutationUpdate },
+    ] = useMutation(UPDATE_CUSTOM_COURSES);
 
     // print status to page (NOTE: Raises Rending more hooks than previous... error)
     // if (loading) return <p>Loading</p>;
@@ -116,11 +153,11 @@ const DegreePlan = () => {
             draftSessions: schedule.draftSessions,
             notes: schedule.notes,
             _id: schedule._id,
+            customCourses: schedule.customCourse,
         }));
         setUserId(user_id);
         setSemesterList(defaultSchedule);
     }, [loading, data, error]);
-    console.log(userId);
 
     // adding new semester to semester list (state variable)
     const addNewSem = () => {
@@ -131,15 +168,15 @@ const DegreePlan = () => {
                 draftSessions: [],
             },
         });
-        const newSem = { term: term, draftSessions: [], notes: "", _id: "" };
-        setSemesterList([...semesterList, newSem]);
+        // const newSem = { term: term, draftSessions: [], notes: "", _id: "" };
+        // setSemesterList([...semesterList, newSem]);
     };
     console.log(semesterList);
 
     // delete a semester
     const deleteSem = (term, _id) => {
         const updated_list = semesterList.filter(
-            (semester) => semester.term != term
+            (semester) => semester._id != _id
         );
         deleteSemester({
             variables: {
@@ -152,13 +189,21 @@ const DegreePlan = () => {
     const history = useHistory();
     return (
         <div>
-            <button
-                className="button"
-                onClick={() => history.push("/schedule")}
-            >
-                Back To Schedule
-            </button>
-            <h1 className="title">My Degree Plan</h1>
+            <DegreePlanNav />
+            {/* <div className="logoContainer">
+                <img
+                    src={RiceAppsLogo}
+                    // style={styles.logo}
+                    onClick={() => handleLogoClick()}
+                />
+                <button
+                    className="toschedule"
+                    onClick={() => history.push("/schedule")}
+                >
+                    Back To Schedule
+                </button>
+            </div>
+            <h1 className="title">My Degree Plan</h1> */}
             <div className="layout">
                 {/* {defaultSchedule.map((semester) => {
                 return (<SemesterBox term={semester.term} draftSessions={semester.draftSessions} notes={semester.notes} />)
@@ -171,6 +216,7 @@ const DegreePlan = () => {
                                 draftSessions={semester.draftSessions}
                                 notes={semester.notes}
                                 //  id={semester.id}
+                                customCourse={semester.customCourses}
                                 deleteSem={() =>
                                     deleteSem(semester.term, semester._id)
                                 }
@@ -197,4 +243,5 @@ const DegreePlan = () => {
         </div>
     );
 };
+
 export default DegreePlan;

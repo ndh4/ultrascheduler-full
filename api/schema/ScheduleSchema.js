@@ -177,6 +177,9 @@ ScheduleTC.addResolver({
     },
 });
 
+/**
+ * Add a term from the degree planner
+ */
 ScheduleTC.addResolver({
     name: "createNewSchedule",
     type: ScheduleTC,
@@ -184,25 +187,41 @@ ScheduleTC.addResolver({
     resolve: async ({ source, args, context, info }) => {
         const { user } = args.filter;
         // Create if it doesn't exist
-        console.log(args);
+        // console.log(args);
         return await Schedule.create({ term: args.record.term, user: user });
     },
 });
 
+/**
+ * Remove a term from the degree planner
+ */
 ScheduleTC.addResolver({
     name: "removeSchedule",
     type: ScheduleTC,
     args: ScheduleTC.getResolver("removeOne").getArgs(),
     resolve: async ({ source, args, context, info }) => {
         // Create if it doesn't exist
-        console.log(args);
+        // console.log(args);
         return await Schedule.findByIdAndRemove({ _id: args.filter._id });
     },
 });
 
 /**
- * Add or remove a term from the degeree planner
+ * Update custom courses
  */
+ScheduleTC.addResolver({
+    name: "updateCustomCourses",
+    type: ScheduleTC,
+    args: ScheduleTC.getResolver("updateOne").getArgs(),
+    resolve: async ({ source, args, context, info }) => {
+        let CC = args.record.customCourse;
+        console.log(CC);
+        console.log(args);
+        return await Schedule.findByIdAndUpdate(args.filter._id, {
+            customCourse: args.record.customCourse,
+        });
+    },
+});
 
 const ScheduleQuery = {
     scheduleOne: ScheduleTC.getResolver("findOrCreate", [authMiddleware]),
@@ -232,9 +251,9 @@ const ScheduleMutation = {
     degreePlanRemoveTerm: ScheduleTC.getResolver("removeOne"),
 
     // for adding a new schedule, i can create a new term in the mutation.
-    degreePlanAddCourse: ScheduleTC.getResolver("createOne"),
-    degreePlanUpdateCourse: ScheduleTC.getResolver("updateOne"),
-    degreePlanRemoveCourse: ScheduleTC.getResolver("removeOne"),
+    updateCustomCourses: ScheduleTC.getResolver("updateCustomCourses", [
+        authMiddleware,
+    ]),
 };
 
 // Grab whatever the frontend saves as the custom course and add a mutation

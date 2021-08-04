@@ -67,3 +67,34 @@
     justify-content: flex-end;
     align-items: flex-end;
 }
+
+.customCourseCode {
+    position: relative;
+    left: -5px;
+    height: 19px;
+    width: 85px;
+    font: "Acari Sans";
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 19px;
+    padding-top: 3px;
+    color: #338182;
+
+    border-color: transparent;
+    border-radius: 5px;
+}
+
+.customCourseName {
+    height: 19px;
+    width: 240px;
+    font: "Acari Sans";
+    font-style: normal;
+    padding-top: 3px;
+    font-size: 16px;
+    line-height: 19px;
+    color: #63ccce;
+
+    border-color: transparent;
+    border-radius: 5px;
+}

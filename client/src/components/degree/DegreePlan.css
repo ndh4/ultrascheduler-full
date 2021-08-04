@@ -34,4 +34,42 @@
     padding-left: 20px;
     margin-top: 47px;
     position: relative;
+    text-align: center;
+    color: #149fa0;
+}
+
+.toschedule {
+    height: 35px;
+    left: 128px;
+    top: 511px;
+    border: 1.5px solid #e1e3e3;
+    box-sizing: border-box;
+    background-color: white;
+    font: "Acari Sans";
+    font-style: normal;
+    font-weight: 600;
+    font-size: 15.75px;
+    line-height: 19px;
+    color: #149fa0;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%;
+    /* position: absolute;
+    top: 0px;
+    right: 0px; */
+    /* display: flex;
+    flex-direction: column;
+    justify-content: center; */
+}
+.logoContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 80%;
+}
+
+.toschedule:hover {
+    background-color: #149fa0;
+    color: #e1e3e3;
 }

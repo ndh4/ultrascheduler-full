@@ -54,9 +54,9 @@ const LeftTitleBox = (props) => {
                                     
                     </select>
                                 
-                    <button onClick={saveSelections} className="saveBtn">
+                    {/* <button onClick={saveSelections} className="saveBtn">
                         Save
-                    </button>
+                    </button> */}
                 </>
             )}
                     
