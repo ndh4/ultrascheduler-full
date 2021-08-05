@@ -73,13 +73,13 @@ const SemesterBox = (props) => {
 
     useEffect(() => {
         if (databaseCustomCourse && customCourseList) {
-            const extractedCourse = customCourseList.map(
-                (course) => course.course
-            );
+            let extractedCourse = customCourseList
+                .map((course) => course.course)
+                .filter((course) => !databaseCustomCourse.includes(course));
             let combinedCourse = databaseCustomCourse.concat(extractedCourse);
             setExtractedCustomCourseList(combinedCourse);
         }
-    }, [databaseCustomCourse, customCourseList, refetch]);
+    }, [databaseCustomCourse, customCourseList]);
 
     const newCustomCourse = {
         course: "",
@@ -100,19 +100,23 @@ const SemesterBox = (props) => {
     console.log("extractedCustomCourseList", extractedCustomCourseList);
 
     const saveCustomCoursesToDatabase = () => {
+        let checkValid = true;
         extractedCustomCourseList.forEach(function (course) {
             if (!course) {
                 alert("Please check all the custom courses");
+                checkValid = false;
                 return;
             }
         });
-        updateCustomCourses({
-            variables: {
-                _id: props._id,
-                customCourse: extractedCustomCourseList,
-            },
-        });
-        refetch();
+        if (checkValid) {
+            updateCustomCourses({
+                variables: {
+                    _id: props._id,
+                    customCourse: extractedCustomCourseList,
+                },
+            });
+            refetch();
+        }
     };
 
     const deleteCustomCourseDatabase = (courseDetailString) => {
