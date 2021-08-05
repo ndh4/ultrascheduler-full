@@ -217,15 +217,34 @@ ScheduleTC.addResolver({
         let CC = args.record.customCourse;
         console.log(CC);
         console.log(args);
-        return await Schedule.findByIdAndUpdate(args.filter._id, {
-            customCourse: args.record.customCourse,
-        });
+        const schedule = await Schedule.updateOne(
+            { _id: args.filter._id },
+            { $set: { customCourse: args.record.customCourse } }
+        );
+
+        if (!schedule) return null;
+        return Schedule.findById(args.filter._id);
+        // return await Schedule.findByIdAndUpdate(args.filter._id, {
+        //     customCourse: args.record.customCourse,
+        // });
+    },
+});
+
+ScheduleTC.addResolver({
+    name: "findScheduleById",
+    type: ScheduleTC,
+    args: ScheduleTC.getResolver("findOne").getArgs(),
+    resolve: async ({ source, args, context, info }) => {
+        return Schedule.findById(args.filter._id);
     },
 });
 
 const ScheduleQuery = {
     scheduleOne: ScheduleTC.getResolver("findOrCreate", [authMiddleware]),
     scheduleMany: ScheduleTC.getResolver("findManyByUser", [authMiddleware]),
+    findScheduleById: ScheduleTC.getResolver("findScheduleById", [
+        authMiddleware,
+    ]),
 };
 
 const ScheduleMutation = {

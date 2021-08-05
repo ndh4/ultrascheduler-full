@@ -91,11 +91,19 @@ const UPDATE_CUSTOM_COURSES = gql`
             record: { customCourse: $customCourse }
             filter: { _id: $_id }
         ) {
-            record {
-                _id
-                term
-                customCourse
-            }
+            _id
+            term
+            customCourse
+        }
+    }
+`;
+
+const FIND_SCHEDULE_BY_ID = gql`
+    query findScheduleById($_id: MongoID!) {
+        findScheduleById(filter: { _id: $_id }) {
+            _id
+            customCourse
+            term
         }
     }
 `;
@@ -122,10 +130,9 @@ const DegreePlan = () => {
         refetchQueries: () => [{ query: QUERY_ALL_USER_SCHEDULES }],
     });
 
-    const [
-        updateCustomCourse,
-        { loadingMutationUpdate, errorMutationUpdate, dataMutationUpdate },
-    ] = useMutation(UPDATE_CUSTOM_COURSES);
+    const [updateCustomCourses, { loading2, error2, data2 }] = useMutation(
+        UPDATE_CUSTOM_COURSES
+    );
 
     // print status to page (NOTE: Raises Rending more hooks than previous... error)
     // if (loading) return <p>Loading</p>;
@@ -197,11 +204,12 @@ const DegreePlan = () => {
                                 draftSessions={semester.draftSessions}
                                 notes={semester.notes}
                                 //  id={semester.id}
-                                customCourse={semester.customCourses}
+                                customCourses={semester.customCourses}
                                 deleteSem={() =>
                                     deleteSem(semester.term, semester._id)
                                 }
-                                updateCustomCourse={updateCustomCourse}
+                                query={FIND_SCHEDULE_BY_ID}
+                                mutation={UPDATE_CUSTOM_COURSES}
                                 selector={false}
                             />
                         );

@@ -12,21 +12,6 @@ import { gql, useQuery, useMutation } from "@apollo/client";
 
 let creditSum;
 
-const UPDATE_CUSTOM_COURSES = gql`
-    mutation updateCustomCourses($_id: MongoID!, $customCourse: [String]) {
-        updateCustomCourses(
-            record: { customCourse: $customCourse }
-            filter: { _id: $_id }
-        ) {
-            record {
-                _id
-                term
-                customCourse
-            }
-        }
-    }
-`;
-
 const SemesterBox = (props) => {
     // for the edit schedule button
     const history = useHistory();
@@ -47,23 +32,106 @@ const SemesterBox = (props) => {
     };
     const [instuctorList, setInstructorList] = useState([]);
 
-    const {
-        state: { customCourses },
-    } = useContext(CustomCourseContext);
-
-    const [updateCustomCourses, { loading, error, data }] = useMutation(
-        UPDATE_CUSTOM_COURSES
+    // const {
+    //     state: { customCourses },
+    // } = useContext(CustomCourseContext);
+    // console.log(customCourses);
+    const { loading, error, data, refetch } = useQuery(props.query, {
+        variables: { _id: props._id },
+    });
+    const [updateCustomCourses, { loading2, error2, data2 }] = useMutation(
+        props.mutation
     );
-    console.log(customCourses);
+    const [customCourseList, setCustomCourseList] = useState([]);
+    const [databaseCustomCourse, setDatabaseCustomCourse] = useState([]);
+    const [extractedCustomCourseList, setExtractedCustomCourseList] = useState(
+        []
+    );
+    const [creditSumState, setCreditSumState] = useState(0);
+    const editCustomCourse = (course, id) => {
+        console.log("id", id);
+        if (
+            customCourseList &&
+            customCourseList.find((course) => course.id == id)
+        ) {
+            const newState = [...customCourseList];
+            console.log("in the array");
+            const index = newState.findIndex((course) => course.id == id);
+            if (index >= 0) {
+                newState[index] = {
+                    course: course,
+                    id: id,
+                };
+            }
+            setCustomCourseList(newState);
+        }
+    };
+    useEffect(() => {
+        const customCoursesFromDatabase = data?.findScheduleById.customCourse;
+        setDatabaseCustomCourse(customCoursesFromDatabase);
+    }, [loading, data, error]);
 
-    const updateCustomCourseToSchedule = () => {
+    useEffect(() => {
+        if (databaseCustomCourse && customCourseList) {
+            const extractedCourse = customCourseList.map(
+                (course) => course.course
+            );
+            let combinedCourse = databaseCustomCourse.concat(extractedCourse);
+            setExtractedCustomCourseList(combinedCourse);
+        }
+    }, [databaseCustomCourse, customCourseList, refetch]);
+
+    const newCustomCourse = {
+        course: "",
+        id: extractedCustomCourseList.length + 1,
+    };
+    const addCustomCourseAction = () => {
+        // setCustomCourseList(customCourseList.concat(customCourses));
+        setCustomCourseList([...customCourseList, newCustomCourse]);
+    };
+
+    const deleteCustomCourse = () => {
+        console.log("hello");
+        const newCustomCourseList = [...customCourseList];
+        newCustomCourseList.pop();
+        setCustomCourseList(newCustomCourseList);
+    };
+    console.log("customCourseList", customCourseList);
+    console.log("extractedCustomCourseList", extractedCustomCourseList);
+
+    const saveCustomCoursesToDatabase = () => {
+        extractedCustomCourseList.forEach(function (course) {
+            if (!course) {
+                alert("Please check all the custom courses");
+                return;
+            }
+        });
         updateCustomCourses({
             variables: {
                 _id: props._id,
-                customCourse: [],
+                customCourse: extractedCustomCourseList,
             },
         });
+        refetch();
     };
+
+    const deleteCustomCourseDatabase = (courseDetailString) => {
+        setCustomCourseList(
+            customCourseList.filter(
+                (course) => course.course != courseDetailString
+            )
+        );
+        updateCustomCourses({
+            variables: {
+                _id: props._id,
+                customCourse: extractedCustomCourseList.filter(
+                    (course) => course != courseDetailString && course != ""
+                ),
+            },
+        });
+        refetch();
+    };
+
     // console.log('checkmark', props["draftSessions"][6].session)
     // console.log('checkmark', props["draftSessions"][6].session)
 
@@ -74,7 +142,6 @@ const SemesterBox = (props) => {
     // console.log('check1', props["draftSessions"][6].session.instructors)
 
     const defaultDraftSessions = props["draftSessions"].map((sessions) => {
-        // return (sessions != undefined) ?
         return sessions.session
             ? {
                   subject: sessions.session.course
@@ -150,19 +217,24 @@ const SemesterBox = (props) => {
     //     }
     //     instructorList.push(instructorDict)
     // }
+    useEffect(() => {
+        if (defaultDraftSessions && extractedCustomCourseList) {
+            let creditSum = defaultDraftSessions.reduce(function (sum, arr) {
+                return sum + arr.credits;
+            }, 0);
 
-    creditSum = defaultDraftSessions.reduce(function (sum, arr) {
-        return sum + arr.credits;
-    }, 0);
-
-    const [customCourseList, setCustomCourseList] = useState([]);
-    const newCustomCourse = "newCustomCourse";
-    // setCustomCourseList([...customCourseList, newCustomCourse]);
-
-    const addCustomCourseAction = () => {
-        setCustomCourseList(customCourseList.concat(customCourses));
-        // setCustomCourseList([...customCourseList, newCustomCourse]);
-    };
+            let creditSumCustomCourse = extractedCustomCourseList.reduce(
+                function (sum, arr) {
+                    return sum + parseInt(arr.split("&")[2]);
+                },
+                0
+            );
+            setCreditSumState(creditSum + creditSumCustomCourse);
+        }
+    }, [defaultDraftSessions, extractedCustomCourseList]);
+    // creditSum = defaultDraftSessions.reduce(function (sum, arr) {
+    //     return sum + arr.credits;
+    // }, 0);
 
     // console.log('instructor list', instructorList)
     return (
@@ -188,15 +260,15 @@ const SemesterBox = (props) => {
                     // style={{ width: "170px" }}
                     onClick={openModal}
                 >
-                    Edit Notes
+                    Notes
                 </button>
 
                 <button
                     className="button"
                     // style={{ width: "170px" }}
-                    onClick={updateCustomCourseToSchedule}
+                    onClick={saveCustomCoursesToDatabase}
                 >
-                    Save
+                    Save Course
                 </button>
                 <Modal
                     isOpen={modalState}
@@ -213,19 +285,18 @@ const SemesterBox = (props) => {
                         ></textarea>
                     </div>
                 </Modal>
-
                 <button
                     className="customButton"
                     // style={{ width: "170px" }}
                     onClick={addCustomCourseAction}
                 >
-                    Add Custom Course
+                    Custom Course
                 </button>
             </div>
             <div className="semesterFlexBox">
                 <TitleBox
                     term={props.term}
-                    credits={props["credits"]}
+                    credits={creditSumState}
                     selector={props.selector}
                 />
 
@@ -245,12 +316,18 @@ const SemesterBox = (props) => {
                             />
                         );
                     })}
-                {customCourseList &&
-                    customCourseList.map((course, index) => {
+                {extractedCustomCourseList &&
+                    extractedCustomCourseList.map((course, index) => {
                         return (
                             <CustomCourseRow
-                                customCourses={props.customCourse}
-                                index={index}
+                                customCourses={props.customCourses}
+                                id={index}
+                                editCustomCourse={editCustomCourse}
+                                deleteCustomCourse={deleteCustomCourse}
+                                deleteCustomCourseDatabase={
+                                    deleteCustomCourseDatabase
+                                }
+                                courseDetailString={course}
                             />
                         );
                     })}

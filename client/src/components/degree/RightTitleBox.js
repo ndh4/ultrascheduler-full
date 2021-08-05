@@ -1,13 +1,15 @@
-import React from 'react'
-import './RightTitleBox.css'
-import { creditSum } from "./SemesterBox"
+import React from "react";
+import "./RightTitleBox.css";
+import { creditSum } from "./SemesterBox";
 
-const RightTitleBox = () => {
+const RightTitleBox = (props) => {
     return (
-        <div className='rtbox'>
-            <div className='totalCredit'>{creditSum} credits</div>
+        <div className="rtbox">
+            <div className="totalCredit">
+                {props.credits ? props.credits : ""} credits
+            </div>
         </div>
-    )
-}
+    );
+};
 
-export default RightTitleBox
+export default RightTitleBox;
