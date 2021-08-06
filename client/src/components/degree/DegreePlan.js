@@ -162,7 +162,6 @@ const DegreePlan = () => {
 
     // adding new semester to semester list (state variable)
     const addNewSem = () => {
-        console.log("entered");
         mutateSemester({
             variables: {
                 term: term,
@@ -172,7 +171,6 @@ const DegreePlan = () => {
         // const newSem = { term: term, draftSessions: [], notes: "", _id: "" };
         // setSemesterList([...semesterList, newSem]);
     };
-    console.log(semesterList);
 
     // delete a semester
     const deleteSem = (term, _id) => {

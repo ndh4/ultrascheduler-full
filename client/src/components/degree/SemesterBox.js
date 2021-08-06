@@ -30,12 +30,6 @@ const SemesterBox = (props) => {
         changeInputVal(document.getElementById("notes").value);
         document.getElementById("notes").value = inputVal;
     };
-    const [instuctorList, setInstructorList] = useState([]);
-
-    // const {
-    //     state: { customCourses },
-    // } = useContext(CustomCourseContext);
-    // console.log(customCourses);
     const { loading, error, data, refetch } = useQuery(props.query, {
         variables: { _id: props._id },
     });
@@ -49,7 +43,6 @@ const SemesterBox = (props) => {
     );
     const [creditSumState, setCreditSumState] = useState(0);
     const editCustomCourse = (course, id) => {
-        console.log("id", id);
         if (
             customCourseList &&
             customCourseList.find((course) => course.id == id)
@@ -91,13 +84,10 @@ const SemesterBox = (props) => {
     };
 
     const deleteCustomCourse = () => {
-        console.log("hello");
         const newCustomCourseList = [...customCourseList];
         newCustomCourseList.pop();
         setCustomCourseList(newCustomCourseList);
     };
-    console.log("customCourseList", customCourseList);
-    console.log("extractedCustomCourseList", extractedCustomCourseList);
 
     const saveCustomCoursesToDatabase = () => {
         let checkValid = true;
